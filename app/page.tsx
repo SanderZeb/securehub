@@ -268,6 +268,100 @@ if (typeof document !== "undefined") {
   document.head.appendChild(styleElement);
 }
 
+// Mouse Context for global mouse tracking
+const MouseContext = React.createContext<{
+  mouseX: any;
+  mouseY: any;
+}>({
+  mouseX: null,
+  mouseY: null
+});
+
+// Mouse Provider Component
+const MouseProvider = React.memo<{ children: React.ReactNode }>(({ children }) => {
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const updateMousePosition = (e: MouseEvent) => {
+        mouseX.set(e.clientX);
+        mouseY.set(e.clientY);
+      };
+      
+      window.addEventListener('mousemove', updateMousePosition);
+      return () => window.removeEventListener('mousemove', updateMousePosition);
+    }
+  }, [mouseX, mouseY]);
+
+  return (
+    <MouseContext.Provider value={{ mouseX, mouseY }}>
+      {children}
+    </MouseContext.Provider>
+  );
+});
+
+MouseProvider.displayName = 'MouseProvider';
+
+// Independent MouseParallax Component - tracks mouse per element
+const MouseParallax = React.memo<{ 
+  children: React.ReactNode; 
+  strength?: number;
+  className?: string;
+}>(({ children, strength = 0.05, className = "" }) => {
+  const [localMousePosition, setLocalMousePosition] = useState({ x: 0, y: 0 });
+  const [isHovered, setIsHovered] = useState(false);
+  const elementRef = useRef<HTMLDivElement>(null);
+
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    if (!elementRef.current) return;
+    
+    const rect = elementRef.current.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    
+    const mouseX = e.clientX - centerX;
+    const mouseY = e.clientY - centerY;
+    
+    setLocalMousePosition({ x: mouseX, y: mouseY });
+    
+    // Apply parallax effect
+    x.set(mouseX * strength);
+    y.set(mouseY * strength);
+  }, [strength, x, y]);
+
+  const handleMouseEnter = useCallback(() => {
+    setIsHovered(true);
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    setIsHovered(false);
+    // Return to center position smoothly
+    x.set(0);
+    y.set(0);
+    setLocalMousePosition({ x: 0, y: 0 });
+  }, [x, y]);
+
+  return (
+    <motion.div 
+      ref={elementRef}
+      style={{ x, y }} 
+      className={className}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      transition={{ type: "spring", stiffness: 150, damping: 15 }}
+    >
+      {children}
+    </motion.div>
+  );
+});
+
+MouseParallax.displayName = 'MouseParallax';
+
 // Theme context
 const ThemeContext = React.createContext<{
   theme: 'light' | 'dark';
@@ -333,20 +427,17 @@ const certificates = [
   {
     name: "ISO 27001",
     description: "Zarządzanie bezpieczeństwem informacji",
-    image: "/api/placeholder/200/150", // Placeholder - replace with actual certificate
-    year: "2024"
+    image: "/api/placeholder/200/150", 
   },
   {
-    name: "CISSP",
-    description: "Certified Information Systems Security Professional",
-    image: "/api/placeholder/200/150", // Placeholder - replace with actual certificate
-    year: "2024"
+    name: "ISO 27001",
+    description: "Zarządzanie bezpieczeństwem informacji",
+    image: "/api/placeholder/200/150", 
   },
   {
-    name: "CEH",
-    description: "Certified Ethical Hacker",
-    image: "/api/placeholder/200/150", // Placeholder - replace with actual certificate
-    year: "2024"
+    name: "ISO 27001",
+    description: "Zarządzanie bezpieczeństwem informacji",
+    image: "/api/placeholder/200/150", 
   }
 ];
 
@@ -890,12 +981,12 @@ const HeroSection = React.memo<{ scrollToSection: (sectionId: string) => void }>
   }, [scrollToSection]);
 
   // Parallax effect for logo
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
+  const mouseXLocal = useMotionValue(0);
+  const mouseYLocal = useMotionValue(0);
   
   const springConfig = { damping: 25, stiffness: 150 };
-  const x = useSpring(mouseX, springConfig);
-  const y = useSpring(mouseY, springConfig);
+  const x = useSpring(mouseXLocal, springConfig);
+  const y = useSpring(mouseYLocal, springConfig);
   
   // Transform values for parallax layers
   const xTransform = useTransform(x, [-0.5, 0.5], [-12, 12]);
@@ -908,14 +999,14 @@ const HeroSection = React.memo<{ scrollToSection: (sectionId: string) => void }>
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
     
-    mouseX.set((e.clientX - centerX) / rect.width);
-    mouseY.set((e.clientY - centerY) / rect.height);
-  }, [mouseX, mouseY]);
+    mouseXLocal.set((e.clientX - centerX) / rect.width);
+    mouseYLocal.set((e.clientY - centerY) / rect.height);
+  }, [mouseXLocal, mouseYLocal]);
 
   const handleMouseLeave = useCallback(() => {
-    mouseX.set(0);
-    mouseY.set(0);
-  }, [mouseX, mouseY]);
+    mouseXLocal.set(0);
+    mouseYLocal.set(0);
+  }, [mouseXLocal, mouseYLocal]);
 
   return (
     <section id="hero" className="min-h-screen hero-section text-white overflow-hidden relative select-none">
@@ -1092,7 +1183,7 @@ const HeroSection = React.memo<{ scrollToSection: (sectionId: string) => void }>
 
 HeroSection.displayName = 'HeroSection';
 
-// Memoized AboutSection Component
+// Enhanced AboutSection Component with improved visual effects
 const AboutSection = React.memo(() => {
   const { theme } = React.useContext(ThemeContext);
   
@@ -1155,16 +1246,131 @@ const AboutSection = React.memo(() => {
                     </p>
                   </motion.div>
                 </div>
+
                 <div className="flex-1 w-full lg:max-w-md">
                   <motion.div 
-                    whileHover={{ scale: 1.02 }}
-                    transition={{ duration: 0.3 }}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.6, delay: 0.2 }}
+                    viewport={{ once: true }}
                     className="relative"
                   >
-                    <div className="neuromorphic-inset w-full h-48 sm:h-64 rounded-2xl flex items-center justify-center group overflow-hidden">
-                      <Icon className="w-16 sm:w-24 h-16 sm:h-24 text-amber-400/40 group-hover:text-amber-400/60 transition-colors duration-300" />
-                      <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 to-yellow-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    </div>
+                    <MouseParallax strength={0.15}>
+                      {/* Background layer with transform */}
+                      <div className={`absolute inset-0 rounded-2xl transform translate-x-4 translate-y-4 ${
+                        theme === 'dark' 
+                          ? 'bg-gradient-to-br from-amber-600/30 to-yellow-600/30' 
+                          : 'bg-gradient-to-br from-amber-400/30 to-yellow-400/30'
+                      }`} />
+                      
+                      {/* Main container */}
+                      <div className="relative neuromorphic-inset rounded-2xl overflow-hidden shadow-2xl">
+                        {/* Gradient background */}
+                        <div className={`h-48 sm:h-64 bg-gradient-to-br ${
+                          theme === 'dark'
+                            ? 'from-amber-900/40 via-yellow-800/40 to-orange-900/40'
+                            : 'from-amber-200/60 via-yellow-200/60 to-orange-200/60'
+                        } relative`}>
+                          
+                          {/* Animated background pattern */}
+                          <motion.div
+                            className="absolute inset-0 opacity-30"
+                            animate={{
+                              background: [
+                                "radial-gradient(circle at 20% 80%, rgba(251, 191, 36, 0.3) 0%, transparent 50%)",
+                                "radial-gradient(circle at 80% 20%, rgba(251, 191, 36, 0.3) 0%, transparent 50%)",
+                                "radial-gradient(circle at 40% 40%, rgba(251, 191, 36, 0.3) 0%, transparent 50%)"
+                              ]
+                            }}
+                            transition={{
+                              duration: 4,
+                              repeat: Infinity,
+                              repeatType: "reverse"
+                            }}
+                          />
+
+                          {/* Icon container with enhanced effects */}
+                          <div className="relative h-full flex items-center justify-center group">
+                            <MouseParallax strength={0.1} className="relative">
+                              {/* Icon glow effect */}
+                              <motion.div
+                                className="absolute inset-0 rounded-full"
+                                animate={{
+                                  boxShadow: [
+                                    "0 0 20px rgba(251, 191, 36, 0.0)",
+                                    "0 0 40px rgba(251, 191, 36, 0.3)",
+                                    "0 0 20px rgba(251, 191, 36, 0.0)"
+                                  ]
+                                }}
+                                transition={{
+                                  duration: 3,
+                                  repeat: Infinity,
+                                  ease: "easeInOut"
+                                }}
+                              />
+                              
+                              {/* Main icon */}
+                              <motion.div
+                                whileHover={{ 
+                                  scale: 1.1,
+                                  rotate: [0, -5, 5, 0]
+                                }}
+                                transition={{ 
+                                  scale: { duration: 0.3 },
+                                  rotate: { duration: 0.6, ease: "easeInOut" }
+                                }}
+                                className="relative z-10"
+                              >
+                                <Icon className={`w-16 sm:w-20 h-16 sm:h-20 transition-all duration-500 ${
+                                  theme === 'dark'
+                                    ? 'text-amber-400 drop-shadow-[0_0_15px_rgba(251,191,36,0.5)]'
+                                    : 'text-amber-600 drop-shadow-[0_0_15px_rgba(217,119,6,0.3)]'
+                                }`} />
+                              </motion.div>
+
+                              {/* Floating particles effect */}
+                              {[...Array(3)].map((_, i) => (
+                                <motion.div
+                                  key={i}
+                                  className="absolute w-2 h-2 bg-amber-400/60 rounded-full"
+                                  animate={{
+                                    x: [0, 20, -20, 0],
+                                    y: [0, -15, 10, 0],
+                                    opacity: [0, 1, 1, 0]
+                                  }}
+                                  transition={{
+                                    duration: 4,
+                                    repeat: Infinity,
+                                    delay: i * 1.3,
+                                    ease: "easeInOut"
+                                  }}
+                                  style={{
+                                    left: `${20 + i * 20}%`,
+                                    top: `${30 + i * 15}%`
+                                  }}
+                                />
+                              ))}
+                            </MouseParallax>
+
+                            {/* Overlay gradient on hover */}
+                            <div className={`absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-20 transition-opacity duration-500 ${
+                              theme === 'dark'
+                                ? 'from-amber-500/20 to-yellow-500/20'
+                                : 'from-amber-400/20 to-yellow-400/20'
+                            }`} />
+                          </div>
+                        </div>
+
+                        {/* Bottom accent line */}
+                        <motion.div
+                          className="h-1 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-400"
+                          initial={{ scaleX: 0 }}
+                          whileInView={{ scaleX: 1 }}
+                          transition={{ duration: 0.8, delay: 0.5 }}
+                          viewport={{ once: true }}
+                        />
+                      </div>
+                    </MouseParallax>
                   </motion.div>
                 </div>
               </motion.div>
@@ -1261,7 +1467,7 @@ const FeaturesSection = React.memo(() => {
       
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 1, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
@@ -1294,7 +1500,7 @@ FeaturesSection.displayName = 'FeaturesSection';
 // Certificates Section Component
 const CertificatesSection = React.memo(() => {
   const { theme } = React.useContext(ThemeContext);
-  
+  console.log("render");
   return (
     <section id="certificates" className="py-16 sm:py-24 section-bg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -1332,7 +1538,7 @@ const CertificatesSection = React.memo(() => {
               
               <div className="relative z-10">
                 <div className="w-32 h-24 mx-auto mb-6 neuromorphic-inset rounded-xl flex items-center justify-center group-hover:shadow-blue-500/30 transition-all duration-500">
-                  <Certificate className="w-16 h-16 text-amber-400 group-hover:text-amber-300 transition-colors duration-500" />
+                  <Certificate className="w-16 h-16 text-blue-400 group-hover:text-blue-300 transition-colors duration-500" />
                 </div>
                 
                 <h3 className={`text-xl font-bold mb-2 font-heading ${
@@ -1347,7 +1553,7 @@ const CertificatesSection = React.memo(() => {
                   {certificate.description}
                 </p>
                 
-
+  
               </div>
             </motion.div>
           ))}
@@ -1369,10 +1575,40 @@ const ContactSection = React.memo<{ showToast: (message: string) => void }>(({ s
     message: ""
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState({
+    email: "",
+    message: ""
+  });
+
+  const validateEmail = useCallback((email: string) => {
+    if (email.trim() === "") return ""; // Optional field
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email) ? "" : "Nieprawidłowy format adresu e-mail";
+  }, []);
+
+  const validateMessage = useCallback((message: string) => {
+    const trimmed = message.trim();
+    if (trimmed === "") return "Wiadomość jest wymagana";
+    if (trimmed.length < 10) return "Wiadomość musi zawierać co najmniej 10 znaków";
+    if (trimmed.length > 1000) return "Wiadomość nie może przekraczać 1000 znaków";
+    return "";
+  }, []);
+
+  const validateForm = useCallback(() => {
+    const emailError = validateEmail(formData.email);
+    const messageError = validateMessage(formData.message);
+    
+    setErrors({
+      email: emailError,
+      message: messageError
+    });
+
+    return emailError === "" && messageError === "";
+  }, [formData.email, formData.message, validateEmail, validateMessage]);
 
   const handleSubmit = useCallback(async () => {
-    if (!formData.message.trim()) {
-      showToast("Proszę wypełnić pole wiadomości.");
+    if (!validateForm()) {
+      showToast("Proszę poprawić błędy w formularzu.");
       return;
     }
 
@@ -1383,12 +1619,24 @@ const ContactSection = React.memo<{ showToast: (message: string) => void }>(({ s
     
     showToast("Wiadomość została wysłana! Skontaktujemy się wkrótce.");
     setFormData({ email: "", organization: "", companySize: "wole-nie-mowic", message: "" });
+    setErrors({ email: "", message: "" });
     setIsSubmitting(false);
-  }, [formData.message, showToast]);
+  }, [formData, showToast, validateForm]);
 
   const handleInputChange = useCallback((field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-  }, []);
+    
+    // Real-time validation
+    if (field === 'email') {
+      setErrors(prev => ({ ...prev, email: validateEmail(value) }));
+    } else if (field === 'message') {
+      setErrors(prev => ({ ...prev, message: validateMessage(value) }));
+    }
+  }, [validateEmail, validateMessage]);
+
+  const isFormValid = useMemo(() => {
+    return errors.email === "" && errors.message === "" && formData.message.trim() !== "";
+  }, [errors, formData.message]);
 
   return (
     <section id="contact" className="py-16 sm:py-24 section-bg">
@@ -1437,11 +1685,37 @@ const ContactSection = React.memo<{ showToast: (message: string) => void }>(({ s
                   type="email"
                   value={formData.email}
                   onChange={(e) => handleInputChange('email', e.target.value)}
-                  className={`neuromorphic-inset w-full px-4 py-3 bg-transparent rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all duration-200 font-body text-sm sm:text-base ${
+                  className={`neuromorphic-inset w-full px-4 py-3 bg-transparent rounded-lg focus:outline-none transition-all duration-200 font-body text-sm sm:text-base ${
                     theme === 'dark' ? 'text-gray-100' : 'text-gray-800'
+                  } ${
+                    errors.email 
+                      ? 'focus:ring-2 focus:ring-red-500 border-red-500/50' 
+                      : formData.email && !errors.email && formData.email.trim() !== ''
+                        ? 'focus:ring-2 focus:ring-green-500 border-green-500/50'
+                        : 'focus:ring-2 focus:ring-amber-500'
                   }`}
                   placeholder="twoj@email.com"
                 />
+                {errors.email && (
+                  <motion.p
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-red-400 text-xs mt-2 font-body flex items-center"
+                  >
+                    <X className="w-3 h-3 mr-1" />
+                    {errors.email}
+                  </motion.p>
+                )}
+                {!errors.email && formData.email && formData.email.trim() !== '' && (
+                  <motion.p
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-green-400 text-xs mt-2 font-body flex items-center"
+                  >
+                    <CheckCircle className="w-3 h-3 mr-1" />
+                    Adres e-mail wygląda poprawnie
+                  </motion.p>
+                )}
               </div>
               <div>
                 <label className={`block text-sm font-medium mb-2 font-body ${
@@ -1473,27 +1747,60 @@ const ContactSection = React.memo<{ showToast: (message: string) => void }>(({ s
                 />
               </div>
               <div>
-                <label className={`block text-sm font-medium mb-2 font-body ${
-                  theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
-                }`}>
-                  Jak możemy pomóc? *
-                </label>
+                <div className="flex justify-between items-center mb-2">
+                  <label className={`text-sm font-medium font-body ${
+                    theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
+                  }`}>
+                    Jak możemy pomóc? *
+                  </label>
+                  <span className={`text-xs font-body ${
+                    formData.message.length > 1000 
+                      ? 'text-red-400' 
+                      : theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+                  }`}>
+                    {formData.message.length}/1000
+                  </span>
+                </div>
                 <textarea
                   value={formData.message}
                   onChange={(e) => handleInputChange('message', e.target.value)}
                   rows={4}
-                  className={`neuromorphic-inset w-full px-4 py-3 bg-transparent rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all duration-200 font-body text-sm sm:text-base ${
+                  className={`neuromorphic-inset w-full px-4 py-3 bg-transparent rounded-lg resize-none focus:outline-none transition-all duration-200 font-body text-sm sm:text-base ${
                     theme === 'dark' ? 'text-gray-100' : 'text-gray-800'
+                  } ${
+                    errors.message 
+                      ? 'focus:ring-2 focus:ring-red-500 border-red-500/50' 
+                      : 'focus:ring-2 focus:ring-amber-500'
                   }`}
                   placeholder="Opisz swoje potrzeby lub wyzwania..."
                 />
+                {errors.message && (
+                  <motion.p
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-red-400 text-xs mt-2 font-body flex items-center"
+                  >
+                    <X className="w-3 h-3 mr-1" />
+                    {errors.message}
+                  </motion.p>
+                )}
+                {!errors.message && formData.message.trim() && formData.message.length >= 10 && (
+                  <motion.p
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-green-400 text-xs mt-2 font-body flex items-center"
+                  >
+                    <CheckCircle className="w-3 h-3 mr-1" />
+                    Wiadomość wygląda dobrze!
+                  </motion.p>
+                )}
               </div>
               <PremiumButton
                 onClick={handleSubmit}
                 variant="primary"
                 size="lg"
                 className="w-full"
-                disabled={isSubmitting}
+                disabled={isSubmitting || !isFormValid}
               >
                 {isSubmitting ? (
                   <>
@@ -1510,8 +1817,8 @@ const ContactSection = React.memo<{ showToast: (message: string) => void }>(({ s
                   </>
                 ) : (
                   <>
-                    Wyślij wiadomość
-                    <ArrowRight className="w-5 h-5 ml-2" />
+                    {!isFormValid ? "Wypełnij wymagane pola" : "Wyślij wiadomość"}
+                    {isFormValid && <ArrowRight className="w-5 h-5 ml-2" />}
                   </>
                 )}
               </PremiumButton>
@@ -1662,7 +1969,7 @@ const Footer = React.memo(() => {
           </div>
           
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 1, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
             viewport={{ once: true }}
@@ -1822,31 +2129,33 @@ export default function SecurHubLanding() {
   }, []);
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
-      <div className={`min-h-screen font-body overflow-x-hidden transition-colors duration-300 ${
-        theme === 'dark' ? 'bg-black' : 'bg-gray-50'
-      }`}>
-        <NavigationBar 
-          isScrolled={isScrolled}
-          mobileNavActive={mobileNavActive}
-          setMobileNavActive={setMobileNavActive}
-          scrollToSection={scrollToSection}
-          isOverHero={isOverHero}
-        />
-        <main>
-          <HeroSection scrollToSection={scrollToSection} />
-          <AboutSection />
-          <FeaturesSection />
-          <CertificatesSection />
-          <ContactSection showToast={showToast} />
-        </main>
-        <Footer />
-        <AnimatePresence>
-          {toastMessage && (
-            <Toast message={toastMessage} onClose={handleCloseToast} />
-          )}
-        </AnimatePresence>
-      </div>
-    </ThemeContext.Provider>
+    <MouseProvider>
+      <ThemeContext.Provider value={{ theme, toggleTheme }}>
+        <div className={`min-h-screen font-body overflow-x-hidden transition-colors duration-300 ${
+          theme === 'dark' ? 'bg-black' : 'bg-gray-50'
+        }`}>
+          <NavigationBar 
+            isScrolled={isScrolled}
+            mobileNavActive={mobileNavActive}
+            setMobileNavActive={setMobileNavActive}
+            scrollToSection={scrollToSection}
+            isOverHero={isOverHero}
+          />
+          <main>
+            <HeroSection scrollToSection={scrollToSection} />
+            <AboutSection />
+            <FeaturesSection />
+            <CertificatesSection />
+            <ContactSection showToast={showToast} />
+          </main>
+          <Footer />
+          <AnimatePresence>
+            {toastMessage && (
+              <Toast message={toastMessage} onClose={handleCloseToast} />
+            )}
+          </AnimatePresence>
+        </div>
+      </ThemeContext.Provider>
+    </MouseProvider>
   );
 }
