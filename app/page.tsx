@@ -28,7 +28,6 @@ import {
   FaCertificate as Certificate,
 } from "react-icons/fa";
 
-// Enhanced global styles with improved light/dark mode support
 const globalStyles = `
 @import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Outfit:wght@100..900&family=Quicksand:wght@300..700&display=swap');
 
@@ -44,7 +43,6 @@ const globalStyles = `
   width: 6px;
 }
 
-/* Dark mode scrollbar */
 .dark ::-webkit-scrollbar-track {
   background: #111111;
 }
@@ -58,7 +56,6 @@ const globalStyles = `
   background: linear-gradient(180deg, #666666, #444444);
 }
 
-/* Light mode scrollbar */
 .light ::-webkit-scrollbar-track {
   background: #f8f9fa;
 }
@@ -72,7 +69,6 @@ const globalStyles = `
   background: linear-gradient(180deg, #999999, #808080);
 }
 
-/* Dark mode neuromorphic */
 .dark .neuromorphic {
   background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
   box-shadow: 
@@ -89,7 +85,6 @@ const globalStyles = `
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-/* Light mode neuromorphic - improved contrast */
 .light .neuromorphic {
   background: linear-gradient(145deg, #ffffff, #f0f4f8);
   box-shadow: 
@@ -106,28 +101,24 @@ const globalStyles = `
   border: 1px solid rgba(0, 0, 0, 0.08);
 }
 
-/* Dark mode glass effect */
 .dark .glass-effect {
   background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
-/* Light mode glass effect */
 .light .glass-effect {
   background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-/* Hero section glass effect - always dark for navbar */
 .hero-section .glass-effect {
   background: rgba(0, 0, 0, 0.4) !important;
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.15) !important;
 }
 
-/* Hero navbar - always light text */
 .hero-navbar {
   color: rgba(255, 255, 255, 0.9) !important;
 }
@@ -136,7 +127,6 @@ const globalStyles = `
   color: rgba(255, 255, 255, 1) !important;
 }
 
-/* Dark mode premium button */
 .dark .premium-button {
   position: relative;
   overflow: hidden;
@@ -147,7 +137,6 @@ const globalStyles = `
     inset 0 1px 0 rgba(106, 64, 27, 0.3);
 }
 
-/* Light mode premium button - improved contrast */
 .light .premium-button {
   position: relative;
   overflow: hidden;
@@ -158,7 +147,6 @@ const globalStyles = `
     inset 0 1px 0 rgba(59, 130, 246, 0.2);
 }
 
-/* Hero section premium button - always dark style */
 .hero-section .premium-button {
   background: linear-gradient(135deg, #1e1e1e, #2a2a2a) !important;
   border: 1px solid rgba(106, 64, 27, 0.4) !important;
@@ -183,7 +171,6 @@ const globalStyles = `
   left: 100%;
 }
 
-/* Hero section - same for both modes */
 .hero-overlay {
   background: rgba(0, 0, 0, 0.4);
 }
@@ -192,17 +179,14 @@ const globalStyles = `
   background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0f0f0f 100%);
 }
 
-/* Dark mode backgrounds */
 .dark .section-bg {
   background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0f0f0f 100%);
 }
 
-/* Light mode backgrounds - improved */
 .light .section-bg {
   background: linear-gradient(135deg, #f8fafc 0%, #ffffff 50%, #f1f5f9 100%);
 }
 
-/* Image loading placeholder */
 .image-placeholder {
   background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
   background-size: 200% 100%;
@@ -268,7 +252,6 @@ if (typeof document !== "undefined") {
   document.head.appendChild(styleElement);
 }
 
-// Mouse Context for global mouse tracking
 const MouseContext = React.createContext<{
   mouseX: any;
   mouseY: any;
@@ -277,7 +260,6 @@ const MouseContext = React.createContext<{
   mouseY: null
 });
 
-// Mouse Provider Component
 const MouseProvider = React.memo<{ children: React.ReactNode }>(({ children }) => {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -303,7 +285,6 @@ const MouseProvider = React.memo<{ children: React.ReactNode }>(({ children }) =
 
 MouseProvider.displayName = 'MouseProvider';
 
-// Independent MouseParallax Component - tracks mouse per element
 const MouseParallax = React.memo<{ 
   children: React.ReactNode; 
   strength?: number;
@@ -328,7 +309,6 @@ const MouseParallax = React.memo<{
     
     setLocalMousePosition({ x: mouseX, y: mouseY });
     
-    // Apply parallax effect
     x.set(mouseX * strength);
     y.set(mouseY * strength);
   }, [strength, x, y]);
@@ -339,7 +319,6 @@ const MouseParallax = React.memo<{
 
   const handleMouseLeave = useCallback(() => {
     setIsHovered(false);
-    // Return to center position smoothly
     x.set(0);
     y.set(0);
     setLocalMousePosition({ x: 0, y: 0 });
@@ -362,7 +341,6 @@ const MouseParallax = React.memo<{
 
 MouseParallax.displayName = 'MouseParallax';
 
-// Theme context
 const ThemeContext = React.createContext<{
   theme: 'light' | 'dark';
   toggleTheme: () => void;
@@ -371,7 +349,6 @@ const ThemeContext = React.createContext<{
   toggleTheme: () => {}
 });
 
-// Static data - moved outside component to prevent recreation
 const features = [
   {
     icon: Code,
@@ -427,17 +404,65 @@ const certificates = [
   {
     name: "ISO 27001",
     description: "Zarządzanie bezpieczeństwem informacji",
-    image: "/api/placeholder/200/150", 
+    image: "/api/placeholder/200/150",
+    fullDescription: "ISO 27001 to międzynarodowy standard określający wymagania dla systemów zarządzania bezpieczeństwem informacji (ISMS). Standard zapewnia systematyczne podejście do zarządzania wrażliwymi informacjami firmy, tak aby pozostały bezpieczne.",
+    details: [
+      "Systematyczne podejście do zarządzania bezpieczeństwem",
+      "Ciągłe doskonalenie procesów bezpieczeństwa", 
+      "Zgodność z międzynarodowymi standardami",
+      "Redukcja ryzyka naruszenia bezpieczeństwa"
+    ]
   },
   {
-    name: "ISO 27001",
+    name: "ISO 27002",
     description: "Zarządzanie bezpieczeństwem informacji",
-    image: "/api/placeholder/200/150", 
+    image: "/api/placeholder/200/150",
+    fullDescription: "ISO 27002 to międzynarodowy standard zawierający praktyczne wskazówki dotyczące implementacji kontroli bezpieczeństwa informacji. Standard ten stanowi uzupełnienie dla ISO 27001 i pomaga organizacjom w wyborze i wdrażaniu odpowiednich zabezpieczeń.",
+    details: [
+      "Praktyczne wskazówki implementacyjne",
+      "Katalog kontroli bezpieczeństwa", 
+      "Wsparcie dla ISO 27001",
+      "Najlepsze praktyki branżowe"
+    ]
   },
   {
-    name: "ISO 27001",
-    description: "Zarządzanie bezpieczeństwem informacji",
-    image: "/api/placeholder/200/150", 
+    name: "ISO 27003",
+    description: "Wdrażanie ISMS",
+    image: "/api/placeholder/200/150",
+    fullDescription: "ISO 27003 to standard zawierający wytyczne dotyczące wdrażania systemu zarządzania bezpieczeństwem informacji (ISMS). Pomaga organizacjom w praktycznej implementacji wymagań ISO 27001.",
+    details: [
+      "Wytyczne wdrożeniowe ISMS",
+      "Praktyczne podejście do implementacji", 
+      "Wsparcie procesu certyfikacji",
+      "Metodologia zarządzania projektami ISMS"
+    ]
+  }
+];
+
+const cyberStats = [
+  {
+    number: 8.2,
+    suffix: "mln",
+    label: "Incydentów cyber w 2024",
+    description: "Globalna liczba ataków cybernetycznych"
+  },
+  {
+    number: 68,
+    suffix: "%",
+    label: "Wzrost ataków RdR",
+    description: "Wzrost w porównaniu do 2023 roku"
+  },
+  {
+    number: 4.88,
+    suffix: "mln zł",
+    label: "Średni koszt naruszenia",
+    description: "Koszt jednego incydentu bezpieczeństwa"
+  },
+  {
+    number: 277,
+    suffix: " dni",
+    label: "Czas wykrycia ataku",
+    description: "Średni czas identyfikacji naruszenia"
   }
 ];
 
@@ -450,6 +475,7 @@ const companySizeOptions = [
 
 const navigationItems = [
   { name: "O nas", target: "about" },
+  { name: "Statystyki", target: "cyberstats" },
   { name: "Współpraca", target: "features" },
   { name: "Certyfikaty", target: "certificates" },
   { name: "Kontakt", target: "contact" }
@@ -489,7 +515,6 @@ const aboutBlocks = [
   }
 ];
 
-// Throttle function for scroll optimization
 const throttle = <T extends unknown[]>(func: (...args: T) => void, delay: number) => {
   let timeoutId: NodeJS.Timeout;
   let lastExecTime = 0;
@@ -509,7 +534,6 @@ const throttle = <T extends unknown[]>(func: (...args: T) => void, delay: number
   };
 };
 
-// Lazy Image Component with loading state
 const LazyImage = React.memo<{
   src: string;
   alt: string;
@@ -564,7 +588,6 @@ const LazyImage = React.memo<{
 
 LazyImage.displayName = 'LazyImage';
 
-// Theme Toggle Component
 const ThemeToggle = React.memo<{ isOverHero?: boolean }>(({ isOverHero = false }) => {
   const { theme, toggleTheme } = React.useContext(ThemeContext);
   
@@ -597,7 +620,6 @@ const ThemeToggle = React.memo<{ isOverHero?: boolean }>(({ isOverHero = false }
 
 ThemeToggle.displayName = 'ThemeToggle';
 
-// Memoized Toast Component
 interface ToastProps {
   message: string;
   onClose: () => void;
@@ -634,7 +656,6 @@ const Toast = React.memo<ToastProps>(({ message, onClose }) => {
 
 Toast.displayName = 'Toast';
 
-// Memoized AnimatedCounter with better performance
 const AnimatedCounter = React.memo<{ target: number; duration?: number }>(({ target, duration = 2000 }) => {
   const [count, setCount] = useState(0);
   const countRef = useRef<HTMLSpanElement>(null);
@@ -663,7 +684,6 @@ const AnimatedCounter = React.memo<{ target: number; duration?: number }>(({ tar
 
 AnimatedCounter.displayName = 'AnimatedCounter';
 
-// Memoized PremiumButton Component
 interface PremiumButtonProps {
   children: React.ReactNode;
   onClick?: () => void;
@@ -727,13 +747,279 @@ const PremiumButton = React.memo<PremiumButtonProps>(({
 
 PremiumButton.displayName = 'PremiumButton';
 
-// Memoized CustomDropdown Component
 interface CustomDropdownProps {
   value: string;
   onChange: (value: string) => void;
   options: { value: string; label: string }[];
   placeholder: string;
 }
+
+interface CertificateModalProps {
+  certificate: typeof certificates[0] | null;
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+const CertificateModal = React.memo<CertificateModalProps>(({ certificate, isOpen, onClose }) => {
+  const { theme } = React.useContext(ThemeContext);
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
+
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleEscape);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [isOpen, onClose]);
+
+  if (!certificate) return null;
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          onClick={onClose}
+        >
+          <motion.div
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          />
+          
+          <motion.div
+            initial={{ scale: 0.95, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.95, opacity: 0, y: 20 }}
+            transition={{ duration: 0.2 }}
+            className={`relative w-full max-w-lg max-h-[90vh] overflow-y-auto neuromorphic rounded-2xl p-6 sm:p-8 ${
+              theme === 'dark' ? 'bg-gray-900' : 'bg-white'
+            }`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-start mb-6">
+              <div className="flex items-center">
+                <div className="neuromorphic-inset w-16 h-16 rounded-xl flex items-center justify-center mr-4">
+                  <Certificate className="w-8 h-8 text-amber-400" />
+                </div>
+                <div>
+                  <h3 className={`text-xl sm:text-2xl font-bold font-heading ${
+                    theme === 'dark' ? 'text-white' : 'text-gray-900'
+                  }`}>
+                    {certificate.name}
+                  </h3>
+                  <p className={`text-sm ${
+                    theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                  }`}>
+                    {certificate.description}
+                  </p>
+                </div>
+              </div>
+              
+              <motion.button
+                onClick={onClose}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                className={`p-2 rounded-lg transition-colors duration-200 ${
+                  theme === 'dark' 
+                    ? 'hover:bg-white/10 text-gray-300 hover:text-white' 
+                    : 'hover:bg-black/10 text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                <X className="w-5 h-5" />
+              </motion.button>
+            </div>
+
+            <div className="space-y-6">
+              <div>
+                <h4 className={`text-lg font-semibold mb-3 font-heading ${
+                  theme === 'dark' ? 'text-white' : 'text-gray-900'
+                }`}>
+                  Opis certyfikatu
+                </h4>
+                <p className={`font-body leading-relaxed text-sm sm:text-base ${
+                  theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
+                }`}>
+                  {certificate.fullDescription}
+                </p>
+              </div>
+
+              <div>
+                <h4 className={`text-lg font-semibold mb-4 font-heading ${
+                  theme === 'dark' ? 'text-white' : 'text-gray-900'
+                }`}>
+                  Kluczowe obszary
+                </h4>
+                <ul className="space-y-3">
+                  {certificate.details.map((detail, index) => (
+                    <motion.li
+                      key={index}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.3, delay: index * 0.1 }}
+                      className={`flex items-start text-sm sm:text-base font-body ${
+                        theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
+                      }`}
+                    >
+                      <div className="w-2 h-2 bg-blue-400 rounded-full mr-3 mt-2 flex-shrink-0" />
+                      {detail}
+                    </motion.li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+                <PremiumButton
+                  onClick={onClose}
+                  variant="primary"
+                  size="md"
+                  className="w-full"
+                >
+                  Zamknij
+                </PremiumButton>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+});
+
+CertificateModal.displayName = 'CertificateModal';
+
+const CyberStatsSection = React.memo(() => {
+  const { theme } = React.useContext(ThemeContext);
+  
+  return (
+    <section id="cyberstats" className="py-16 sm:py-24 section-bg relative overflow-hidden">
+      <div className="absolute inset-0">
+        <div className={`absolute inset-0 bg-gradient-to-r ${
+          theme === 'dark' 
+            ? 'from-red-900/10 via-orange-900/5 to-amber-900/10' 
+            : 'from-red-100/30 via-orange-100/20 to-amber-100/30'
+        }`} />
+        <div className={`absolute inset-0 bg-[linear-gradient(rgba(255,100,100,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,100,100,0.02)_1px,transparent_1px)] bg-[size:60px_60px]`} />
+      </div>
+      
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <h2 className={`text-3xl sm:text-4xl md:text-5xl font-bold mb-4 font-heading ${
+            theme === 'dark' ? 'text-white' : 'text-gray-900'
+          }`}>
+            Cyberbezpieczeństwo w liczbach
+          </h2>
+          <p className={`text-lg sm:text-xl max-w-3xl mx-auto font-body ${
+            theme === 'dark' ? 'text-gray-200' : 'text-gray-600'
+          }`}>
+            Poznaj aktualne statystyki zagrożeń cybernetycznych na świecie
+          </p>
+        </motion.div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+          {cyberStats.map((stat, index) => (
+            <motion.div
+              key={`${stat.label}-${index}`}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              viewport={{ once: true }}
+              whileHover={{ y: -5 }}
+              className="neuromorphic p-6 sm:p-8 rounded-2xl text-center group hover:shadow-red-500/20 transition-all duration-500 relative overflow-hidden"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-orange-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              
+              <div className="relative z-10">
+                <div className="neuromorphic-inset w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:shadow-red-500/30 transition-all duration-500">
+                  <Shield className="w-8 h-8 text-red-400 group-hover:text-red-300 transition-colors duration-500" />
+                </div>
+                
+                <div className="mb-2">
+                  <span className={`text-2xl sm:text-3xl md:text-4xl font-bold font-heading ${
+                    theme === 'dark' ? 'text-white' : 'text-gray-900'
+                  }`}>
+                    <AnimatedCounter target={stat.number} />
+                  </span>
+                  <span className={`text-2xl sm:text-3xl md:text-4xl font-bold font-heading ${
+                    theme === 'dark' ? 'text-white' : 'text-gray-900'
+                  }`}>
+                    {stat.suffix}
+                  </span>
+                </div>
+                
+                <h3 className={`text-base sm:text-lg font-semibold mb-2 font-heading ${
+                  theme === 'dark' ? 'text-white' : 'text-gray-900'
+                }`}>
+                  {stat.label}
+                </h3>
+                
+                <p className={`text-xs sm:text-sm font-body ${
+                  theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                }`}>
+                  {stat.description}
+                </p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.5 }}
+          viewport={{ once: true }}
+          className="mt-12 text-center"
+        >
+          <div className={`neuromorphic p-6 sm:p-8 rounded-2xl max-w-4xl mx-auto ${
+            theme === 'dark' ? 'bg-gray-900/50' : 'bg-white/50'
+          }`}>
+            <h3 className={`text-xl sm:text-2xl font-bold mb-4 font-heading ${
+              theme === 'dark' ? 'text-white' : 'text-gray-900'
+            }`}>
+              Nie czekaj na atak - działaj prewencyjnie!
+            </h3>
+            <p className={`font-body text-base sm:text-lg leading-relaxed ${
+              theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
+            }`}>
+              Statystyki pokazują rosnące zagrożenie cyberatakami. Nasz zespół ekspertów pomoże Ci zbudować solidną obronę przed współczesnymi zagrożeniami cybernetycznymi.
+            </p>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+});
+
+CyberStatsSection.displayName = 'CyberStatsSection';
 
 const CustomDropdown = React.memo<CustomDropdownProps>(({ 
   value, 
@@ -813,7 +1099,6 @@ const CustomDropdown = React.memo<CustomDropdownProps>(({
 
 CustomDropdown.displayName = 'CustomDropdown';
 
-// Memoized NavigationBar Component with improved hero detection
 const NavigationBar = React.memo<{ 
   isScrolled: boolean; 
   mobileNavActive: boolean; 
@@ -840,10 +1125,9 @@ const NavigationBar = React.memo<{
     setMobileNavActive(false);
   }, [scrollToSection, setMobileNavActive]);
 
-  // Determine text color based on hero position and theme
   const textColorClass = useMemo(() => {
     if (isOverHero) {
-      return 'hero-navbar'; // Always light text over hero
+      return 'hero-navbar';
     }
     return theme === 'dark' 
       ? 'text-gray-200 hover:text-white' 
@@ -970,7 +1254,6 @@ const NavigationBar = React.memo<{
 
 NavigationBar.displayName = 'NavigationBar';
 
-// Memoized HeroSection Component
 const HeroSection = React.memo<{ scrollToSection: (sectionId: string) => void }>(({ scrollToSection }) => {
   const handleContactClick = useCallback(() => {
     scrollToSection("contact");
@@ -980,7 +1263,6 @@ const HeroSection = React.memo<{ scrollToSection: (sectionId: string) => void }>
     scrollToSection("features");
   }, [scrollToSection]);
 
-  // Parallax effect for logo
   const mouseXLocal = useMotionValue(0);
   const mouseYLocal = useMotionValue(0);
   
@@ -988,7 +1270,6 @@ const HeroSection = React.memo<{ scrollToSection: (sectionId: string) => void }>
   const x = useSpring(mouseXLocal, springConfig);
   const y = useSpring(mouseYLocal, springConfig);
   
-  // Transform values for parallax layers
   const xTransform = useTransform(x, [-0.5, 0.5], [-12, 12]);
   const yTransform = useTransform(y, [-0.5, 0.5], [-8, 8]);
   const rotateX = useTransform(y, [-0.5, 0.5], [5, -5]);
@@ -1037,7 +1318,6 @@ const HeroSection = React.memo<{ scrollToSection: (sectionId: string) => void }>
                 onMouseLeave={handleMouseLeave}
                 style={{ perspective: "1000px" }}
               >
-                {/* Background glow effect */}
                 <motion.div
                   className="absolute inset-0 rounded-full blur-3xl"
                   style={{
@@ -1047,7 +1327,6 @@ const HeroSection = React.memo<{ scrollToSection: (sectionId: string) => void }>
                   }}
                 />
                 
-                {/* Main logo with parallax */}
                 <motion.div
                   className="relative z-10"
                   style={{
@@ -1072,7 +1351,6 @@ const HeroSection = React.memo<{ scrollToSection: (sectionId: string) => void }>
                   />
                 </motion.div>
 
-                {/* Interactive border effect */}
                 <motion.div
                   className="absolute inset-0 rounded-full border border-amber-400/20"
                   style={{
@@ -1183,7 +1461,6 @@ const HeroSection = React.memo<{ scrollToSection: (sectionId: string) => void }>
 
 HeroSection.displayName = 'HeroSection';
 
-// Enhanced AboutSection Component with improved visual effects
 const AboutSection = React.memo(() => {
   const { theme } = React.useContext(ThemeContext);
   
@@ -1256,23 +1533,19 @@ const AboutSection = React.memo(() => {
                     className="relative"
                   >
                     <MouseParallax strength={0.15}>
-                      {/* Background layer with transform */}
                       <div className={`absolute inset-0 rounded-2xl transform translate-x-4 translate-y-4 ${
                         theme === 'dark' 
                           ? 'bg-gradient-to-br from-amber-600/30 to-yellow-600/30' 
                           : 'bg-gradient-to-br from-amber-400/30 to-yellow-400/30'
                       }`} />
                       
-                      {/* Main container */}
                       <div className="relative neuromorphic-inset rounded-2xl overflow-hidden shadow-2xl">
-                        {/* Gradient background */}
                         <div className={`h-48 sm:h-64 bg-gradient-to-br ${
                           theme === 'dark'
                             ? 'from-amber-900/40 via-yellow-800/40 to-orange-900/40'
                             : 'from-amber-200/60 via-yellow-200/60 to-orange-200/60'
                         } relative`}>
                           
-                          {/* Animated background pattern */}
                           <motion.div
                             className="absolute inset-0 opacity-30"
                             animate={{
@@ -1289,10 +1562,8 @@ const AboutSection = React.memo(() => {
                             }}
                           />
 
-                          {/* Icon container with enhanced effects */}
                           <div className="relative h-full flex items-center justify-center group">
                             <MouseParallax strength={0.1} className="relative">
-                              {/* Icon glow effect */}
                               <motion.div
                                 className="absolute inset-0 rounded-full"
                                 animate={{
@@ -1309,7 +1580,6 @@ const AboutSection = React.memo(() => {
                                 }}
                               />
                               
-                              {/* Main icon */}
                               <motion.div
                                 whileHover={{ 
                                   scale: 1.1,
@@ -1328,7 +1598,6 @@ const AboutSection = React.memo(() => {
                                 }`} />
                               </motion.div>
 
-                              {/* Floating particles effect */}
                               {[...Array(3)].map((_, i) => (
                                 <motion.div
                                   key={i}
@@ -1352,7 +1621,6 @@ const AboutSection = React.memo(() => {
                               ))}
                             </MouseParallax>
 
-                            {/* Overlay gradient on hover */}
                             <div className={`absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-20 transition-opacity duration-500 ${
                               theme === 'dark'
                                 ? 'from-amber-500/20 to-yellow-500/20'
@@ -1361,7 +1629,6 @@ const AboutSection = React.memo(() => {
                           </div>
                         </div>
 
-                        {/* Bottom accent line */}
                         <motion.div
                           className="h-1 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-400"
                           initial={{ scaleX: 0 }}
@@ -1384,7 +1651,6 @@ const AboutSection = React.memo(() => {
 
 AboutSection.displayName = 'AboutSection';
 
-// Memoized FeatureCard Component
 const FeatureCard = React.memo<{
   feature: typeof features[0];
   index: number;
@@ -1453,7 +1719,6 @@ const FeatureCard = React.memo<{
 
 FeatureCard.displayName = 'FeatureCard';
 
-// Memoized FeaturesSection Component
 const FeaturesSection = React.memo(() => {
   const { theme } = React.useContext(ThemeContext);
   
@@ -1497,10 +1762,9 @@ const FeaturesSection = React.memo(() => {
 
 FeaturesSection.displayName = 'FeaturesSection';
 
-// Certificates Section Component
-const CertificatesSection = React.memo(() => {
+const CertificatesSection = React.memo<{ onCertificateClick: (certificate: typeof certificates[0]) => void }>(({ onCertificateClick }) => {
   const { theme } = React.useContext(ThemeContext);
-  console.log("render");
+  
   return (
     <section id="certificates" className="py-16 sm:py-24 section-bg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -1526,19 +1790,20 @@ const CertificatesSection = React.memo(() => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10">
           {certificates.map((certificate, index) => (
             <motion.div
-              key={certificate.name}
+              key={`${certificate.name}-${index}`}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.05 }}
               viewport={{ once: true }}
               whileHover={{ y: -5 }}
-              className="neuromorphic p-8 rounded-2xl text-center group hover:shadow-blue-500/20 transition-all duration-500 relative overflow-hidden"
+              className="neuromorphic p-8 rounded-2xl text-center group hover:shadow-blue-500/20 transition-all duration-500 relative overflow-hidden cursor-pointer"
+              onClick={() => onCertificateClick(certificate)}
             >
               <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               
               <div className="relative z-10">
                 <div className="w-32 h-24 mx-auto mb-6 neuromorphic-inset rounded-xl flex items-center justify-center group-hover:shadow-blue-500/30 transition-all duration-500">
-                  <Certificate className="w-16 h-16 text-blue-400 group-hover:text-blue-300 transition-colors duration-500" />
+                  <Certificate className="w-16 h-16 text-amber-400 group-hover:text-amber-300 transition-colors duration-500" />
                 </div>
                 
                 <h3 className={`text-xl font-bold mb-2 font-heading ${
@@ -1552,8 +1817,16 @@ const CertificatesSection = React.memo(() => {
                 }`}>
                   {certificate.description}
                 </p>
-                
-  
+
+                <motion.div
+                  className={`inline-flex items-center text-sm font-body transition-colors duration-200 ${
+                    theme === 'dark' ? 'text-amber-400 group-hover:text-amber-300' : 'text-amber-600 group-hover:text-amber-700'
+                  }`}
+                  whileHover={{ x: 3 }}
+                >
+                  Zobacz szczegóły
+                  <ChevronRight className="w-4 h-4 ml-1" />
+                </motion.div>
               </div>
             </motion.div>
           ))}
@@ -1565,7 +1838,6 @@ const CertificatesSection = React.memo(() => {
 
 CertificatesSection.displayName = 'CertificatesSection';
 
-// Memoized ContactSection Component
 const ContactSection = React.memo<{ showToast: (message: string) => void }>(({ showToast }) => {
   const { theme } = React.useContext(ThemeContext);
   const [formData, setFormData] = useState({
@@ -1581,7 +1853,7 @@ const ContactSection = React.memo<{ showToast: (message: string) => void }>(({ s
   });
 
   const validateEmail = useCallback((email: string) => {
-    if (email.trim() === "") return ""; // Optional field
+    if (email.trim() === "") return "";
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email) ? "" : "Nieprawidłowy format adresu e-mail";
   }, []);
@@ -1614,7 +1886,6 @@ const ContactSection = React.memo<{ showToast: (message: string) => void }>(({ s
 
     setIsSubmitting(true);
     
-    // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1500));
     
     showToast("Wiadomość została wysłana! Skontaktujemy się wkrótce.");
@@ -1626,7 +1897,6 @@ const ContactSection = React.memo<{ showToast: (message: string) => void }>(({ s
   const handleInputChange = useCallback((field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     
-    // Real-time validation
     if (field === 'email') {
       setErrors(prev => ({ ...prev, email: validateEmail(value) }));
     } else if (field === 'message') {
@@ -1910,7 +2180,6 @@ const ContactSection = React.memo<{ showToast: (message: string) => void }>(({ s
 
 ContactSection.displayName = 'ContactSection';
 
-// Memoized Footer Component
 const Footer = React.memo(() => {
   const { theme } = React.useContext(ThemeContext);
   
@@ -1919,13 +2188,6 @@ const Footer = React.memo(() => {
     "Audyty bezpieczeństwa", 
     "Inżynieria społeczna",
     "Audyty zgodności"
-  ], []);
-
-  const companyList = useMemo(() => [
-    "O nas",
-    "Nasz zespół",
-    "Kariera",
-    "Blog"
   ], []);
 
   const legalList = useMemo(() => [
@@ -1941,7 +2203,7 @@ const Footer = React.memo(() => {
         : 'bg-gray-50 border-gray-300'
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
           <div className="sm:col-span-2 lg:col-span-1">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -1985,28 +2247,6 @@ const Footer = React.memo(() => {
               {servicesList.map((service, index) => (
                 <li key={`service-${index}`} className="hover:text-amber-400 transition-colors duration-200 cursor-pointer">
                   {service}
-                </li>
-              ))}
-            </ul>
-          </motion.div>
-          
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            viewport={{ once: true }}
-          >
-            <h4 className={`text-lg font-semibold mb-4 font-heading ${
-              theme === 'dark' ? 'text-white' : 'text-gray-900'
-            }`}>
-              Firma
-            </h4>
-            <ul className={`space-y-2 font-body text-sm ${
-              theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-            }`}>
-              {companyList.map((item, index) => (
-                <li key={`company-${index}`} className="hover:text-amber-400 transition-colors duration-200 cursor-pointer">
-                  {item}
                 </li>
               ))}
             </ul>
@@ -2075,28 +2315,27 @@ const Footer = React.memo(() => {
 
 Footer.displayName = 'Footer';
 
-// Main component with theme support and hero detection
 export default function SecurHubLanding() {
   const [theme, setTheme] = useState<'light' | 'dark'>('dark');
   const [mobileNavActive, setMobileNavActive] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOverHero, setIsOverHero] = useState(true);
+  const [selectedCertificate, setSelectedCertificate] = useState<typeof certificates[0] | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const { scrollY } = useScroll();
 
   const toggleTheme = useCallback(() => {
     setTheme(prev => prev === 'dark' ? 'light' : 'dark');
   }, []);
 
-  // Throttled scroll handler to prevent excessive re-renders
   const throttledScrollHandler = useMemo(
     () => throttle((latest: number) => {
       setIsScrolled(latest > 50);
-      // Determine if we're over the hero section
       const heroElement = document.getElementById('hero');
       if (heroElement) {
         const heroHeight = heroElement.offsetHeight;
-        setIsOverHero(latest < heroHeight - 100); // 100px buffer
+        setIsOverHero(latest < heroHeight - 100);
       }
     }, 100),
     []
@@ -2107,7 +2346,6 @@ export default function SecurHubLanding() {
     return () => unsubscribe();
   }, [scrollY, throttledScrollHandler]);
 
-  // Apply theme class to document
   useEffect(() => {
     document.documentElement.className = theme;
   }, [theme]);
@@ -2128,6 +2366,16 @@ export default function SecurHubLanding() {
     setToastMessage(null);
   }, []);
 
+  const handleCertificateClick = useCallback((certificate: typeof certificates[0]) => {
+    setSelectedCertificate(certificate);
+    setIsModalOpen(true);
+  }, []);
+
+  const handleCloseModal = useCallback(() => {
+    setIsModalOpen(false);
+    setSelectedCertificate(null);
+  }, []);
+
   return (
     <MouseProvider>
       <ThemeContext.Provider value={{ theme, toggleTheme }}>
@@ -2144,11 +2392,17 @@ export default function SecurHubLanding() {
           <main>
             <HeroSection scrollToSection={scrollToSection} />
             <AboutSection />
+            <CyberStatsSection />
             <FeaturesSection />
-            <CertificatesSection />
+            <CertificatesSection onCertificateClick={handleCertificateClick} />
             <ContactSection showToast={showToast} />
           </main>
           <Footer />
+          <CertificateModal
+            certificate={selectedCertificate}
+            isOpen={isModalOpen}
+            onClose={handleCloseModal}
+          />
           <AnimatePresence>
             {toastMessage && (
               <Toast message={toastMessage} onClose={handleCloseToast} />
