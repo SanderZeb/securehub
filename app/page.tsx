@@ -25,9 +25,10 @@ import {
   FaChevronDown as ChevronDown,
   FaSun as Sun,
   FaMoon as Moon,
+  FaCertificate as Certificate,
 } from "react-icons/fa";
 
-// Enhanced global styles with light/dark mode support
+// Enhanced global styles with improved light/dark mode support
 const globalStyles = `
 @import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Outfit:wght@100..900&family=Quicksand:wght@300..700&display=swap');
 
@@ -88,21 +89,21 @@ const globalStyles = `
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-/* Light mode neuromorphic */
+/* Light mode neuromorphic - improved contrast */
 .light .neuromorphic {
-  background: linear-gradient(145deg, #ffffff, #f0f0f0);
+  background: linear-gradient(145deg, #ffffff, #f0f4f8);
   box-shadow: 
-    20px 20px 40px rgba(0, 0, 0, 0.1),
-    -20px -20px 40px rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(0, 0, 0, 0.08);
+    20px 20px 40px rgba(0, 0, 0, 0.15),
+    -20px -20px 40px rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .light .neuromorphic-inset {
-  background: linear-gradient(145deg, #f0f0f0, #ffffff);
+  background: linear-gradient(145deg, #f0f4f8, #ffffff);
   box-shadow: 
-    inset 20px 20px 40px rgba(0, 0, 0, 0.1),
-    inset -20px -20px 40px rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(0, 0, 0, 0.05);
+    inset 20px 20px 40px rgba(0, 0, 0, 0.15),
+    inset -20px -20px 40px rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 /* Dark mode glass effect */
@@ -114,16 +115,25 @@ const globalStyles = `
 
 /* Light mode glass effect */
 .light .glass-effect {
-  background: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-/* Hero section glass effect - always dark */
+/* Hero section glass effect - always dark for navbar */
 .hero-section .glass-effect {
   background: rgba(0, 0, 0, 0.4) !important;
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Hero navbar - always light text */
+.hero-navbar {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.hero-navbar:hover {
+  color: rgba(255, 255, 255, 1) !important;
 }
 
 /* Dark mode premium button */
@@ -137,15 +147,15 @@ const globalStyles = `
     inset 0 1px 0 rgba(106, 64, 27, 0.3);
 }
 
-/* Light mode premium button */
+/* Light mode premium button - improved contrast */
 .light .premium-button {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, #ffffff, #f8f9fa);
-  border: 1px solid rgba(106, 64, 27, 0.3);
+  background: linear-gradient(135deg, #ffffff, #f8fafc);
+  border: 1px solid rgba(59, 130, 246, 0.3);
   box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.15),
-    inset 0 1px 0 rgba(106, 64, 27, 0.2);
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(59, 130, 246, 0.2);
 }
 
 /* Hero section premium button - always dark style */
@@ -187,14 +197,35 @@ const globalStyles = `
   background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0f0f0f 100%);
 }
 
-/* Light mode backgrounds */
+/* Light mode backgrounds - improved */
 .light .section-bg {
-  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 50%, #f0f0f0 100%);
+  background: linear-gradient(135deg, #f8fafc 0%, #ffffff 50%, #f1f5f9 100%);
+}
+
+/* Image loading placeholder */
+.image-placeholder {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+.dark .image-placeholder {
+  background: linear-gradient(90deg, #2a2a2a 25%, #3a3a3a 50%, #2a2a2a 75%);
+  background-size: 200% 100%;
+}
+
+@keyframes loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .premium-button::before {
     transition: none;
+  }
+  
+  .image-placeholder {
+    animation: none;
   }
   
   * {
@@ -219,14 +250,14 @@ const globalStyles = `
 
   .light .neuromorphic {
     box-shadow: 
-      10px 10px 20px rgba(0, 0, 0, 0.1),
-      -10px -10px 20px rgba(255, 255, 255, 0.8);
+      10px 10px 20px rgba(0, 0, 0, 0.15),
+      -10px -10px 20px rgba(255, 255, 255, 0.9);
   }
   
   .light .neuromorphic-inset {
     box-shadow: 
-      inset 10px 10px 20px rgba(0, 0, 0, 0.1),
-      inset -10px -10px 20px rgba(255, 255, 255, 0.8);
+      inset 10px 10px 20px rgba(0, 0, 0, 0.15),
+      inset -10px -10px 20px rgba(255, 255, 255, 0.9);
   }
 }
 `;
@@ -298,6 +329,27 @@ const features = [
   }
 ];
 
+const certificates = [
+  {
+    name: "ISO 27001",
+    description: "Zarządzanie bezpieczeństwem informacji",
+    image: "/api/placeholder/200/150", // Placeholder - replace with actual certificate
+    year: "2024"
+  },
+  {
+    name: "CISSP",
+    description: "Certified Information Systems Security Professional",
+    image: "/api/placeholder/200/150", // Placeholder - replace with actual certificate
+    year: "2024"
+  },
+  {
+    name: "CEH",
+    description: "Certified Ethical Hacker",
+    image: "/api/placeholder/200/150", // Placeholder - replace with actual certificate
+    year: "2024"
+  }
+];
+
 const companySizeOptions = [
   { value: "wole-nie-mowic", label: "Wolę nie mówić" },
   { value: "<50", label: "Mniej niż 50 pracowników" },
@@ -308,6 +360,7 @@ const companySizeOptions = [
 const navigationItems = [
   { name: "O nas", target: "about" },
   { name: "Współpraca", target: "features" },
+  { name: "Certyfikaty", target: "certificates" },
   { name: "Kontakt", target: "contact" }
 ];
 
@@ -365,19 +418,79 @@ const throttle = <T extends unknown[]>(func: (...args: T) => void, delay: number
   };
 };
 
+// Lazy Image Component with loading state
+const LazyImage = React.memo<{
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+  className?: string;
+  priority?: boolean;
+}>(({ src, alt, width, height, className = "", priority = false }) => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+
+  const handleLoad = useCallback(() => {
+    setIsLoading(false);
+  }, []);
+
+  const handleError = useCallback(() => {
+    setIsLoading(false);
+    setHasError(true);
+  }, []);
+
+  return (
+    <div className="relative">
+      {isLoading && (
+        <div 
+          className={`absolute inset-0 image-placeholder rounded ${className}`}
+          style={{ width, height }}
+        />
+      )}
+      {!hasError ? (
+        <Image
+          src={src}
+          alt={alt}
+          width={width}
+          height={height}
+          className={`transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'} ${className}`}
+          onLoad={handleLoad}
+          onError={handleError}
+          priority={priority}
+          loading={priority ? "eager" : "lazy"}
+        />
+      ) : (
+        <div 
+          className={`flex items-center justify-center bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 ${className}`}
+          style={{ width, height }}
+        >
+          <span className="text-sm">Failed to load</span>
+        </div>
+      )}
+    </div>
+  );
+});
+
+LazyImage.displayName = 'LazyImage';
+
 // Theme Toggle Component
-const ThemeToggle = React.memo(() => {
+const ThemeToggle = React.memo<{ isOverHero?: boolean }>(({ isOverHero = false }) => {
   const { theme, toggleTheme } = React.useContext(ThemeContext);
+  
+  const buttonColorClass = useMemo(() => {
+    if (isOverHero) {
+      return 'text-yellow-400 hover:text-yellow-300 hover:bg-white/10';
+    }
+    return theme === 'dark' 
+      ? 'text-yellow-400 hover:text-yellow-300 hover:bg-white/10' 
+      : 'text-orange-600 hover:text-orange-700 hover:bg-black/10';
+  }, [isOverHero, theme]);
   
   return (
     <motion.button
       onClick={toggleTheme}
       whileTap={{ scale: 0.95 }}
-      className={`p-2 rounded-lg transition-all duration-300 ${
-        theme === 'dark' 
-          ? 'text-yellow-400 hover:text-yellow-300 hover:bg-white/10' 
-          : 'text-orange-600 hover:text-orange-700 hover:bg-black/10'
-      }`}
+      className={`p-2 rounded-lg transition-all duration-300 ${buttonColorClass}`}
       aria-label="Toggle theme"
     >
       <motion.div
@@ -484,7 +597,7 @@ const PremiumButton = React.memo<PremiumButtonProps>(({
   const variantClasses = useMemo(() => ({
     primary: theme === 'dark' 
       ? "text-white hover:shadow-amber-500/30" 
-      : "text-gray-800 hover:shadow-amber-500/30",
+      : "text-gray-800 hover:shadow-blue-500/30",
     secondary: theme === 'dark' 
       ? "text-gray-100 hover:text-white" 
       : "text-gray-700 hover:text-gray-900",
@@ -609,13 +722,14 @@ const CustomDropdown = React.memo<CustomDropdownProps>(({
 
 CustomDropdown.displayName = 'CustomDropdown';
 
-// Memoized NavigationBar Component
+// Memoized NavigationBar Component with improved hero detection
 const NavigationBar = React.memo<{ 
   isScrolled: boolean; 
   mobileNavActive: boolean; 
   setMobileNavActive: (active: boolean) => void; 
-  scrollToSection: (sectionId: string) => void; 
-}>(({ isScrolled, mobileNavActive, setMobileNavActive, scrollToSection }) => {
+  scrollToSection: (sectionId: string) => void;
+  isOverHero: boolean;
+}>(({ isScrolled, mobileNavActive, setMobileNavActive, scrollToSection, isOverHero }) => {
   const { theme } = React.useContext(ThemeContext);
   
   const handleToggleMobileNav = useCallback(() => {
@@ -634,6 +748,16 @@ const NavigationBar = React.memo<{
     scrollToSection("contact");
     setMobileNavActive(false);
   }, [scrollToSection, setMobileNavActive]);
+
+  // Determine text color based on hero position and theme
+  const textColorClass = useMemo(() => {
+    if (isOverHero) {
+      return 'hero-navbar'; // Always light text over hero
+    }
+    return theme === 'dark' 
+      ? 'text-gray-200 hover:text-white' 
+      : 'text-gray-700 hover:text-gray-900';
+  }, [isOverHero, theme]);
 
   return (
     <motion.nav 
@@ -655,12 +779,13 @@ const NavigationBar = React.memo<{
             >
               <div className="flex items-center">
                 <span className="flex-shrink-0">
-                  <Image 
+                  <LazyImage 
                     src="https://i.ibb.co/cXXYY8mg/logo2.png" 
                     alt="Secur" 
                     width={96}
                     height={96}
                     className="object-contain filter drop-shadow-lg"
+                    priority={true}
                   />
                 </span>
               </div>
@@ -670,11 +795,7 @@ const NavigationBar = React.memo<{
                 <motion.button
                   key={item.name}
                   onClick={() => scrollToSection(item.target)}
-                  className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 relative group font-body ${
-                    theme === 'dark' 
-                      ? 'text-gray-200 hover:text-white hover:bg-white/8' 
-                      : 'text-gray-700 hover:text-gray-900 hover:bg-black/8'
-                  }`}
+                  className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 relative group font-body ${textColorClass} hover:bg-white/8`}
                   whileHover={{ y: -1 }}
                   transition={{ duration: 0.2 }}
                 >
@@ -689,7 +810,7 @@ const NavigationBar = React.memo<{
           </div>
 
           <div className="flex items-center space-x-4">
-            <ThemeToggle />
+            <ThemeToggle isOverHero={isOverHero} />
             <div className="hidden md:flex">
               <PremiumButton
                 onClick={handleContactClick}
@@ -704,11 +825,7 @@ const NavigationBar = React.memo<{
               <motion.button
                 whileTap={{ scale: 0.95 }}
                 onClick={handleToggleMobileNav}
-                className={`p-2 transition-colors duration-200 ${
-                  theme === 'dark' 
-                    ? 'text-gray-200 hover:text-white' 
-                    : 'text-gray-700 hover:text-gray-900'
-                }`}
+                className={`p-2 transition-colors duration-200 ${textColorClass}`}
               >
                 {mobileNavActive ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
               </motion.button>
@@ -854,12 +971,13 @@ const HeroSection = React.memo<{ scrollToSection: (sectionId: string) => void }>
                     transition: { duration: 0.3, ease: "easeOut" }
                   }}
                 >
-                  <Image 
+                  <LazyImage 
                     src="https://i.ibb.co/j9T7prmF/logo.png" 
                     alt="SecurHUB Logo" 
                     width={512}
                     height={512}
                     className="w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 lg:w-[28rem] lg:h-[28rem] xl:w-[32rem] xl:h-[32rem] object-contain filter drop-shadow-2xl transition-all duration-300"
+                    priority={true}
                   />
                 </motion.div>
 
@@ -1006,9 +1124,9 @@ const AboutSection = React.memo(() => {
             return (
               <motion.div
                 key={`${block.title}-${index}`}
-                initial={{ opacity: 0, y: 40 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
+                transition={{ duration: 0.5, delay: index * 0.05 }}
                 viewport={{ once: true }}
                 className={`flex flex-col lg:flex-row items-center gap-8 lg:gap-12 ${
                   block.reverse ? "lg:flex-row-reverse" : ""
@@ -1070,9 +1188,9 @@ const FeatureCard = React.memo<{
   
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30 }}
+      initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, delay: index * 0.1 }}
+      transition={{ duration: 0.5, delay: index * 0.05 }}
       viewport={{ once: true }}
       whileHover={{ y: -5 }}
       className="neuromorphic-inset p-8 sm:p-10 rounded-3xl group hover:shadow-amber-500/20 transition-all duration-500 relative overflow-hidden min-h-[400px] flex flex-col"
@@ -1082,7 +1200,7 @@ const FeatureCard = React.memo<{
       <div className="relative z-10 flex flex-col h-full">
         <div className="w-40 h-40 rounded-2xl flex items-center justify-center mb-8 mx-auto group-hover:shadow-amber-500/30 transition-all duration-500 neuromorphic">
           {feature.customImage ? (
-            <Image 
+            <LazyImage 
               src={feature.customImage} 
               alt={feature.title}
               width={128}
@@ -1172,6 +1290,74 @@ const FeaturesSection = React.memo(() => {
 });
 
 FeaturesSection.displayName = 'FeaturesSection';
+
+// Certificates Section Component
+const CertificatesSection = React.memo(() => {
+  const { theme } = React.useContext(ThemeContext);
+  
+  return (
+    <section id="certificates" className="py-16 sm:py-24 section-bg">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <h2 className={`text-3xl sm:text-4xl md:text-5xl font-bold mb-4 font-heading ${
+            theme === 'dark' ? 'text-white' : 'text-gray-900'
+          }`}>
+            Certyfikaty
+          </h2>
+          <p className={`text-lg sm:text-xl max-w-3xl mx-auto font-body ${
+            theme === 'dark' ? 'text-gray-200' : 'text-gray-600'
+          }`}>
+            Potwierdzamy nasze kompetencje uznawanymi certyfikatami branżowymi
+          </p>
+        </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10">
+          {certificates.map((certificate, index) => (
+            <motion.div
+              key={certificate.name}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.05 }}
+              viewport={{ once: true }}
+              whileHover={{ y: -5 }}
+              className="neuromorphic p-8 rounded-2xl text-center group hover:shadow-blue-500/20 transition-all duration-500 relative overflow-hidden"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              
+              <div className="relative z-10">
+                <div className="w-32 h-24 mx-auto mb-6 neuromorphic-inset rounded-xl flex items-center justify-center group-hover:shadow-blue-500/30 transition-all duration-500">
+                  <Certificate className="w-16 h-16 text-amber-400 group-hover:text-amber-300 transition-colors duration-500" />
+                </div>
+                
+                <h3 className={`text-xl font-bold mb-2 font-heading ${
+                  theme === 'dark' ? 'text-white' : 'text-gray-900'
+                }`}>
+                  {certificate.name}
+                </h3>
+                
+                <p className={`text-sm font-body mb-4 ${
+                  theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                }`}>
+                  {certificate.description}
+                </p>
+                
+
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+});
+
+CertificatesSection.displayName = 'CertificatesSection';
 
 // Memoized ContactSection Component
 const ContactSection = React.memo<{ showToast: (message: string) => void }>(({ showToast }) => {
@@ -1401,7 +1587,9 @@ const ContactSection = React.memo<{ showToast: (message: string) => void }>(({ s
               }`}>
                 Pierwsza konsultacja jest całkowicie bezpłatna. Nasz ekspert pomoże zidentyfikować obszary wymagające wzmocnienia bezpieczeństwa.
               </p>
-              <div className="flex items-center text-green-400">
+              <div className={`flex items-center ${
+                theme === 'dark' ? 'text-green-400' : 'text-green-800'
+              }`}>
                 <CheckCircle className="w-4 h-4 mr-2" />
                 <span className="text-sm font-body">100% bez zobowiązań</span>
               </div>
@@ -1456,7 +1644,7 @@ const Footer = React.memo(() => {
             >
               <div className="flex items-center mb-4">
                 <div className="flex items-center mr-3">
-                  <Image 
+                  <LazyImage 
                     src="https://i.ibb.co/cXXYY8mg/logo2.png" 
                     alt="Secur" 
                     width={96}
@@ -1580,12 +1768,13 @@ const Footer = React.memo(() => {
 
 Footer.displayName = 'Footer';
 
-// Main component with theme support
+// Main component with theme support and hero detection
 export default function SecurHubLanding() {
   const [theme, setTheme] = useState<'light' | 'dark'>('dark');
   const [mobileNavActive, setMobileNavActive] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isOverHero, setIsOverHero] = useState(true);
   const { scrollY } = useScroll();
 
   const toggleTheme = useCallback(() => {
@@ -1596,6 +1785,12 @@ export default function SecurHubLanding() {
   const throttledScrollHandler = useMemo(
     () => throttle((latest: number) => {
       setIsScrolled(latest > 50);
+      // Determine if we're over the hero section
+      const heroElement = document.getElementById('hero');
+      if (heroElement) {
+        const heroHeight = heroElement.offsetHeight;
+        setIsOverHero(latest < heroHeight - 100); // 100px buffer
+      }
     }, 100),
     []
   );
@@ -1636,11 +1831,13 @@ export default function SecurHubLanding() {
           mobileNavActive={mobileNavActive}
           setMobileNavActive={setMobileNavActive}
           scrollToSection={scrollToSection}
+          isOverHero={isOverHero}
         />
         <main>
           <HeroSection scrollToSection={scrollToSection} />
           <AboutSection />
           <FeaturesSection />
+          <CertificatesSection />
           <ContactSection showToast={showToast} />
         </main>
         <Footer />
