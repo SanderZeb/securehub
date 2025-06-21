@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
-import { motion, AnimatePresence, useScroll, useInView, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useInView, useMotionValue, useSpring, useTransform, MotionValue } from "framer-motion";
 import Image from "next/image";
 
 import {
@@ -253,11 +253,11 @@ if (typeof document !== "undefined") {
 }
 
 const MouseContext = React.createContext<{
-  mouseX: any;
-  mouseY: any;
+  mouseX: MotionValue<number>;
+  mouseY: MotionValue<number>;
 }>({
-  mouseX: null,
-  mouseY: null
+  mouseX: {} as MotionValue<number>,
+  mouseY: {} as MotionValue<number>
 });
 
 const MouseProvider = React.memo<{ children: React.ReactNode }>(({ children }) => {
@@ -290,8 +290,6 @@ const MouseParallax = React.memo<{
   strength?: number;
   className?: string;
 }>(({ children, strength = 0.05, className = "" }) => {
-  const [localMousePosition, setLocalMousePosition] = useState({ x: 0, y: 0 });
-  const [isHovered, setIsHovered] = useState(false);
   const elementRef = useRef<HTMLDivElement>(null);
 
   const x = useMotionValue(0);
@@ -307,21 +305,17 @@ const MouseParallax = React.memo<{
     const mouseX = e.clientX - centerX;
     const mouseY = e.clientY - centerY;
     
-    setLocalMousePosition({ x: mouseX, y: mouseY });
-    
     x.set(mouseX * strength);
     y.set(mouseY * strength);
   }, [strength, x, y]);
 
   const handleMouseEnter = useCallback(() => {
-    setIsHovered(true);
+    // Mouse enter logic can be added here if needed
   }, []);
 
   const handleMouseLeave = useCallback(() => {
-    setIsHovered(false);
     x.set(0);
     y.set(0);
-    setLocalMousePosition({ x: 0, y: 0 });
   }, [x, y]);
 
   return (
@@ -475,7 +469,7 @@ const companySizeOptions = [
 
 const navigationItems = [
   { name: "O nas", target: "about" },
-  { name: "Statystyki", target: "cyberstats" },
+  { name: "Statystyki", target: "stats" },
   { name: "Współpraca", target: "features" },
   { name: "Certyfikaty", target: "certificates" },
   { name: "Kontakt", target: "contact" }
@@ -915,7 +909,7 @@ const CyberStatsSection = React.memo(() => {
   const { theme } = React.useContext(ThemeContext);
   
   return (
-    <section id="cyberstats" className="py-16 sm:py-24 section-bg relative overflow-hidden">
+    <section id="stats" className="py-16 sm:py-24 section-bg relative overflow-hidden">
       <div className="absolute inset-0">
         <div className={`absolute inset-0 bg-gradient-to-r ${
           theme === 'dark' 
@@ -1892,7 +1886,7 @@ const ContactSection = React.memo<{ showToast: (message: string) => void }>(({ s
     setFormData({ email: "", organization: "", companySize: "wole-nie-mowic", message: "" });
     setErrors({ email: "", message: "" });
     setIsSubmitting(false);
-  }, [formData, showToast, validateForm]);
+  }, [showToast, validateForm]);
 
   const handleInputChange = useCallback((field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
