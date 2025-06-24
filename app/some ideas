@@ -1,0 +1,2571 @@
+"use client";
+import React, { useState, useEffect, useRef, useCallback, useMemo, Suspense } from "react";
+import { motion, AnimatePresence, useScroll, useInView, useMotionValue, useSpring, useTransform, MotionValue } from "framer-motion";
+import Image from "next/image";
+
+import {
+  FaShieldAlt as Shield,
+  FaCode as Code,
+  FaNetworkWired as Network,
+  FaUserSecret as UserSecret,
+  FaClipboardCheck as ClipboardCheck,
+  FaLock as Lock,
+  FaBug as Bug,
+  FaServer as Server,
+  FaUsers as Users,
+  FaAward as Award,
+  FaHeadset as Headset,
+  FaBars as Menu,
+  FaTimes as X,
+  FaChevronRight as ChevronRight,
+  FaEnvelope as Mail,
+  FaArrowRight as ArrowRight,
+  FaPlay as Play,
+  FaCheckCircle as CheckCircle,
+  FaChevronDown as ChevronDown,
+  FaSun as Sun,
+  FaMoon as Moon,
+  FaCertificate as Certificate,
+  FaQuoteLeft as Quote,
+  FaLinkedin as LinkedIn,
+  FaTwitter as Twitter,
+  FaGithub as Github,
+  FaExclamationTriangle as Warning,
+  FaRocket as Rocket,
+  FaBrain as Brain,
+  FaChartLine as Chart,
+  FaGlobe as Globe,
+  FaClock as Clock,
+  FaPhone as Phone,
+  FaMapMarkerAlt as Location,
+  FaStar as Star,
+} from "react-icons/fa";
+
+// Enhanced global styles with cyber theme
+const globalStyles = `
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Outfit:wght@100..900&family=Quicksand:wght@300..700&family=Orbitron:wght@400..900&display=swap');
+
+.font-heading {
+  font-family: "Outfit", sans-serif;
+}
+
+.font-body {
+  font-family: "Quicksand", sans-serif;
+}
+
+.font-cyber {
+  font-family: "Orbitron", sans-serif;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #111111;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #fbbf24, #f59e0b);
+  border-radius: 4px;
+}
+
+.light ::-webkit-scrollbar-track {
+  background: #f8f9fa;
+}
+
+.light ::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #f59e0b, #d97706);
+  border-radius: 4px;
+}
+
+/* Cyber Grid Background */
+.cyber-grid {
+  background-image: 
+    linear-gradient(rgba(251, 191, 36, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(251, 191, 36, 0.1) 1px, transparent 1px);
+  background-size: 50px 50px;
+  animation: grid-move 20s linear infinite;
+}
+
+@keyframes grid-move {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(50px, 50px); }
+}
+
+/* Glitch Effect */
+.glitch {
+  position: relative;
+}
+
+.glitch::before,
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.glitch::before {
+  animation: glitch-1 0.5s infinite;
+  color: #fbbf24;
+  z-index: -1;
+}
+
+.glitch::after {
+  animation: glitch-2 0.5s infinite;
+  color: #f59e0b;
+  z-index: -2;
+}
+
+@keyframes glitch-1 {
+  0%, 100% { clip-path: inset(0 0 0 0); transform: translate(0); }
+  20% { clip-path: inset(20% 0 60% 0); transform: translate(-2px, 2px); }
+  40% { clip-path: inset(50% 0 20% 0); transform: translate(2px, -2px); }
+  60% { clip-path: inset(80% 0 10% 0); transform: translate(-2px, -2px); }
+  80% { clip-path: inset(10% 0 80% 0); transform: translate(2px, 2px); }
+}
+
+@keyframes glitch-2 {
+  0%, 100% { clip-path: inset(0 0 0 0); transform: translate(0); }
+  20% { clip-path: inset(80% 0 10% 0); transform: translate(2px, -2px); }
+  40% { clip-path: inset(10% 0 80% 0); transform: translate(-2px, 2px); }
+  60% { clip-path: inset(20% 0 60% 0); transform: translate(2px, 2px); }
+  80% { clip-path: inset(50% 0 20% 0); transform: translate(-2px, -2px); }
+}
+
+/* Neuromorphic Enhancements */
+.dark .neuromorphic {
+  background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+  box-shadow: 
+    20px 20px 40px rgba(0, 0, 0, 0.9),
+    -20px -20px 40px rgba(255, 255, 255, 0.08),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.light .neuromorphic {
+  background: linear-gradient(145deg, #ffffff, #f0f4f8);
+  box-shadow: 
+    20px 20px 40px rgba(0, 0, 0, 0.15),
+    -20px -20px 40px rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Cyber Button */
+.cyber-button {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #1e1e1e, #2a2a2a);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.cyber-button::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.cyber-button:hover::before {
+  opacity: 1;
+}
+
+.cyber-button::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #1e1e1e, #2a2a2a);
+  z-index: -1;
+}
+
+/* Particle Effect */
+.particle {
+  position: absolute;
+  background: #fbbf24;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* Scanner Line */
+.scanner-line {
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #fbbf24, transparent);
+  animation: scan 3s linear infinite;
+}
+
+@keyframes scan {
+  0% { top: 0%; opacity: 0; }
+  5% { opacity: 1; }
+  95% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+/* Matrix Rain Effect */
+.matrix-rain {
+  position: absolute;
+  color: #fbbf24;
+  font-family: monospace;
+  font-size: 14px;
+  animation: matrix-fall linear infinite;
+  text-shadow: 0 0 5px #fbbf24;
+}
+
+@keyframes matrix-fall {
+  0% { transform: translateY(-100%); opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(100vh); opacity: 0; }
+}
+
+/* Hover Glow */
+.hover-glow {
+  transition: all 0.3s ease;
+}
+
+.hover-glow:hover {
+  box-shadow: 0 0 30px rgba(251, 191, 36, 0.6);
+}
+
+/* Loading Animation */
+.cyber-loader {
+  width: 50px;
+  height: 50px;
+  border: 3px solid rgba(251, 191, 36, 0.2);
+  border-top-color: #fbbf24;
+  border-radius: 50%;
+  animation: cyber-spin 1s linear infinite;
+}
+
+@keyframes cyber-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive Typography */
+@media (max-width: 640px) {
+  .text-responsive {
+    font-size: clamp(1rem, 4vw, 1.25rem);
+  }
+  
+  .heading-responsive {
+    font-size: clamp(1.5rem, 6vw, 2.5rem);
+  }
+}
+`;
+
+// Inject styles
+if (typeof document !== "undefined") {
+  const styleElement = document.createElement("style");
+  styleElement.textContent = globalStyles;
+  document.head.appendChild(styleElement);
+}
+
+// Constants
+const ANIMATION_DURATION = {
+  fast: 0.3,
+  medium: 0.6,
+  slow: 1
+};
+
+const BREAKPOINTS = {
+  sm: 640,
+  md: 768,
+  lg: 1024,
+  xl: 1280
+};
+
+// Enhanced Context
+const ThemeContext = React.createContext<{
+  theme: 'light' | 'dark';
+  toggleTheme: () => void;
+}>({
+  theme: 'dark',
+  toggleTheme: () => {}
+});
+
+// Error Boundary
+class ErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold mb-4">Oops! Something went wrong.</h2>
+            <button 
+              onClick={() => window.location.reload()}
+              className="px-6 py-3 bg-amber-500 rounded-lg hover:bg-amber-600 transition-colors"
+            >
+              Reload Page
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
+// Particle System Component
+const ParticleSystem = React.memo(() => {
+  const [particles, setParticles] = useState<Array<{
+    id: number;
+    x: number;
+    y: number;
+    size: number;
+    duration: number;
+  }>>([]);
+
+  useEffect(() => {
+    const createParticle = () => {
+      const id = Date.now() + Math.random();
+      const particle = {
+        id,
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+        size: Math.random() * 4 + 1,
+        duration: Math.random() * 20 + 10
+      };
+
+      setParticles(prev => [...prev.slice(-50), particle]);
+    };
+
+    const interval = setInterval(createParticle, 300);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="fixed inset-0 pointer-events-none z-0">
+      {particles.map(particle => (
+        <motion.div
+          key={particle.id}
+          className="particle"
+          initial={{ 
+            x: particle.x,
+            y: particle.y,
+            opacity: 0,
+            scale: 0
+          }}
+          animate={{ 
+            y: particle.y - 200,
+            opacity: [0, 1, 0],
+            scale: [0, 1, 0]
+          }}
+          transition={{ 
+            duration: particle.duration,
+            ease: "linear"
+          }}
+          style={{
+            width: particle.size,
+            height: particle.size,
+            left: particle.x,
+            top: particle.y
+          }}
+        />
+      ))}
+    </div>
+  );
+});
+
+ParticleSystem.displayName = 'ParticleSystem';
+
+// Matrix Rain Component
+const MatrixRain = React.memo(() => {
+  const [drops, setDrops] = useState<Array<{
+    id: number;
+    x: number;
+    char: string;
+    speed: number;
+  }>>([]);
+
+  useEffect(() => {
+    const chars = "01アイウエオカキクケコサシスセソタチツテト";
+    
+    const createDrop = () => {
+      const id = Date.now() + Math.random();
+      const drop = {
+        id,
+        x: Math.random() * window.innerWidth,
+        char: chars[Math.floor(Math.random() * chars.length)],
+        speed: Math.random() * 10 + 5
+      };
+
+      setDrops(prev => [...prev.slice(-30), drop]);
+    };
+
+    const interval = setInterval(createDrop, 100);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="fixed inset-0 pointer-events-none overflow-hidden opacity-10">
+      {drops.map(drop => (
+        <div
+          key={drop.id}
+          className="matrix-rain"
+          style={{
+            left: drop.x,
+            animationDuration: `${drop.speed}s`
+          }}
+        >
+          {drop.char}
+        </div>
+      ))}
+    </div>
+  );
+});
+
+MatrixRain.displayName = 'MatrixRain';
+
+// Live Security Stats Component
+const LiveSecurityStats = React.memo(() => {
+  const [stats, setStats] = useState({
+    threatsBlocked: 1847293,
+    activeScans: 342,
+    uptime: 99.99,
+    responseTime: 12
+  });
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setStats(prev => ({
+        threatsBlocked: prev.threatsBlocked + Math.floor(Math.random() * 10),
+        activeScans: Math.max(300, Math.min(400, prev.activeScans + Math.floor(Math.random() * 10 - 5))),
+        uptime: 99.99,
+        responseTime: Math.max(8, Math.min(20, prev.responseTime + (Math.random() * 2 - 1)))
+      }));
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+      className="bg-black/40 backdrop-blur-sm rounded-2xl p-6 border border-amber-500/20"
+    >
+      <h3 className="text-amber-400 font-cyber text-sm mb-4 flex items-center">
+        <Globe className="w-4 h-4 mr-2 animate-pulse" />
+        LIVE SECURITY METRICS
+      </h3>
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <p className="text-gray-400 text-xs">Threats Blocked</p>
+          <p className="text-white font-bold text-xl font-cyber">
+            {stats.threatsBlocked.toLocaleString()}
+          </p>
+        </div>
+        <div>
+          <p className="text-gray-400 text-xs">Active Scans</p>
+          <p className="text-white font-bold text-xl font-cyber">
+            {stats.activeScans}
+          </p>
+        </div>
+        <div>
+          <p className="text-gray-400 text-xs">Uptime</p>
+          <p className="text-white font-bold text-xl font-cyber">
+            {stats.uptime}%
+          </p>
+        </div>
+        <div>
+          <p className="text-gray-400 text-xs">Response Time</p>
+          <p className="text-white font-bold text-xl font-cyber">
+            {stats.responseTime.toFixed(0)}ms
+          </p>
+        </div>
+      </div>
+      <div className="mt-4 h-1 bg-gray-800 rounded-full overflow-hidden">
+        <motion.div
+          className="h-full bg-gradient-to-r from-green-500 to-amber-500"
+          animate={{ x: ['-100%', '100%'] }}
+          transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+        />
+      </div>
+    </motion.div>
+  );
+});
+
+LiveSecurityStats.displayName = 'LiveSecurityStats';
+
+// Enhanced Hero Section with Cyber Elements
+const HeroSection = React.memo<{ scrollToSection: (sectionId: string) => void }>(({ scrollToSection }) => {
+  const [typedText, setTypedText] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [loopNum, setLoopNum] = useState(0);
+  const [typingSpeed, setTypingSpeed] = useState(150);
+
+  const textArray = [
+    "Zabezpiecz swoją firmę",
+    "Wykryj zagrożenia",
+    "Chroń dane",
+    "Zaufaj ekspertom"
+  ];
+
+  useEffect(() => {
+    const handleTyping = () => {
+      const i = loopNum % textArray.length;
+      const fullText = textArray[i];
+
+      setTypedText(
+        isDeleting
+          ? fullText.substring(0, typedText.length - 1)
+          : fullText.substring(0, typedText.length + 1)
+      );
+
+      setTypingSpeed(isDeleting ? 30 : 150);
+
+      if (!isDeleting && typedText === fullText) {
+        setTimeout(() => setIsDeleting(true), 1000);
+      } else if (isDeleting && typedText === '') {
+        setIsDeleting(false);
+        setLoopNum(loopNum + 1);
+      }
+    };
+
+    const timer = setTimeout(handleTyping, typingSpeed);
+    return () => clearTimeout(timer);
+  }, [typedText, isDeleting, loopNum, typingSpeed]);
+
+  return (
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* Background Elements */}
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-900" />
+      <div className="absolute inset-0 cyber-grid opacity-20" />
+      <MatrixRain />
+      <ParticleSystem />
+      
+      {/* Scanner Effect */}
+      <div className="scanner-line" />
+      
+      {/* Content */}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8 }}
+          className="mb-8"
+        >
+          <h1 className="text-5xl md:text-7xl font-bold font-heading text-white mb-6">
+            <span className="glitch" data-text="SecurHUB">
+              SecurHUB
+            </span>
+          </h1>
+          <div className="h-20 flex items-center justify-center">
+            <h2 className="text-2xl md:text-4xl font-cyber text-amber-400">
+              {typedText}
+              <span className="animate-pulse">|</span>
+            </h2>
+          </div>
+        </motion.div>
+
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="text-lg md:text-xl text-gray-300 mb-8 max-w-3xl mx-auto"
+        >
+          Platforma dedykowana dla dużych przedsiębiorstw, oferująca kompleksowe
+          rozwiązania cybersecurity od ekspertów z 25-letnim doświadczeniem
+        </motion.p>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12"
+        >
+          <button
+            onClick={() => scrollToSection("contact")}
+            className="cyber-button px-8 py-4 rounded-lg text-white font-semibold flex items-center hover-glow transition-all duration-300"
+          >
+            <Shield className="w-5 h-5 mr-2" />
+            Rozpocznij ochronę
+            <ArrowRight className="w-5 h-5 ml-2" />
+          </button>
+          
+          <button
+            onClick={() => scrollToSection("demo")}
+            className="px-8 py-4 rounded-lg border border-amber-500/50 text-amber-400 font-semibold flex items-center hover:bg-amber-500/10 transition-all duration-300"
+          >
+            <Play className="w-5 h-5 mr-2" />
+            Zobacz demo
+          </button>
+        </motion.div>
+
+        {/* Live Stats */}
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8 }}
+          className="max-w-2xl mx-auto"
+        >
+          <LiveSecurityStats />
+        </motion.div>
+
+        {/* Trust Badges */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1 }}
+          className="mt-12 flex flex-wrap justify-center gap-8"
+        >
+          {['ISO 27001', 'SOC 2', 'GDPR', 'PCI DSS'].map((badge, index) => (
+            <div
+              key={badge}
+              className="flex items-center space-x-2 text-gray-400"
+            >
+              <Certificate className="w-5 h-5 text-amber-400" />
+              <span className="font-cyber text-sm">{badge}</span>
+            </div>
+          ))}
+        </motion.div>
+      </div>
+
+      {/* Scroll Indicator */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.2 }}
+        className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+      >
+        <motion.div
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 1.5, repeat: Infinity }}
+          className="text-amber-400 cursor-pointer"
+          onClick={() => scrollToSection("about")}
+        >
+          <ChevronDown className="w-8 h-8" />
+        </motion.div>
+      </motion.div>
+    </section>
+  );
+});
+
+HeroSection.displayName = 'HeroSection';
+
+// Interactive Demo Section
+const DemoSection = React.memo(() => {
+  const { theme } = React.useContext(ThemeContext);
+  const [activeDemo, setActiveDemo] = useState<'scan' | 'monitor' | 'protect'>('scan');
+  const [scanProgress, setScanProgress] = useState(0);
+  const [threats, setThreats] = useState<string[]>([]);
+
+  const runScan = useCallback(() => {
+    setScanProgress(0);
+    setThreats([]);
+    
+    const interval = setInterval(() => {
+      setScanProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          return 100;
+        }
+        
+        // Simulate finding threats
+        if (prev === 25) {
+          setThreats(t => [...t, 'SQL Injection vulnerability detected']);
+        } else if (prev === 50) {
+          setThreats(t => [...t, 'Weak password policy found']);
+        } else if (prev === 75) {
+          setThreats(t => [...t, 'Outdated SSL certificate']);
+        }
+        
+        return prev + 2;
+      });
+    }, 50);
+  }, []);
+
+  return (
+    <section id="demo" className="py-24 section-bg relative overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <h2 className={`text-4xl md:text-5xl font-bold mb-4 font-heading ${
+            theme === 'dark' ? 'text-white' : 'text-gray-900'
+          }`}>
+            Zobacz nas w akcji
+          </h2>
+          <p className={`text-xl max-w-3xl mx-auto ${
+            theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+          }`}>
+            Interaktywne demo pokazujące nasze możliwości
+          </p>
+        </motion.div>
+
+        <div className="neuromorphic rounded-2xl p-8 max-w-4xl mx-auto">
+          {/* Demo Tabs */}
+          <div className="flex flex-wrap gap-4 mb-8 justify-center">
+            {[
+              { id: 'scan', label: 'Skanowanie', icon: Bug },
+              { id: 'monitor', label: 'Monitoring', icon: Chart },
+              { id: 'protect', label: 'Ochrona', icon: Shield }
+            ].map(tab => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveDemo(tab.id as any)}
+                className={`flex items-center px-6 py-3 rounded-lg font-semibold transition-all ${
+                  activeDemo === tab.id
+                    ? 'bg-amber-500 text-black'
+                    : theme === 'dark'
+                    ? 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+              >
+                <tab.icon className="w-5 h-5 mr-2" />
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Demo Content */}
+          <AnimatePresence mode="wait">
+            {activeDemo === 'scan' && (
+              <motion.div
+                key="scan"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="space-y-6"
+              >
+                <div className="neuromorphic-inset p-6 rounded-xl">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-semibold">
+                      Skanowanie bezpieczeństwa
+                    </h3>
+                    <button
+                      onClick={runScan}
+                      disabled={scanProgress > 0 && scanProgress < 100}
+                      className="px-4 py-2 bg-amber-500 text-black rounded-lg font-semibold disabled:opacity-50 hover:bg-amber-600 transition-colors"
+                    >
+                      {scanProgress === 0 ? 'Rozpocznij' : scanProgress === 100 ? 'Ponów' : 'Skanowanie...'}
+                    </button>
+                  </div>
+                  
+                  {/* Progress Bar */}
+                  <div className="mb-4">
+                    <div className="h-4 bg-gray-700 rounded-full overflow-hidden">
+                      <motion.div
+                        className="h-full bg-gradient-to-r from-amber-500 to-green-500"
+                        initial={{ width: 0 }}
+                        animate={{ width: `${scanProgress}%` }}
+                        transition={{ duration: 0.5 }}
+                      />
+                    </div>
+                    <p className="text-sm text-gray-400 mt-2">
+                      {scanProgress}% ukończone
+                    </p>
+                  </div>
+
+                  {/* Threats Found */}
+                  {threats.length > 0 && (
+                    <div className="space-y-2">
+                      <h4 className="text-sm font-semibold text-red-400">
+                        Wykryte zagrożenia:
+                      </h4>
+                      {threats.map((threat, index) => (
+                        <motion.div
+                          key={index}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          className="flex items-center text-sm p-2 bg-red-500/10 rounded-lg border border-red-500/20"
+                        >
+                          <Warning className="w-4 h-4 text-red-400 mr-2" />
+                          {threat}
+                        </motion.div>
+                      ))}
+                    </div>
+                  )}
+
+                  {scanProgress === 100 && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="mt-4 p-4 bg-green-500/10 rounded-lg border border-green-500/20"
+                    >
+                      <p className="text-green-400 font-semibold">
+                        Skanowanie zakończone - znaleziono {threats.length} zagrożeń
+                      </p>
+                    </motion.div>
+                  )}
+                </div>
+              </motion.div>
+            )}
+
+            {activeDemo === 'monitor' && (
+              <motion.div
+                key="monitor"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="neuromorphic-inset p-6 rounded-xl"
+              >
+                <h3 className="text-lg font-semibold mb-4">
+                  Monitoring w czasie rzeczywistym
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {[
+                    { label: 'Ruch sieciowy', value: '2.4 GB/s', status: 'normal' },
+                    { label: 'Aktywne połączenia', value: '1,342', status: 'normal' },
+                    { label: 'Próby włamań', value: '17', status: 'warning' },
+                    { label: 'Zablokowane ataki', value: '99.7%', status: 'success' }
+                  ].map((metric, index) => (
+                    <div
+                      key={index}
+                      className={`p-4 rounded-lg border ${
+                        metric.status === 'warning'
+                          ? 'border-yellow-500/50 bg-yellow-500/10'
+                          : metric.status === 'success'
+                          ? 'border-green-500/50 bg-green-500/10'
+                          : 'border-gray-600 bg-gray-800/50'
+                      }`}
+                    >
+                      <p className="text-sm text-gray-400">{metric.label}</p>
+                      <p className={`text-2xl font-bold font-cyber ${
+                        metric.status === 'warning'
+                          ? 'text-yellow-400'
+                          : metric.status === 'success'
+                          ? 'text-green-400'
+                          : 'text-white'
+                      }`}>
+                        {metric.value}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+
+            {activeDemo === 'protect' && (
+              <motion.div
+                key="protect"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="neuromorphic-inset p-6 rounded-xl"
+              >
+                <h3 className="text-lg font-semibold mb-4">
+                  Aktywna ochrona
+                </h3>
+                <div className="space-y-4">
+                  {[
+                    { name: 'Firewall', status: true, description: 'Blokowanie nieautoryzowanego ruchu' },
+                    { name: 'Anti-DDoS', status: true, description: 'Ochrona przed atakami DDoS' },
+                    { name: 'WAF', status: true, description: 'Ochrona aplikacji webowych' },
+                    { name: 'IDS/IPS', status: true, description: 'Wykrywanie i zapobieganie włamaniom' }
+                  ].map((protection, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-4 bg-gray-800/50 rounded-lg"
+                    >
+                      <div className="flex items-center">
+                        <div className={`w-3 h-3 rounded-full mr-3 ${
+                          protection.status ? 'bg-green-500' : 'bg-red-500'
+                        } animate-pulse`} />
+                        <div>
+                          <p className="font-semibold">{protection.name}</p>
+                          <p className="text-sm text-gray-400">{protection.description}</p>
+                        </div>
+                      </div>
+                      <Shield className="w-6 h-6 text-green-400" />
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+    </section>
+  );
+});
+
+DemoSection.displayName = 'DemoSection';
+
+// Testimonials Section
+const TestimonialsSection = React.memo(() => {
+  const { theme } = React.useContext(ThemeContext);
+  const [activeTestimonial, setActiveTestimonial] = useState(0);
+
+  const testimonials = [
+    {
+      name: "Jan Kowalski",
+      position: "CTO, TechCorp",
+      company: "TechCorp",
+      content: "SecurHUB przekształcił nasze podejście do cyberbezpieczeństwa. Ich proaktywne rozwiązania pozwoliły nam wykryć i naprawić luki, o których nie mieliśmy pojęcia.",
+      rating: 5,
+      image: "/api/placeholder/80/80"
+    },
+    {
+      name: "Anna Nowak",
+      position: "CISO, FinanceHub",
+      company: "FinanceHub",
+      content: "Profesjonalizm i wiedza zespołu SecurHUB są na najwyższym poziomie. Dzięki nim spełniamy wszystkie wymagania regulacyjne i śpimy spokojnie.",
+      rating: 5,
+      image: "/api/placeholder/80/80"
+    },
+    {
+      name: "Piotr Wiśniewski",
+      position: "CEO, E-Commerce Plus",
+      company: "E-Commerce Plus",
+      content: "Inwestycja w usługi SecurHUB zwróciła się wielokrotnie. Uniknęliśmy kosztownych incydentów i zyskaliśmy zaufanie klientów.",
+      rating: 5,
+      image: "/api/placeholder/80/80"
+    }
+  ];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveTestimonial((prev) => (prev + 1) % testimonials.length);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [testimonials.length]);
+
+  return (
+    <section className="py-24 section-bg relative overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <h2 className={`text-4xl md:text-5xl font-bold mb-4 font-heading ${
+            theme === 'dark' ? 'text-white' : 'text-gray-900'
+          }`}>
+            Co mówią nasi klienci
+          </h2>
+          <p className={`text-xl max-w-3xl mx-auto ${
+            theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+          }`}>
+            Zaufało nam ponad 500 firm w całej Polsce
+          </p>
+        </motion.div>
+
+        <div className="max-w-4xl mx-auto">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTestimonial}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.5 }}
+              className="neuromorphic p-8 md:p-12 rounded-2xl"
+            >
+              <Quote className="w-12 h-12 text-amber-400 mb-6" />
+              
+              <p className={`text-lg md:text-xl mb-8 italic ${
+                theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
+              }`}>
+                "{testimonials[activeTestimonial].content}"
+              </p>
+
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <img
+                    src={testimonials[activeTestimonial].image}
+                    alt={testimonials[activeTestimonial].name}
+                    className="w-16 h-16 rounded-full mr-4"
+                  />
+                  <div>
+                    <h4 className={`font-semibold ${
+                      theme === 'dark' ? 'text-white' : 'text-gray-900'
+                    }`}>
+                      {testimonials[activeTestimonial].name}
+                    </h4>
+                    <p className={`text-sm ${
+                      theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                    }`}>
+                      {testimonials[activeTestimonial].position}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex">
+                  {[...Array(5)].map((_, i) => (
+                    <Star
+                      key={i}
+                      className={`w-5 h-5 ${
+                        i < testimonials[activeTestimonial].rating
+                          ? 'text-amber-400 fill-current'
+                          : 'text-gray-600'
+                      }`}
+                    />
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Testimonial Dots */}
+          <div className="flex justify-center mt-8 space-x-2">
+            {testimonials.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setActiveTestimonial(index)}
+                className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                  index === activeTestimonial
+                    ? 'bg-amber-400 w-8'
+                    : theme === 'dark'
+                    ? 'bg-gray-600'
+                    : 'bg-gray-400'
+                }`}
+                aria-label={`Go to testimonial ${index + 1}`}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Client Logos */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.3 }}
+          className="mt-20"
+        >
+          <p className={`text-center text-sm font-semibold mb-8 ${
+            theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+          }`}>
+            ZAUFALI NAM
+          </p>
+          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12">
+            {['Client1', 'Client2', 'Client3', 'Client4', 'Client5'].map((client, index) => (
+              <motion.div
+                key={client}
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ delay: index * 0.1 }}
+                className={`w-32 h-16 rounded-lg flex items-center justify-center ${
+                  theme === 'dark' ? 'bg-gray-800' : 'bg-gray-200'
+                }`}
+              >
+                <span className={`font-cyber text-sm ${
+                  theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                }`}>
+                  {client}
+                </span>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+});
+
+TestimonialsSection.displayName = 'TestimonialsSection';
+
+// Pricing Section
+const PricingSection = React.memo(() => {
+  const { theme } = React.useContext(ThemeContext);
+  const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
+
+  const plans = [
+    {
+      name: "Starter",
+      description: "Dla małych zespołów",
+      price: billingCycle === 'monthly' ? 2999 : 29990,
+      features: [
+        "Do 50 urządzeń",
+        "Podstawowe skanowanie",
+        "Raport miesięczny",
+        "Email support",
+        "Podstawowa ochrona"
+      ],
+      cta: "Rozpocznij",
+      featured: false
+    },
+    {
+      name: "Professional",
+      description: "Dla rosnących firm",
+      price: billingCycle === 'monthly' ? 5999 : 59990,
+      features: [
+        "Do 200 urządzeń",
+        "Zaawansowane skanowanie",
+        "Raport tygodniowy",
+        "24/7 phone support",
+        "Pełna ochrona",
+        "Pentesty kwartalne",
+        "Dedykowany opiekun"
+      ],
+      cta: "Najpopularniejszy",
+      featured: true
+    },
+    {
+      name: "Enterprise",
+      description: "Dla dużych organizacji",
+      price: 'Kontakt',
+      features: [
+        "Nieograniczone urządzenia",
+        "Ciągłe skanowanie",
+        "Raporty na żądanie",
+        "Dedykowany zespół",
+        "Customowa ochrona",
+        "Pentesty miesięczne",
+        "Szkolenia dla zespołu",
+        "Compliance support"
+      ],
+      cta: "Skontaktuj się",
+      featured: false
+    }
+  ];
+
+  return (
+    <section className="py-24 section-bg relative">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <h2 className={`text-4xl md:text-5xl font-bold mb-4 font-heading ${
+            theme === 'dark' ? 'text-white' : 'text-gray-900'
+          }`}>
+            Prosty i przejrzysty cennik
+          </h2>
+          <p className={`text-xl max-w-3xl mx-auto mb-8 ${
+            theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+          }`}>
+            Wybierz plan dopasowany do Twoich potrzeb
+          </p>
+
+          {/* Billing Toggle */}
+          <div className="inline-flex items-center p-1 rounded-lg bg-gray-800">
+            <button
+              onClick={() => setBillingCycle('monthly')}
+              className={`px-4 py-2 rounded-md font-semibold transition-all ${
+                billingCycle === 'monthly'
+                  ? 'bg-amber-500 text-black'
+                  : 'text-gray-400'
+              }`}
+            >
+              Miesięcznie
+            </button>
+            <button
+              onClick={() => setBillingCycle('yearly')}
+              className={`px-4 py-2 rounded-md font-semibold transition-all ${
+                billingCycle === 'yearly'
+                  ? 'bg-amber-500 text-black'
+                  : 'text-gray-400'
+              }`}
+            >
+              Rocznie
+              <span className="ml-2 text-xs text-green-400">-20%</span>
+            </button>
+          </div>
+        </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {plans.map((plan, index) => (
+            <motion.div
+              key={plan.name}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              viewport={{ once: true }}
+              className={`relative ${plan.featured ? 'md:-mt-4' : ''}`}
+            >
+              {plan.featured && (
+                <div className="absolute -top-4 left-0 right-0 text-center">
+                  <span className="bg-amber-500 text-black px-4 py-1 rounded-full text-sm font-semibold">
+                    REKOMENDOWANY
+                  </span>
+                </div>
+              )}
+              
+              <div className={`neuromorphic p-8 rounded-2xl h-full flex flex-col ${
+                plan.featured ? 'border-2 border-amber-500/50' : ''
+              }`}>
+                <div className="text-center mb-8">
+                  <h3 className={`text-2xl font-bold mb-2 ${
+                    theme === 'dark' ? 'text-white' : 'text-gray-900'
+                  }`}>
+                    {plan.name}
+                  </h3>
+                  <p className={`text-sm ${
+                    theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                  }`}>
+                    {plan.description}
+                  </p>
+                </div>
+
+                <div className="text-center mb-8">
+                  {typeof plan.price === 'number' ? (
+                    <>
+                      <span className={`text-4xl font-bold font-cyber ${
+                        theme === 'dark' ? 'text-white' : 'text-gray-900'
+                      }`}>
+                        {plan.price} zł
+                      </span>
+                      <span className={`text-sm ${
+                        theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                      }`}>
+                        /{billingCycle === 'monthly' ? 'miesiąc' : 'rok'}
+                      </span>
+                    </>
+                  ) : (
+                    <span className={`text-3xl font-bold ${
+                      theme === 'dark' ? 'text-white' : 'text-gray-900'
+                    }`}>
+                      {plan.price}
+                    </span>
+                  )}
+                </div>
+
+                <ul className="space-y-3 mb-8 flex-1">
+                  {plan.features.map((feature, i) => (
+                    <li key={i} className="flex items-start">
+                      <CheckCircle className="w-5 h-5 text-green-400 mt-0.5 mr-3 flex-shrink-0" />
+                      <span className={`text-sm ${
+                        theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                      }`}>
+                        {feature}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+
+                <button className={`w-full py-3 rounded-lg font-semibold transition-all ${
+                  plan.featured
+                    ? 'bg-amber-500 text-black hover:bg-amber-600'
+                    : theme === 'dark'
+                    ? 'bg-gray-800 text-white hover:bg-gray-700'
+                    : 'bg-gray-200 text-gray-900 hover:bg-gray-300'
+                }`}>
+                  {plan.cta}
+                </button>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.4 }}
+          className="mt-12 text-center"
+        >
+          <p className={`text-sm ${
+            theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+          }`}>
+            Wszystkie plany zawierają 30-dniowy okres próbny bez zobowiązań
+          </p>
+        </motion.div>
+      </div>
+    </section>
+  );
+});
+
+PricingSection.displayName = 'PricingSection';
+
+// Enhanced Features Section
+const FeaturesSection = React.memo(() => {
+  const { theme } = React.useContext(ThemeContext);
+  
+  const features = [
+    {
+      icon: Code,
+      title: "Pentest Aplikacji",
+      description: "Weryfikacja poziomu bezpieczeństwa aplikacji webowych i mobilnych zgodnie z OWASP Top 10.",
+      details: ["Testy automatyczne i manualne", "Wykrywanie luk 0-day", "Fuzzing dostosowany do technologii"],
+      stats: { tests: "10k+", accuracy: "99.9%" }
+    },
+    {
+      icon: Network,
+      title: "Pentest Sieci i Chmury",
+      description: "Ocena ryzyka, zgodności i dostępności usług w środowisku sieciowym i chmurowym.",
+      details: ["Zgodność z ISO", "Usługa OSINT", "Skanowanie podatności"],
+      stats: { networks: "500+", uptime: "100%" }
+    },
+    {
+      icon: Bug,
+      title: "Audyt Kodu Źródłowego",
+      description: "Kompleksowa analiza kodu zgodnie z modelem DevSecOps - Security by design.",
+      details: ["Analiza ręczna i automatyczna", "Audyt Blockchain", "Wykrywanie błędów bezpieczeństwa"],
+      stats: { lines: "50M+", bugs: "15k+" }
+    },
+    {
+      icon: Server,
+      title: "Utwardzanie Systemów",
+      description: "Wdrażanie dodatkowych warstw ochrony zgodnie ze standardem OSSTMM.",
+      details: ["Serwery i usługi sieciowe", "Urządzenia IoT", "Środowiska chmury"],
+      stats: { servers: "2k+", security: "A+" }
+    },
+    {
+      icon: UserSecret,
+      title: "Inżynieria Społeczna",
+      description: "Bezpieczna symulacja prawdziwych ataków hakerskich.",
+      details: ["Symulacje phishingu", "Testy vishingu", "Włamania fizyczne"],
+      stats: { campaigns: "300+", awareness: "85%" }
+    },
+    {
+      icon: ClipboardCheck,
+      title: "Audyt Zgodności",
+      description: "Przegląd zgodności z regulacjami WCAG, ISO 27001, GDPR, DORA, NIS2.",
+      details: ["Przepisy zewnętrzne", "Wytyczne wewnętrzne", "Kontrole i procedury"],
+      stats: { audits: "1k+", compliance: "100%" }
+    }
+  ];
+
+  return (
+    <section id="features" className="py-24 section-bg relative overflow-hidden">
+      <div className="absolute inset-0 cyber-grid opacity-5" />
+      
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <h2 className={`text-4xl md:text-5xl font-bold mb-4 font-heading ${
+            theme === 'dark' ? 'text-white' : 'text-gray-900'
+          }`}>
+            Nasze usługi
+          </h2>
+          <p className={`text-xl max-w-3xl mx-auto ${
+            theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+          }`}>
+            Kompleksowe rozwiązania cybersecurity dla nowoczesnych przedsiębiorstw
+          </p>
+        </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+          {features.map((feature, index) => (
+            <motion.div
+              key={feature.title}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              viewport={{ once: true }}
+              whileHover={{ y: -5, transition: { duration: 0.2 } }}
+              className="group"
+            >
+              <div className="neuromorphic p-8 rounded-2xl h-full hover-glow relative overflow-hidden">
+                {/* Animated Background */}
+                <div className="absolute inset-0 bg-gradient-to-br from-amber-500/0 to-orange-500/0 group-hover:from-amber-500/10 group-hover:to-orange-500/10 transition-all duration-500" />
+                
+                <div className="relative z-10">
+                  {/* Icon */}
+                  <div className="w-16 h-16 neuromorphic rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <feature.icon className="w-8 h-8 text-amber-400" />
+                  </div>
+
+                  {/* Title */}
+                  <h3 className={`text-2xl font-bold mb-4 font-heading ${
+                    theme === 'dark' ? 'text-white' : 'text-gray-900'
+                  }`}>
+                    {feature.title}
+                  </h3>
+
+                  {/* Description */}
+                  <p className={`mb-6 ${
+                    theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                  }`}>
+                    {feature.description}
+                  </p>
+
+                  {/* Stats */}
+                  <div className="grid grid-cols-2 gap-4 mb-6">
+                    {Object.entries(feature.stats).map(([key, value]) => (
+                      <div key={key} className="text-center">
+                        <p className="font-cyber text-xl text-amber-400">{value}</p>
+                        <p className="text-xs text-gray-500 capitalize">{key}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Details */}
+                  <ul className="space-y-2">
+                    {feature.details.map((detail, i) => (
+                      <li key={i} className="flex items-center text-sm">
+                        <div className="w-1.5 h-1.5 bg-amber-400 rounded-full mr-3" />
+                        <span className={
+                          theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                        }>
+                          {detail}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  {/* CTA */}
+                  <motion.button
+                    whileHover={{ x: 5 }}
+                    className="mt-6 text-amber-400 font-semibold flex items-center group/btn"
+                  >
+                    Dowiedz się więcej
+                    <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
+                  </motion.button>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+});
+
+FeaturesSection.displayName = 'FeaturesSection';
+
+// Team Section
+const TeamSection = React.memo(() => {
+  const { theme } = React.useContext(ThemeContext);
+
+  const team = [
+    {
+      name: "Dr. Marek Kowalski",
+      role: "CEO & Founder",
+      bio: "25 lat doświadczenia w cybersecurity",
+      image: "/api/placeholder/200/200",
+      social: { linkedin: "#", twitter: "#" }
+    },
+    {
+      name: "Anna Wiśniewska",
+      role: "CTO",
+      bio: "Ekspert w pentestach i audytach",
+      image: "/api/placeholder/200/200",
+      social: { linkedin: "#", github: "#" }
+    },
+    {
+      name: "Tomasz Nowak",
+      role: "Head of Security",
+      bio: "Specjalista od incident response",
+      image: "/api/placeholder/200/200",
+      social: { linkedin: "#", twitter: "#" }
+    },
+    {
+      name: "Katarzyna Lewandowska",
+      role: "Lead Consultant",
+      bio: "Certyfikowany audytor ISO 27001",
+      image: "/api/placeholder/200/200",
+      social: { linkedin: "#" }
+    }
+  ];
+
+  return (
+    <section className="py-24 section-bg">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <h2 className={`text-4xl md:text-5xl font-bold mb-4 font-heading ${
+            theme === 'dark' ? 'text-white' : 'text-gray-900'
+          }`}>
+            Poznaj nasz zespół
+          </h2>
+          <p className={`text-xl max-w-3xl mx-auto ${
+            theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+          }`}>
+            Eksperci z pasją do cyberbezpieczeństwa
+          </p>
+        </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {team.map((member, index) => (
+            <motion.div
+              key={member.name}
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ delay: index * 0.1 }}
+              viewport={{ once: true }}
+              whileHover={{ y: -10 }}
+              className="text-center"
+            >
+              <div className="neuromorphic p-6 rounded-2xl hover-glow">
+                <div className="relative mb-6 mx-auto w-32 h-32">
+                  <div className="w-full h-full rounded-full overflow-hidden neuromorphic-inset">
+                    <img
+                      src={member.image}
+                      alt={member.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                    <CheckCircle className="w-5 h-5 text-white" />
+                  </div>
+                </div>
+
+                <h3 className={`text-xl font-bold mb-1 ${
+                  theme === 'dark' ? 'text-white' : 'text-gray-900'
+                }`}>
+                  {member.name}
+                </h3>
+                <p className="text-amber-400 text-sm mb-3">{member.role}</p>
+                <p className={`text-sm mb-4 ${
+                  theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                }`}>
+                  {member.bio}
+                </p>
+
+                <div className="flex justify-center space-x-3">
+                  {member.social.linkedin && (
+                    <a
+                      href={member.social.linkedin}
+                      className={`p-2 rounded-lg transition-colors ${
+                        theme === 'dark'
+                          ? 'hover:bg-gray-800 text-gray-400 hover:text-white'
+                          : 'hover:bg-gray-200 text-gray-600 hover:text-gray-900'
+                      }`}
+                    >
+                      <LinkedIn className="w-5 h-5" />
+                    </a>
+                  )}
+                  {member.social.twitter && (
+                    <a
+                      href={member.social.twitter}
+                      className={`p-2 rounded-lg transition-colors ${
+                        theme === 'dark'
+                          ? 'hover:bg-gray-800 text-gray-400 hover:text-white'
+                          : 'hover:bg-gray-200 text-gray-600 hover:text-gray-900'
+                      }`}
+                    >
+                      <Twitter className="w-5 h-5" />
+                    </a>
+                  )}
+                  {member.social.github && (
+                    <a
+                      href={member.social.github}
+                      className={`p-2 rounded-lg transition-colors ${
+                        theme === 'dark'
+                          ? 'hover:bg-gray-800 text-gray-400 hover:text-white'
+                          : 'hover:bg-gray-200 text-gray-600 hover:text-gray-900'
+                      }`}
+                    >
+                      <Github className="w-5 h-5" />
+                    </a>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+});
+
+TeamSection.displayName = 'TeamSection';
+
+// FAQ Section
+const FAQSection = React.memo(() => {
+  const { theme } = React.useContext(ThemeContext);
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+
+  const faqs = [
+    {
+      question: "Jak długo trwa typowy pentest?",
+      answer: "Czas trwania pentestu zależy od wielkości i złożoności testowanego systemu. Małe aplikacje mogą być przetestowane w 3-5 dni, podczas gdy kompleksowe środowiska korporacyjne mogą wymagać 2-4 tygodni."
+    },
+    {
+      question: "Czy pentesty wpływają na działanie systemów produkcyjnych?",
+      answer: "Nasze testy są przeprowadzane w sposób bezpieczny i kontrolowany. Zawsze uzgadniamy zakres i metodologię z klientem, aby zminimalizować ryzyko wpływu na systemy produkcyjne."
+    },
+    {
+      question: "Jakie certyfikaty posiadają wasi eksperci?",
+      answer: "Nasi eksperci posiadają międzynarodowe certyfikaty takie jak OSCP, CEH, CISSP, ISO 27001 Lead Auditor i wiele innych. Regularnie aktualizujemy nasze kompetencje."
+    },
+    {
+      question: "Czy oferujecie wsparcie po zakończeniu audytu?",
+      answer: "Tak, oferujemy pełne wsparcie w procesie usuwania wykrytych podatności oraz ponowne testy weryfikacyjne. Nasi klienci mogą liczyć na pomoc przez cały okres współpracy."
+    },
+    {
+      question: "Jak zapewniacie poufność podczas testów?",
+      answer: "Wszystkie testy są objęte ścisłą klauzulą poufności (NDA). Stosujemy najwyższe standardy bezpieczeństwa danych, a dostęp do informacji klienta mają tylko upoważnieni eksperci."
+    }
+  ];
+
+  return (
+    <section className="py-24 section-bg">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <h2 className={`text-4xl md:text-5xl font-bold mb-4 font-heading ${
+            theme === 'dark' ? 'text-white' : 'text-gray-900'
+          }`}>
+            Często zadawane pytania
+          </h2>
+          <p className={`text-xl ${
+            theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+          }`}>
+            Znajdź odpowiedzi na najczęstsze pytania
+          </p>
+        </motion.div>
+
+        <div className="space-y-4">
+          {faqs.map((faq, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              viewport={{ once: true }}
+            >
+              <button
+                onClick={() => setActiveIndex(activeIndex === index ? null : index)}
+                className={`w-full neuromorphic p-6 rounded-xl text-left transition-all ${
+                  activeIndex === index ? 'shadow-amber-500/20' : ''
+                }`}
+              >
+                <div className="flex justify-between items-center">
+                  <h3 className={`text-lg font-semibold pr-4 ${
+                    theme === 'dark' ? 'text-white' : 'text-gray-900'
+                  }`}>
+                    {faq.question}
+                  </h3>
+                  <motion.div
+                    animate={{ rotate: activeIndex === index ? 180 : 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <ChevronDown className={`w-5 h-5 flex-shrink-0 ${
+                      activeIndex === index ? 'text-amber-400' : 'text-gray-500'
+                    }`} />
+                  </motion.div>
+                </div>
+
+                <AnimatePresence>
+                  {activeIndex === index && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="overflow-hidden"
+                    >
+                      <p className={`mt-4 ${
+                        theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                      }`}>
+                        {faq.answer}
+                      </p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </button>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+});
+
+FAQSection.displayName = 'FAQSection';
+
+// Enhanced Contact Section
+const ContactSection = React.memo<{ showToast: (message: string) => void }>(({ showToast }) => {
+  const { theme } = React.useContext(ThemeContext);
+  const [formData, setFormData] = useState({
+    email: "",
+    organization: "",
+    companySize: "wole-nie-mowic",
+    message: "",
+    phone: ""
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!formData.message.trim()) {
+      showToast("Proszę wpisać wiadomość");
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    showToast("Wiadomość została wysłana! Skontaktujemy się wkrótce.");
+    setFormData({ email: "", organization: "", companySize: "wole-nie-mowic", message: "", phone: "" });
+    setIsSubmitting(false);
+  };
+
+  return (
+    <section id="contact" className="py-24 section-bg relative">
+      <div className="absolute inset-0 cyber-grid opacity-5" />
+      
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <h2 className={`text-4xl md:text-5xl font-bold mb-4 font-heading ${
+            theme === 'dark' ? 'text-white' : 'text-gray-900'
+          }`}>
+            Skontaktuj się z nami
+          </h2>
+          <p className={`text-xl max-w-3xl mx-auto ${
+            theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+          }`}>
+            Jesteśmy gotowi odpowiedzieć na Twoje pytania i rozpocząć współpracę
+          </p>
+        </motion.div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+          {/* Contact Info */}
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="space-y-6"
+          >
+            <div className="neuromorphic p-6 rounded-xl">
+              <Phone className="w-8 h-8 text-amber-400 mb-4" />
+              <h3 className={`font-semibold mb-2 ${
+                theme === 'dark' ? 'text-white' : 'text-gray-900'
+              }`}>
+                Telefon
+              </h3>
+              <p className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>
+                +48 123 456 789
+              </p>
+              <p className="text-sm text-gray-500 mt-1">
+                Pon-Pt: 9:00 - 17:00
+              </p>
+            </div>
+
+            <div className="neuromorphic p-6 rounded-xl">
+              <Mail className="w-8 h-8 text-amber-400 mb-4" />
+              <h3 className={`font-semibold mb-2 ${
+                theme === 'dark' ? 'text-white' : 'text-gray-900'
+              }`}>
+                Email
+              </h3>
+              <p className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>
+                kontakt@securhub.pl
+              </p>
+              <p className="text-sm text-gray-500 mt-1">
+                Odpowiadamy w 24h
+              </p>
+            </div>
+
+            <div className="neuromorphic p-6 rounded-xl">
+              <Location className="w-8 h-8 text-amber-400 mb-4" />
+              <h3 className={`font-semibold mb-2 ${
+                theme === 'dark' ? 'text-white' : 'text-gray-900'
+              }`}>
+                Biuro
+              </h3>
+              <p className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>
+                ul. Cyberbezpieczna 42<br />
+                00-001 Warszawa
+              </p>
+            </div>
+          </motion.div>
+
+          {/* Contact Form */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="lg:col-span-2"
+          >
+            <form onSubmit={handleSubmit} className="neuromorphic p-8 rounded-2xl">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                  <label className={`block text-sm font-medium mb-2 ${
+                    theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
+                  }`}>
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className={`neuromorphic-inset w-full px-4 py-3 bg-transparent rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 ${
+                      theme === 'dark' ? 'text-white' : 'text-gray-900'
+                    }`}
+                    placeholder="twoj@email.com"
+                  />
+                </div>
+
+                <div>
+                  <label className={`block text-sm font-medium mb-2 ${
+                    theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
+                  }`}>
+                    Telefon
+                  </label>
+                  <input
+                    type="tel"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    className={`neuromorphic-inset w-full px-4 py-3 bg-transparent rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 ${
+                      theme === 'dark' ? 'text-white' : 'text-gray-900'
+                    }`}
+                    placeholder="+48 123 456 789"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                  <label className={`block text-sm font-medium mb-2 ${
+                    theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
+                  }`}>
+                    Organizacja
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.organization}
+                    onChange={(e) => setFormData({ ...formData, organization: e.target.value })}
+                    className={`neuromorphic-inset w-full px-4 py-3 bg-transparent rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 ${
+                      theme === 'dark' ? 'text-white' : 'text-gray-900'
+                    }`}
+                    placeholder="Nazwa firmy"
+                  />
+                </div>
+
+                <div>
+                  <label className={`block text-sm font-medium mb-2 ${
+                    theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
+                  }`}>
+                    Wielkość firmy
+                  </label>
+                  <select
+                    value={formData.companySize}
+                    onChange={(e) => setFormData({ ...formData, companySize: e.target.value })}
+                    className={`neuromorphic-inset w-full px-4 py-3 bg-transparent rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 ${
+                      theme === 'dark' ? 'text-white' : 'text-gray-900'
+                    }`}
+                  >
+                    <option value="wole-nie-mowic">Wolę nie mówić</option>
+                    <option value="<50">Mniej niż 50 pracowników</option>
+                    <option value="51-200">51 - 200 pracowników</option>
+                    <option value="200+">Powyżej 200 pracowników</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="mb-6">
+                <label className={`block text-sm font-medium mb-2 ${
+                  theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
+                }`}>
+                  Wiadomość *
+                </label>
+                <textarea
+                  value={formData.message}
+                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                  rows={4}
+                  required
+                  className={`neuromorphic-inset w-full px-4 py-3 bg-transparent rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-amber-500 ${
+                    theme === 'dark' ? 'text-white' : 'text-gray-900'
+                  }`}
+                  placeholder="Opisz swoje potrzeby..."
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="cyber-button w-full py-4 rounded-lg text-white font-semibold flex items-center justify-center hover-glow transition-all disabled:opacity-50"
+              >
+                {isSubmitting ? (
+                  <>
+                    <div className="cyber-loader w-5 h-5 mr-3" />
+                    Wysyłanie...
+                  </>
+                ) : (
+                  <>
+                    <Mail className="w-5 h-5 mr-2" />
+                    Wyślij wiadomość
+                  </>
+                )}
+              </button>
+            </form>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+});
+
+ContactSection.displayName = 'ContactSection';
+
+// Enhanced Footer
+const Footer = React.memo(() => {
+  const { theme } = React.useContext(ThemeContext);
+
+  return (
+    <footer className={`border-t ${
+      theme === 'dark' 
+        ? 'bg-black border-gray-800' 
+        : 'bg-gray-50 border-gray-300'
+    }`}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+          {/* Company Info */}
+          <div>
+            <h3 className={`text-2xl font-bold mb-4 font-heading ${
+              theme === 'dark' ? 'text-white' : 'text-gray-900'
+            }`}>
+              SecurHUB
+            </h3>
+            <p className={`text-sm mb-4 ${
+              theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+            }`}>
+              Innowacyjna platforma cybersecurity dla dużych przedsiębiorstw i korporacji.
+            </p>
+            <div className="flex space-x-3">
+              <a
+                href="#"
+                className={`p-2 rounded-lg transition-colors ${
+                  theme === 'dark'
+                    ? 'hover:bg-gray-800 text-gray-400 hover:text-white'
+                    : 'hover:bg-gray-200 text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                <LinkedIn className="w-5 h-5" />
+              </a>
+              <a
+                href="#"
+                className={`p-2 rounded-lg transition-colors ${
+                  theme === 'dark'
+                    ? 'hover:bg-gray-800 text-gray-400 hover:text-white'
+                    : 'hover:bg-gray-200 text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                <Twitter className="w-5 h-5" />
+              </a>
+              <a
+                href="#"
+                className={`p-2 rounded-lg transition-colors ${
+                  theme === 'dark'
+                    ? 'hover:bg-gray-800 text-gray-400 hover:text-white'
+                    : 'hover:bg-gray-200 text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                <Github className="w-5 h-5" />
+              </a>
+            </div>
+          </div>
+
+          {/* Services */}
+          <div>
+            <h4 className={`font-semibold mb-4 ${
+              theme === 'dark' ? 'text-white' : 'text-gray-900'
+            }`}>
+              Usługi
+            </h4>
+            <ul className={`space-y-2 text-sm ${
+              theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+            }`}>
+              <li><a href="#" className="hover:text-amber-400 transition-colors">Pentesting</a></li>
+              <li><a href="#" className="hover:text-amber-400 transition-colors">Audyt bezpieczeństwa</a></li>
+              <li><a href="#" className="hover:text-amber-400 transition-colors">Monitoring 24/7</a></li>
+              <li><a href="#" className="hover:text-amber-400 transition-colors">Incident Response</a></li>
+            </ul>
+          </div>
+
+          {/* Company */}
+          <div>
+            <h4 className={`font-semibold mb-4 ${
+              theme === 'dark' ? 'text-white' : 'text-gray-900'
+            }`}>
+              Firma
+            </h4>
+            <ul className={`space-y-2 text-sm ${
+              theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+            }`}>
+              <li><a href="#" className="hover:text-amber-400 transition-colors">O nas</a></li>
+              <li><a href="#" className="hover:text-amber-400 transition-colors">Kariera</a></li>
+              <li><a href="#" className="hover:text-amber-400 transition-colors">Blog</a></li>
+              <li><a href="#" className="hover:text-amber-400 transition-colors">Kontakt</a></li>
+            </ul>
+          </div>
+
+          {/* Newsletter */}
+          <div>
+            <h4 className={`font-semibold mb-4 ${
+              theme === 'dark' ? 'text-white' : 'text-gray-900'
+            }`}>
+              Newsletter
+            </h4>
+            <p className={`text-sm mb-4 ${
+              theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+            }`}>
+              Bądź na bieżąco z najnowszymi trendami w cyberbezpieczeństwie
+            </p>
+            <form className="flex">
+              <input
+                type="email"
+                placeholder="twoj@email.com"
+                className={`neuromorphic-inset px-4 py-2 rounded-l-lg flex-1 bg-transparent focus:outline-none ${
+                  theme === 'dark' ? 'text-white' : 'text-gray-900'
+                }`}
+              />
+              <button className="bg-amber-500 px-4 py-2 rounded-r-lg text-black font-semibold hover:bg-amber-600 transition-colors">
+                <ArrowRight className="w-5 h-5" />
+              </button>
+            </form>
+          </div>
+        </div>
+
+        {/* Bottom Bar */}
+        <div className={`border-t pt-8 ${
+          theme === 'dark' ? 'border-gray-800' : 'border-gray-300'
+        }`}>
+          <div className="flex flex-col md:flex-row justify-between items-center">
+            <p className={`text-sm ${
+              theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+            }`}>
+              © 2025 SecurHUB. Wszystkie prawa zastrzeżone.
+            </p>
+            <div className="flex space-x-6 mt-4 md:mt-0">
+              <a href="#" className={`text-sm hover:text-amber-400 transition-colors ${
+                theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+              }`}>
+                Polityka prywatności
+              </a>
+              <a href="#" className={`text-sm hover:text-amber-400 transition-colors ${
+                theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+              }`}>
+                Regulamin
+              </a>
+              <a href="#" className={`text-sm hover:text-amber-400 transition-colors ${
+                theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+              }`}>
+                Cookies
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+});
+
+Footer.displayName = 'Footer';
+
+// Enhanced Navigation
+const Navigation = React.memo<{ 
+  scrollToSection: (sectionId: string) => void;
+  isScrolled: boolean;
+}>(({ scrollToSection, isScrolled }) => {
+  const { theme, toggleTheme } = React.useContext(ThemeContext);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const navItems = [
+    { name: 'Start', target: 'hero' },
+    { name: 'O nas', target: 'about' },
+    { name: 'Usługi', target: 'features' },
+    { name: 'Demo', target: 'demo' },
+    { name: 'Cennik', target: 'pricing' },
+    { name: 'Zespół', target: 'team' },
+    { name: 'FAQ', target: 'faq' },
+    { name: 'Kontakt', target: 'contact' }
+  ];
+
+  return (
+    <motion.nav
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
+        isScrolled 
+          ? theme === 'dark'
+            ? 'bg-black/90 backdrop-blur-lg border-b border-gray-800'
+            : 'bg-white/90 backdrop-blur-lg border-b border-gray-200'
+          : 'bg-transparent'
+      }`}
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-20">
+          {/* Logo */}
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            className="flex items-center cursor-pointer"
+            onClick={() => scrollToSection('hero')}
+          >
+            <Shield className="w-10 h-10 text-amber-400 mr-3" />
+            <span className={`text-2xl font-bold font-cyber ${
+              isScrolled || theme === 'light' ? (theme === 'dark' ? 'text-white' : 'text-gray-900') : 'text-white'
+            }`}>
+              SecurHUB
+            </span>
+          </motion.div>
+
+          {/* Desktop Navigation */}
+          <div className="hidden lg:flex items-center space-x-8">
+            {navItems.map((item) => (
+              <motion.button
+                key={item.name}
+                onClick={() => scrollToSection(item.target)}
+                whileHover={{ y: -2 }}
+                className={`font-medium transition-colors ${
+                  isScrolled || theme === 'light'
+                    ? theme === 'dark'
+                      ? 'text-gray-300 hover:text-amber-400'
+                      : 'text-gray-700 hover:text-amber-600'
+                    : 'text-gray-200 hover:text-amber-400'
+                }`}
+              >
+                {item.name}
+              </motion.button>
+            ))}
+          </div>
+
+          {/* Actions */}
+          <div className="flex items-center space-x-4">
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={toggleTheme}
+              className={`p-2 rounded-lg transition-colors ${
+                isScrolled || theme === 'light'
+                  ? theme === 'dark'
+                    ? 'hover:bg-gray-800 text-gray-400 hover:text-amber-400'
+                    : 'hover:bg-gray-200 text-gray-600 hover:text-amber-600'
+                  : 'hover:bg-white/10 text-gray-300 hover:text-amber-400'
+              }`}
+            >
+              {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            </motion.button>
+
+            <button
+              onClick={() => scrollToSection('contact')}
+              className="hidden md:block cyber-button px-6 py-2 rounded-lg text-white font-semibold"
+            >
+              Rozpocznij
+            </button>
+
+            {/* Mobile Menu Toggle */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className={`lg:hidden p-2 rounded-lg transition-colors ${
+                isScrolled || theme === 'light'
+                  ? theme === 'dark'
+                    ? 'hover:bg-gray-800 text-gray-400'
+                    : 'hover:bg-gray-200 text-gray-600'
+                  : 'hover:bg-white/10 text-gray-300'
+              }`}
+            >
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile Menu */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className={`lg:hidden ${
+                theme === 'dark' ? 'bg-gray-900' : 'bg-white'
+              } rounded-b-2xl shadow-xl`}
+            >
+              <div className="p-4 space-y-2">
+                {navItems.map((item) => (
+                  <button
+                    key={item.name}
+                    onClick={() => {
+                      scrollToSection(item.target);
+                      setMobileMenuOpen(false);
+                    }}
+                    className={`block w-full text-left px-4 py-3 rounded-lg transition-colors ${
+                      theme === 'dark'
+                        ? 'hover:bg-gray-800 text-gray-300 hover:text-amber-400'
+                        : 'hover:bg-gray-100 text-gray-700 hover:text-amber-600'
+                    }`}
+                  >
+                    {item.name}
+                  </button>
+                ))}
+                <button
+                  onClick={() => {
+                    scrollToSection('contact');
+                    setMobileMenuOpen(false);
+                  }}
+                  className="w-full cyber-button px-6 py-3 rounded-lg text-white font-semibold mt-4"
+                >
+                  Rozpocznij
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </motion.nav>
+  );
+});
+
+Navigation.displayName = 'Navigation';
+
+// Toast Component
+const Toast = React.memo<{ message: string; onClose: () => void }>(({ message, onClose }) => {
+  useEffect(() => {
+    const timer = setTimeout(onClose, 4000);
+    return () => clearTimeout(timer);
+  }, [onClose]);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 50, scale: 0.9 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: 50, scale: 0.9 }}
+      className="fixed bottom-6 right-6 bg-green-500 text-white px-6 py-4 rounded-xl shadow-2xl z-50 flex items-center max-w-sm"
+    >
+      <CheckCircle className="w-5 h-5 mr-3 flex-shrink-0" />
+      <p className="font-medium">{message}</p>
+    </motion.div>
+  );
+});
+
+Toast.displayName = 'Toast';
+
+// Enhanced Stats Section
+const StatsSection = React.memo(() => {
+  const { theme } = React.useContext(ThemeContext);
+  
+  const stats = [
+    { number: 25, suffix: "+", label: "Lat doświadczenia", icon: Clock },
+    { number: 500, suffix: "+", label: "Zadowolonych klientów", icon: Users },
+    { number: 99, suffix: "%", label: "Skuteczność testów", icon: Chart },
+    { number: 24, suffix: "/7", label: "Wsparcie techniczne", icon: Headset }
+  ];
+
+  return (
+    <section className="py-24 section-bg relative overflow-hidden">
+      <div className="absolute inset-0 cyber-grid opacity-5" />
+      
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+          {stats.map((stat, index) => (
+            <motion.div
+              key={stat.label}
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ delay: index * 0.1 }}
+              viewport={{ once: true }}
+              className="text-center"
+            >
+              <div className="neuromorphic p-6 rounded-2xl hover-glow group">
+                <stat.icon className="w-12 h-12 text-amber-400 mx-auto mb-4 group-hover:scale-110 transition-transform" />
+                <div className="text-4xl font-bold font-cyber mb-2">
+                  <CountUp end={stat.number} duration={2} />
+                  {stat.suffix}
+                </div>
+                <p className={`text-sm ${
+                  theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                }`}>
+                  {stat.label}
+                </p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+});
+
+StatsSection.displayName = 'StatsSection';
+
+// Count Up Animation
+const CountUp = React.memo<{ end: number; duration: number }>(({ end, duration }) => {
+  const [count, setCount] = useState(0);
+  const countRef = useRef<HTMLSpanElement>(null);
+  const isInView = useInView(countRef, { once: true });
+
+  useEffect(() => {
+    if (!isInView) return;
+
+    const startTime = Date.now();
+    const animate = () => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / (duration * 1000), 1);
+      const easeOut = 1 - Math.pow(1 - progress, 3);
+      setCount(Math.floor(easeOut * end));
+      
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      }
+    };
+    
+    requestAnimationFrame(animate);
+  }, [isInView, end, duration]);
+
+  return <span ref={countRef}>{count}</span>;
+});
+
+CountUp.displayName = 'CountUp';
+
+// About Section
+const AboutSection = React.memo(() => {
+  const { theme } = React.useContext(ThemeContext);
+
+  return (
+    <section id="about" className="py-24 section-bg relative">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <h2 className={`text-4xl md:text-5xl font-bold mb-4 font-heading ${
+            theme === 'dark' ? 'text-white' : 'text-gray-900'
+          }`}>
+            Dlaczego SecurHUB?
+          </h2>
+          <p className={`text-xl max-w-3xl mx-auto ${
+            theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+          }`}>
+            Jesteśmy liderem w branży cyberbezpieczeństwa z misją ochrony Twojego biznesu
+          </p>
+        </motion.div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+          >
+            <div className="space-y-6">
+              {[
+                {
+                  icon: Brain,
+                  title: "Zaawansowana AI",
+                  description: "Wykorzystujemy sztuczną inteligencję do wykrywania zagrożeń w czasie rzeczywistym"
+                },
+                {
+                  icon: Shield,
+                  title: "Proaktywna ochrona",
+                  description: "Nie czekamy na ataki - aktywnie szukamy i eliminujemy podatności"
+                },
+                {
+                  icon: Rocket,
+                  title: "Szybka reakcja",
+                  description: "Nasz zespół reaguje na incydenty w ciągu minut, nie godzin"
+                }
+              ].map((feature, index) => (
+                <motion.div
+                  key={feature.title}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                  className="flex items-start space-x-4"
+                >
+                  <div className="neuromorphic p-3 rounded-lg flex-shrink-0">
+                    <feature.icon className="w-6 h-6 text-amber-400" />
+                  </div>
+                  <div>
+                    <h3 className={`font-semibold mb-1 ${
+                      theme === 'dark' ? 'text-white' : 'text-gray-900'
+                    }`}>
+                      {feature.title}
+                    </h3>
+                    <p className={`text-sm ${
+                      theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                    }`}>
+                      {feature.description}
+                    </p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="relative"
+          >
+            <div className="neuromorphic p-8 rounded-2xl">
+              <div className="aspect-video rounded-lg overflow-hidden bg-gray-800 relative">
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="w-20 h-20 bg-amber-500 rounded-full flex items-center justify-center hover-glow"
+                  >
+                    <Play className="w-8 h-8 text-black ml-1" />
+                  </motion.button>
+                </div>
+                <div className="absolute bottom-4 left-4 text-white">
+                  <p className="text-sm opacity-80">Zobacz jak działamy</p>
+                  <p className="font-semibold">2:30</p>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+});
+
+AboutSection.displayName = 'AboutSection';
+
+// Certificates Section
+const CertificatesSection = React.memo(() => {
+  const { theme } = React.useContext(ThemeContext);
+
+  const certificates = [
+    { name: "ISO 27001", icon: Certificate },
+    { name: "SOC 2", icon: Shield },
+    { name: "GDPR", icon: Lock },
+    { name: "PCI DSS", icon: Server },
+    { name: "HIPAA", icon: ClipboardCheck },
+    { name: "NIST", icon: Award }
+  ];
+
+  return (
+    <section id="certificates" className="py-24 section-bg">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <h2 className={`text-4xl md:text-5xl font-bold mb-4 font-heading ${
+            theme === 'dark' ? 'text-white' : 'text-gray-900'
+          }`}>
+            Certyfikaty i zgodność
+          </h2>
+          <p className={`text-xl max-w-3xl mx-auto ${
+            theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+          }`}>
+            Spełniamy najwyższe standardy branżowe
+          </p>
+        </motion.div>
+
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+          {certificates.map((cert, index) => (
+            <motion.div
+              key={cert.name}
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ delay: index * 0.05 }}
+              viewport={{ once: true }}
+              whileHover={{ y: -5 }}
+              className="neuromorphic p-6 rounded-xl text-center hover-glow"
+            >
+              <cert.icon className="w-12 h-12 text-amber-400 mx-auto mb-3" />
+              <p className={`font-semibold text-sm ${
+                theme === 'dark' ? 'text-white' : 'text-gray-900'
+              }`}>
+                {cert.name}
+              </p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+});
+
+CertificatesSection.displayName = 'CertificatesSection';
+
+// Main App Component
+export default function SecurHubLanding() {
+  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const { scrollY } = useScroll();
+
+  const toggleTheme = useCallback(() => {
+    setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = scrollY.onChange(latest => {
+      setIsScrolled(latest > 50);
+    });
+    return () => unsubscribe();
+  }, [scrollY]);
+
+  useEffect(() => {
+    document.documentElement.className = theme;
+  }, [theme]);
+
+  const showToast = useCallback((message: string) => {
+    setToastMessage(message);
+  }, []);
+
+  const scrollToSection = useCallback((sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      const yOffset = -80;
+      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  }, []);
+
+  return (
+    <ErrorBoundary>
+      <ThemeContext.Provider value={{ theme, toggleTheme }}>
+        <div className={`min-h-screen ${theme} transition-colors duration-300`}>
+          <Navigation scrollToSection={scrollToSection} isScrolled={isScrolled} />
+          
+          <main>
+            <HeroSection scrollToSection={scrollToSection} />
+            <StatsSection />
+            <AboutSection />
+            <FeaturesSection />
+            <DemoSection />
+            <TestimonialsSection />
+            <PricingSection />
+            <CertificatesSection />
+            <TeamSection />
+            <FAQSection />
+            <ContactSection showToast={showToast} />
+          </main>
+
+          <Footer />
+
+          <AnimatePresence>
+            {toastMessage && (
+              <Toast 
+                message={toastMessage} 
+                onClose={() => setToastMessage(null)} 
+              />
+            )}
+          </AnimatePresence>
+        </div>
+      </ThemeContext.Provider>
+    </ErrorBoundary>
+  );
+}

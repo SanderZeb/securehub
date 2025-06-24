@@ -394,44 +394,7 @@ const features = [
   }
 ];
 
-const certificates = [
-  {
-    name: "ISO 27001",
-    description: "Zarządzanie bezpieczeństwem informacji",
-    image: "/api/placeholder/200/150",
-    fullDescription: "ISO 27001 to międzynarodowy standard określający wymagania dla systemów zarządzania bezpieczeństwem informacji (ISMS). Standard zapewnia systematyczne podejście do zarządzania wrażliwymi informacjami firmy, tak aby pozostały bezpieczne.",
-    details: [
-      "Systematyczne podejście do zarządzania bezpieczeństwem",
-      "Ciągłe doskonalenie procesów bezpieczeństwa", 
-      "Zgodność z międzynarodowymi standardami",
-      "Redukcja ryzyka naruszenia bezpieczeństwa"
-    ]
-  },
-  {
-    name: "ISO 27002",
-    description: "Zarządzanie bezpieczeństwem informacji",
-    image: "/api/placeholder/200/150",
-    fullDescription: "ISO 27002 to międzynarodowy standard zawierający praktyczne wskazówki dotyczące implementacji kontroli bezpieczeństwa informacji. Standard ten stanowi uzupełnienie dla ISO 27001 i pomaga organizacjom w wyborze i wdrażaniu odpowiednich zabezpieczeń.",
-    details: [
-      "Praktyczne wskazówki implementacyjne",
-      "Katalog kontroli bezpieczeństwa", 
-      "Wsparcie dla ISO 27001",
-      "Najlepsze praktyki branżowe"
-    ]
-  },
-  {
-    name: "ISO 27003",
-    description: "Wdrażanie ISMS",
-    image: "/api/placeholder/200/150",
-    fullDescription: "ISO 27003 to standard zawierający wytyczne dotyczące wdrażania systemu zarządzania bezpieczeństwem informacji (ISMS). Pomaga organizacjom w praktycznej implementacji wymagań ISO 27001.",
-    details: [
-      "Wytyczne wdrożeniowe ISMS",
-      "Praktyczne podejście do implementacji", 
-      "Wsparcie procesu certyfikacji",
-      "Metodologia zarządzania projektami ISMS"
-    ]
-  }
-];
+
 
 const cyberStats = [
   {
@@ -461,10 +424,10 @@ const cyberStats = [
 ];
 
 const companySizeOptions = [
-  { value: "wole-nie-mowic", label: "Wolę nie mówić" },
+  { value: "wole-nie-mowic", label: "Podam na późniejszym etapie" },
   { value: "<50", label: "Mniej niż 50 pracowników" },
-  { value: "51-200", label: "51 - 200 pracowników" },
-  { value: "200+", label: "Powyżej 200 pracowników" },
+  { value: "50-249", label: "50 - 249 pracowników" },
+  { value: "250+", label: "Powyżej 250 pracowników" },
 ];
 
 const navigationItems = [
@@ -629,7 +592,7 @@ const Toast = React.memo<ToastProps>(({ message, onClose }) => {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 50, scale: 0.9 }}
+      initial={{ opacity: 0.8, y: 50, scale: 0.9 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: 50, scale: 0.9 }}
       className={`fixed bottom-6 right-6 px-6 py-4 rounded-xl shadow-2xl z-50 border max-w-sm ${
@@ -871,7 +834,7 @@ const CertificateModal = React.memo<CertificateModalProps>(({ certificate, isOpe
                   {certificate.details.map((detail, index) => (
                     <motion.li
                       key={index}
-                      initial={{ opacity: 0, x: -20 }}
+                      initial={{ opacity: 0.8, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ duration: 0.3, delay: index * 0.1 }}
                       className={`flex items-start text-sm sm:text-base font-body ${
@@ -921,7 +884,7 @@ const CyberStatsSection = React.memo(() => {
       
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0.8, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
@@ -943,7 +906,7 @@ const CyberStatsSection = React.memo(() => {
           {cyberStats.map((stat, index) => (
             <motion.div
               key={`${stat.label}-${index}`}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0.8, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               viewport={{ once: true }}
@@ -986,28 +949,6 @@ const CyberStatsSection = React.memo(() => {
           ))}
         </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.5 }}
-          viewport={{ once: true }}
-          className="mt-12 text-center"
-        >
-          <div className={`neuromorphic p-6 sm:p-8 rounded-2xl max-w-4xl mx-auto ${
-            theme === 'dark' ? 'bg-gray-900/50' : 'bg-white/50'
-          }`}>
-            <h3 className={`text-xl sm:text-2xl font-bold mb-4 font-heading ${
-              theme === 'dark' ? 'text-white' : 'text-gray-900'
-            }`}>
-              Nie czekaj na atak - działaj prewencyjnie!
-            </h3>
-            <p className={`font-body text-base sm:text-lg leading-relaxed ${
-              theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
-            }`}>
-              Statystyki pokazują rosnące zagrożenie cyberatakami. Nasz zespół ekspertów pomoże Ci zbudować solidną obronę przed współczesnymi zagrożeniami cybernetycznymi.
-            </p>
-          </div>
-        </motion.div>
       </div>
     </section>
   );
@@ -1062,7 +1003,7 @@ const CustomDropdown = React.memo<CustomDropdownProps>(({
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
+            initial={{ opacity: 0.8, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
@@ -1206,7 +1147,7 @@ const NavigationBar = React.memo<{
       <AnimatePresence>
         {mobileNavActive && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
+            initial={{ opacity: 0.8, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
@@ -1366,7 +1307,7 @@ const HeroSection = React.memo<{ scrollToSection: (sectionId: string) => void }>
           </div>
 
           <motion.p
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0.8, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
             className="text-lg sm:text-xl md:text-2xl mb-12 text-gray-100 max-w-4xl mx-auto font-body leading-relaxed px-4"
@@ -1378,7 +1319,7 @@ const HeroSection = React.memo<{ scrollToSection: (sectionId: string) => void }>
           </motion.p>
 
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0.8, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.9 }}
             className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center px-4"
@@ -1407,7 +1348,7 @@ const HeroSection = React.memo<{ scrollToSection: (sectionId: string) => void }>
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0.8, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 1.2 }}
             className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 px-4"
@@ -1415,7 +1356,7 @@ const HeroSection = React.memo<{ scrollToSection: (sectionId: string) => void }>
             {statsData.map((stat, index) => (
               <motion.div
                 key={`${stat.label}-${index}`}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0.8, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 1.4 + index * 0.1 }}
                 className="text-center"
@@ -1444,7 +1385,7 @@ const AboutSection = React.memo(() => {
     <section id="about" className="py-16 sm:py-24 section-bg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0.8, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
@@ -1468,7 +1409,7 @@ const AboutSection = React.memo(() => {
             return (
               <motion.div
                 key={`${block.title}-${index}`}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0.8, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.05 }}
                 viewport={{ once: true }}
@@ -1502,7 +1443,7 @@ const AboutSection = React.memo(() => {
 
                 <div className="flex-1 w-full lg:max-w-md">
                   <motion.div 
-                    initial={{ opacity: 0, scale: 0.95 }}
+                    initial={{ opacity: 0.8, scale: 0.95 }}
                     whileInView={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.6, delay: 0.2 }}
                     viewport={{ once: true }}
@@ -1636,7 +1577,7 @@ const FeatureCard = React.memo<{
   
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0.8, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: index * 0.05 }}
       viewport={{ once: true }}
@@ -1738,14 +1679,513 @@ const FeaturesSection = React.memo(() => {
 
 FeaturesSection.displayName = 'FeaturesSection';
 
+const certificates = [
+  {
+    name: "OSEP",
+    description: "Offensive Security Experienced Penetration Tester",
+    image: "/api/placeholder/200/150",
+    fullDescription: "OSEP to zaawansowany certyfikat penetration testingu od Offensive Security, koncentrujący się na evasion techniques i advanced exploitation w środowiskach korporacyjnych.",
+    details: [
+      "Zaawansowane techniki evasion",
+      "Exploitation w środowiskach korporacyjnych", 
+      "Advanced persistence techniques",
+      "Lateral movement i privilege escalation"
+    ]
+  },
+  {
+    name: "AD",
+    description: "Active Directory Security",
+    image: "/api/placeholder/200/150",
+    fullDescription: "Specjalizacja w zabezpieczaniu i testowaniu środowisk Active Directory, obejmująca zaawansowane techniki ataków i obrony.",
+    details: [
+      "Bezpieczeństwo Active Directory",
+      "Zaawansowane techniki ataków AD", 
+      "Konfiguracja zabezpieczeń domenowych",
+      "Monitoring i wykrywanie zagrożeń AD"
+    ]
+  },
+  {
+    name: "AWS Architect Associate",
+    description: "AWS Solutions Architect Associate",
+    image: "/api/placeholder/200/150",
+    fullDescription: "Certyfikat AWS Solutions Architect Associate potwierdza umiejętności projektowania i wdrażania skalowalnych systemów w chmurze AWS.",
+    details: [
+      "Projektowanie architektur chmurowych",
+      "Bezpieczeństwo w AWS", 
+      "Optymalizacja kosztów",
+      "Wysoką dostępność i odporność na awarie"
+    ]
+  },
+  {
+    name: "AWS Security Specialty",
+    description: "AWS Certified Security – Specialty",
+    image: "/api/placeholder/200/150",
+    fullDescription: "Zaawansowany certyfikat AWS koncentrujący się na bezpieczeństwie w chmurze, obejmujący identity management, data protection i incident response.",
+    details: [
+      "Bezpieczeństwo danych w chmurze",
+      "Identity and Access Management", 
+      "Logging i monitoring bezpieczeństwa",
+      "Incident response w AWS"
+    ]
+  },
+  {
+    name: "Android Forensics",
+    description: "Android Forensics with Belkasoft",
+    image: "/api/placeholder/200/150",
+    fullDescription: "Specjalistyczny certyfikat w dziedzinie kryminalistyki cyfrowej na platformie Android z wykorzystaniem narzędzi Belkasoft.",
+    details: [
+      "Analiza urządzeń mobilnych Android",
+      "Odzyskiwanie usuniętych danych", 
+      "Analiza aplikacji mobilnych",
+      "Dokumentacja dowodów cyfrowych"
+    ]
+  },
+  {
+    name: "ISO 27001 Lead Auditor",
+    description: "Audytor wiodący ISO 27001",
+    image: "/api/placeholder/200/150",
+    fullDescription: "Certyfikat audytora wiodącego ISO 27001 umożliwia przeprowadzanie audytów systemów zarządzania bezpieczeństwem informacji.",
+    details: [
+      "Audyty ISMS zgodne z ISO 27001",
+      "Metodologie audytowe", 
+      "Zarządzanie ryzykiem informacyjnym",
+      "Raportowanie i rekomendacje"
+    ]
+  },
+  {
+    name: "CARTP",
+    description: "Certified Azure Red Team Professional",
+    image: "/api/placeholder/200/150",
+    fullDescription: "Certyfikat Red Team Professional dla środowiska Microsoft Azure, koncentrujący się na zaawansowanych technikach ataków w chmurze.",
+    details: [
+      "Red teaming w środowisku Azure",
+      "Zaawansowane techniki ataków chmurowych", 
+      "Azure AD exploitation",
+      "Persistence w chmurze Microsoft"
+    ]
+  },
+  {
+    name: "CEH",
+    description: "Certified Ethical Hacker",
+    image: "/api/placeholder/200/150",
+    fullDescription: "CEH to globalnie uznawany certyfikat ethical hackera, pokrywający szeroki zakres technik testowania penetracyjnego i analizy bezpieczeństwa.",
+    details: [
+      "Etyczne hackowanie i penetration testing",
+      "Rozpoznanie i skanowanie", 
+      "Exploitation i post-exploitation",
+      "Raportowanie luk bezpieczeństwa"
+    ]
+  },
+  {
+    name: "CEPT",
+    description: "Certified Expert Penetration Tester",
+    image: "/api/placeholder/200/150",
+    fullDescription: "CEPT to zaawansowany certyfikat eksperta w dziedzinie testów penetracyjnych, potwierdzający wysokie umiejętności w identyfikowaniu i wykorzystywaniu luk bezpieczeństwa.",
+    details: [
+      "Zaawansowane testy penetracyjne",
+      "Metodologie testowania bezpieczeństwa", 
+      "Analiza złożonych systemów",
+      "Eksperckie raportowanie"
+    ]
+  },
+  {
+    name: "Chainanalysis CRC",
+    description: "Chainanalysis Reactor Certification",
+    image: "/api/placeholder/200/150",
+    fullDescription: "Certyfikat Chainanalysis Reactor Certification (CRC) potwierdza umiejętności w zakresie analizy transakcji kryptowalutowych i śledztw blockchain.",
+    details: [
+      "Analiza transakcji blockchain",
+      "Śledzenie przepływu kryptowalut", 
+      "Identyfikacja podejrzanych adresów",
+      "Compliance w kryptowalutach"
+    ]
+  },
+  {
+    name: "CISSP",
+    description: "Certified Information Systems Security Professional",
+    image: "/api/placeholder/200/150",
+    fullDescription: "CISSP to prestiżowy certyfikat bezpieczeństwa informacji, pokrywający osiem domen bezpieczeństwa i wymagający znacznego doświadczenia praktycznego.",
+    details: [
+      "Zarządzanie bezpieczeństwem i ryzykiem",
+      "Bezpieczeństwo aktywów", 
+      "Inżynieria bezpieczeństwa",
+      "Bezpieczeństwo operacyjne"
+    ]
+  },
+  {
+    name: "CRTP",
+    description: "Certified Red Team Professional",
+    image: "/api/placeholder/200/150",
+    fullDescription: "CRTP koncentruje się na zaawansowanych technikach Red Team, symulujących rzeczywiste ataki przeciwko środowiskom Active Directory.",
+    details: [
+      "Red Team operations",
+      "Active Directory exploitation", 
+      "Lateral movement techniques",
+      "Persistence i evasion"
+    ]
+  },
+  {
+    name: "DSOC",
+    description: "Digital Security Operations Center",
+    image: "/api/placeholder/200/150",
+    fullDescription: "Certyfikat DSOC potwierdza umiejętności w zakresie operacji centrów bezpieczeństwa cyfrowego, monitoring i response na incydenty.",
+    details: [
+      "Operacje Security Operations Center",
+      "Monitoring bezpieczeństwa 24/7", 
+      "Incident response procedures",
+      "Threat hunting i analiza"
+    ]
+  },
+  {
+    name: "eWPTX",
+    description: "eLearnSecurity Web Application Penetration Tester eXtreme",
+    image: "/api/placeholder/200/150",
+    fullDescription: "eWPTX to zaawansowany certyfikat testowania penetracyjnego aplikacji webowych, koncentrujący się na skomplikowanych scenariuszach ataków.",
+    details: [
+      "Zaawansowane testy aplikacji web",
+      "Complex exploitation scenarios", 
+      "Manual testing techniques",
+      "Advanced web vulnerabilities"
+    ]
+  },
+  {
+    name: "HAK",
+    description: "Hacker Attack Kit",
+    image: "/api/placeholder/200/150",
+    fullDescription: "Certyfikat HAK koncentruje się na praktycznych umiejętnościach hackingu i technikach ataków, wykorzystywanych w testach penetracyjnych.",
+    details: [
+      "Praktyczne techniki hackingu",
+      "Narzędzia i metodologie ataków", 
+      "System exploitation",
+      "Network penetration"
+    ]
+  },
+  {
+    name: "HKT",
+    description: "Hacker Techniques",
+    image: "/api/placeholder/200/150",
+    fullDescription: "HKT obejmuje szerokie spektrum technik hackerskich, od podstawowych po zaawansowane, używanych w profesjonalnych testach bezpieczeństwa.",
+    details: [
+      "Zaawansowane techniki hackerskie",
+      "Social engineering", 
+      "Physical security testing",
+      "Wireless network attacks"
+    ]
+  },
+  {
+    name: "ISO 27001",
+    description: "Information Security Management Systems",
+    image: "/api/placeholder/200/150",
+    fullDescription: "ISO 27001 to międzynarodowy standard dla systemów zarządzania bezpieczeństwem informacji (ISMS), definiujący wymagania dla skutecznego zarządzania bezpieczeństwem.",
+    details: [
+      "Systemy zarządzania bezpieczeństwem",
+      "Zarządzanie ryzykiem informacyjnym", 
+      "Ciągłe doskonalenie ISMS",
+      "Compliance i audyty"
+    ]
+  },
+  {
+    name: "Mobile Security",
+    description: "Mobile Security & Penetration Testing",
+    image: "/api/placeholder/200/150",
+    fullDescription: "Specjalizacja w bezpieczeństwie urządzeń mobilnych i testowaniu penetracyjnym aplikacji mobilnych na platformach iOS i Android.",
+    details: [
+      "Bezpieczeństwo aplikacji mobilnych",
+      "iOS i Android penetration testing", 
+      "Mobile malware analysis",
+      "Mobile device forensics"
+    ]
+  },
+  {
+    name: "OSCE",
+    description: "Offensive Security Certified Expert",
+    image: "/api/placeholder/200/150",
+    fullDescription: "OSCE to bardzo zaawansowany certyfikat od Offensive Security, wymagający umiejętności w zakresie custom exploit development i advanced penetration testing.",
+    details: [
+      "Advanced exploit development",
+      "Custom payload creation", 
+      "Bypass security mechanisms",
+      "Advanced penetration testing"
+    ]
+  },
+  {
+    name: "OSCP",
+    description: "Offensive Security Certified Professional",
+    image: "/api/placeholder/200/150",
+    fullDescription: "OSCP to jeden z najbardziej szanowanych certyfikatów penetration testing, wymagający praktycznych umiejętności w zakresie ethical hackingu.",
+    details: [
+      "Practical penetration testing",
+      "Manual exploitation techniques", 
+      "Linux i Windows exploitation",
+      "Network penetration testing"
+    ]
+  },
+  {
+    name: "OSWE",
+    description: "Offensive Security Web Expert",
+    image: "/api/placeholder/200/150",
+    fullDescription: "OSWE koncentruje się na zaawansowanym testowaniu bezpieczeństwa aplikacji webowych, w tym white-box testing i source code review.",
+    details: [
+      "Advanced web application testing",
+      "Source code review", 
+      "White-box testing methodologies",
+      "Custom web exploitation"
+    ]
+  },
+  {
+    name: "OSWP",
+    description: "Offensive Security Wireless Professional",
+    image: "/api/placeholder/200/150",
+    fullDescription: "OSWP to certyfikat specjalizujący się w testowaniu bezpieczeństwa sieci bezprzewodowych i technikach ataków wireless.",
+    details: [
+      "Wireless network security testing",
+      "WiFi penetration testing", 
+      "Wireless encryption attacks",
+      "Rogue access point detection"
+    ]
+  },
+  {
+    name: "OWASP",
+    description: "Open Web Application Security Project",
+    image: "/api/placeholder/200/150",
+    fullDescription: "Certyfikacje OWASP koncentrują się na bezpieczeństwie aplikacji webowych zgodnie z najlepszymi praktykami i standardami OWASP.",
+    details: [
+      "OWASP Top 10 vulnerabilities",
+      "Secure coding practices", 
+      "Web application security testing",
+      "Application security standards"
+    ]
+  },
+  {
+    name: "Security Analyst",
+    description: "Security Analyst (Blue Team)",
+    image: "/api/placeholder/200/150",
+    fullDescription: "Certyfikat Blue Team Security Analyst koncentruje się na obronie, monitoringu i analizie incydentów bezpieczeństwa w organizacji.",
+    details: [
+      "Security monitoring i analysis",
+      "Incident detection i response", 
+      "Threat hunting",
+      "Defense strategies"
+    ]
+  },
+  {
+    name: "Security Essentials",
+    description: "Information Security Essentials",
+    image: "/api/placeholder/200/150",
+    fullDescription: "Security Essentials pokrywa fundamentalne koncepcje bezpieczeństwa informacji, stanowiąc solidną podstawę dla specjalistów bezpieczeństwa.",
+    details: [
+      "Fundamenty bezpieczeństwa informacji",
+      "Security governance", 
+      "Risk management basics",
+      "Security awareness"
+    ]
+  },
+  {
+    name: "Web App Security Expert",
+    description: "Web Application Security Expert",
+    image: "/api/placeholder/200/150",
+    fullDescription: "Certyfikat eksperta w dziedzinie bezpieczeństwa aplikacji webowych, obejmujący zaawansowane techniki testowania i zabezpieczania aplikacji.",
+    details: [
+      "Advanced web application security",
+      "Secure development lifecycle", 
+      "Application threat modeling",
+      "Advanced penetration testing"
+    ]
+  },
+  {
+    name: "WebSec",
+    description: "Web Security Specialist",
+    image: "/api/placeholder/200/150",
+    fullDescription: "WebSec to specjalizacja w bezpieczeństwie web, obejmująca zarówno testing jak i implementację zabezpieczeń aplikacji webowych.",
+    details: [
+      "Web security testing",
+      "Security architecture review", 
+      "Vulnerability assessment",
+      "Web application hardening"
+    ]
+  }
+];
+
 const CertificatesSection = React.memo<{ onCertificateClick: (certificate: typeof certificates[0]) => void }>(({ onCertificateClick }) => {
   const { theme } = React.useContext(ThemeContext);
-  
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [isPaused, setIsPaused] = useState(false);
+  const [isUserInteracting, setIsUserInteracting] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, scrollLeft: 0 });
+  const userInteractionTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Auto-scroll effect
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    let animationId: number;
+    let scrollPosition = container.scrollLeft;
+    const scrollSpeed = 0.5; // Adjust speed as needed
+
+    const animate = () => {
+      if (!isPaused && !isUserInteracting && !isDragging && container) {
+        scrollPosition += scrollSpeed;
+        
+        // Reset scroll position when reaching the end
+        if (scrollPosition >= container.scrollWidth - container.clientWidth) {
+          scrollPosition = 0;
+        }
+        
+        container.scrollLeft = scrollPosition;
+      } else if (container) {
+        // Update scrollPosition to current position when paused
+        scrollPosition = container.scrollLeft;
+      }
+      animationId = requestAnimationFrame(animate);
+    };
+
+    animationId = requestAnimationFrame(animate);
+
+    return () => {
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+      }
+    };
+  }, [isPaused, isUserInteracting, isDragging]);
+
+  // Handle user interaction timeout
+  const resetUserInteraction = useCallback(() => {
+    if (userInteractionTimeoutRef.current) {
+      clearTimeout(userInteractionTimeoutRef.current);
+    }
+    userInteractionTimeoutRef.current = setTimeout(() => {
+      setIsUserInteracting(false);
+    }, 2000); // Resume auto-scroll after 2 seconds of no interaction
+  }, []);
+
+  // Mouse wheel scrolling
+  const handleWheel = useCallback((e: React.WheelEvent) => {
+    e.preventDefault();
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    setIsUserInteracting(true);
+    
+    // Horizontal scrolling (convert vertical wheel to horizontal)
+    const scrollAmount = e.deltaY !== 0 ? e.deltaY : e.deltaX;
+    container.scrollLeft += scrollAmount;
+    
+    resetUserInteraction();
+  }, [resetUserInteraction]);
+
+  // Drag functionality
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    setIsDragging(true);
+    setIsUserInteracting(true);
+    setDragStart({
+      x: e.pageX - container.offsetLeft,
+      scrollLeft: container.scrollLeft
+    });
+    
+    container.style.cursor = 'grabbing';
+    container.style.userSelect = 'none';
+  }, []);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    if (!isDragging) return;
+    
+    e.preventDefault();
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const x = e.pageX - container.offsetLeft;
+    const walk = (x - dragStart.x) * 2; // Multiply for faster scrolling
+    container.scrollLeft = dragStart.scrollLeft - walk;
+  }, [isDragging, dragStart]);
+
+  const handleMouseUp = useCallback(() => {
+    setIsDragging(false);
+    const container = scrollContainerRef.current;
+    if (container) {
+      container.style.cursor = 'grab';
+      container.style.userSelect = 'auto';
+    }
+    resetUserInteraction();
+  }, [resetUserInteraction]);
+
+  const handleMouseLeave = useCallback(() => {
+    if (isDragging) {
+      setIsDragging(false);
+      const container = scrollContainerRef.current;
+      if (container) {
+        container.style.cursor = 'grab';
+        container.style.userSelect = 'auto';
+      }
+    }
+    setIsPaused(false);
+    resetUserInteraction();
+  }, [isDragging, resetUserInteraction]);
+
+  const handleMouseEnter = useCallback(() => {
+    setIsPaused(true);
+    const container = scrollContainerRef.current;
+    if (container) {
+      container.style.cursor = 'grab';
+    }
+  }, []);
+
+  // Touch support for mobile
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    setIsDragging(true);
+    setIsUserInteracting(true);
+    const touch = e.touches[0];
+    setDragStart({
+      x: touch.pageX - container.offsetLeft,
+      scrollLeft: container.scrollLeft
+    });
+  }, []);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (!isDragging) return;
+    
+    e.preventDefault();
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const touch = e.touches[0];
+    const x = touch.pageX - container.offsetLeft;
+    const walk = (x - dragStart.x) * 2;
+    container.scrollLeft = dragStart.scrollLeft - walk;
+  }, [isDragging, dragStart]);
+
+  const handleTouchEnd = useCallback(() => {
+    setIsDragging(false);
+    resetUserInteraction();
+  }, [resetUserInteraction]);
+
+  // Handle scroll events (for trackpad, etc.)
+  const handleScroll = useCallback(() => {
+    setIsUserInteracting(true);
+    resetUserInteraction();
+  }, [resetUserInteraction]);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (userInteractionTimeoutRef.current) {
+        clearTimeout(userInteractionTimeoutRef.current);
+      }
+    };
+  }, []);
+
   return (
-    <section id="certificates" className="py-16 sm:py-24 section-bg">
+    <section id="certificates" className="py-16 sm:py-24 section-bg overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0.8, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
@@ -1763,50 +2203,139 @@ const CertificatesSection = React.memo<{ onCertificateClick: (certificate: typeo
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10">
-          {certificates.map((certificate, index) => (
-            <motion.div
-              key={`${certificate.name}-${index}`}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.05 }}
-              viewport={{ once: true }}
-              whileHover={{ y: -5 }}
-              className="neuromorphic p-8 rounded-2xl text-center group hover:shadow-blue-500/20 transition-all duration-500 relative overflow-hidden cursor-pointer"
-              onClick={() => onCertificateClick(certificate)}
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              
-              <div className="relative z-10">
-                <div className="w-32 h-24 mx-auto mb-6 neuromorphic-inset rounded-xl flex items-center justify-center group-hover:shadow-blue-500/30 transition-all duration-500">
-                  <Certificate className="w-16 h-16 text-amber-400 group-hover:text-amber-300 transition-colors duration-500" />
-                </div>
-                
-                <h3 className={`text-xl font-bold mb-2 font-heading ${
-                  theme === 'dark' ? 'text-white' : 'text-gray-900'
-                }`}>
-                  {certificate.name}
-                </h3>
-                
-                <p className={`text-sm font-body mb-4 ${
-                  theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-                }`}>
-                  {certificate.description}
-                </p>
+        <div 
+          className="relative"
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        >
+          {/* Gradient overlays for smooth edge effect */}
+          <div className={`absolute left-0 top-0 w-20 h-full bg-gradient-to-r z-10 pointer-events-none ${
+            theme === 'dark' 
+              ? 'from-black via-black/90 to-transparent' 
+              : 'from-gray-50 via-gray-50/90 to-transparent'
+          }`} />
+          <div className={`absolute right-0 top-0 w-20 h-full bg-gradient-to-l z-10 pointer-events-none ${
+            theme === 'dark' 
+              ? 'from-black via-black/90 to-transparent' 
+              : 'from-gray-50 via-gray-50/90 to-transparent'
+          }`} />
 
-                <motion.div
-                  className={`inline-flex items-center text-sm font-body transition-colors duration-200 ${
-                    theme === 'dark' ? 'text-amber-400 group-hover:text-amber-300' : 'text-amber-600 group-hover:text-amber-700'
-                  }`}
-                  whileHover={{ x: 3 }}
-                >
-                  Zobacz szczegóły
-                  <ChevronRight className="w-4 h-4 ml-1" />
-                </motion.div>
-              </div>
-            </motion.div>
-          ))}
+          <div 
+            ref={scrollContainerRef}
+            className="flex gap-6 overflow-x-auto scrollbar-hide pb-4 select-none"
+            style={{ 
+              scrollBehavior: 'auto',
+              WebkitOverflowScrolling: 'touch',
+              cursor: 'grab'
+            }}
+            onWheel={handleWheel}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            onScroll={handleScroll}
+          >
+            {certificates.map((certificate, index) => (
+              <motion.div
+                key={`${certificate.name}-${index}`}
+                initial={{ opacity: 0.8, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: index * 0.02 }}
+                viewport={{ once: true }}
+                whileHover={{ y: -5, scale: 1.02 }}
+                className="neuromorphic p-6 rounded-2xl text-center group hover:shadow-blue-500/20 transition-all duration-500 relative overflow-hidden cursor-pointer flex-shrink-0"
+                style={{ minWidth: '280px', width: '280px' }}
+                onClick={() => onCertificateClick(certificate)}
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                
+                <div className="relative z-10">
+                  <div className="w-20 h-16 mx-auto mb-4 neuromorphic-inset rounded-xl flex items-center justify-center group-hover:shadow-blue-500/30 transition-all duration-500">
+                    <Certificate className="w-10 h-10 text-amber-400 group-hover:text-amber-300 transition-colors duration-500" />
+                  </div>
+                  
+                  <h3 className={`text-lg font-bold mb-2 font-heading ${
+                    theme === 'dark' ? 'text-white' : 'text-gray-900'
+                  }`}>
+                    {certificate.name}
+                  </h3>
+                  
+                  <p className={`text-xs font-body mb-3 line-clamp-2 ${
+                    theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                  }`}>
+                    {certificate.description}
+                  </p>
+
+                  <motion.div
+                    className={`inline-flex items-center text-xs font-body transition-colors duration-200 ${
+                      theme === 'dark' ? 'text-amber-400 group-hover:text-amber-300' : 'text-amber-600 group-hover:text-amber-700'
+                    }`}
+                    whileHover={{ x: 2 }}
+                  >
+                    Zobacz szczegóły
+                    <ChevronRight className="w-3 h-3 ml-1" />
+                  </motion.div>
+                </div>
+              </motion.div>
+            ))}
+            
+            {/* Duplicate certificates for seamless loop */}
+            {certificates.slice(0, 10).map((certificate, index) => (
+              <motion.div
+                key={`duplicate-${certificate.name}-${index}`}
+                whileHover={{ y: -5, scale: 1.02 }}
+                className="neuromorphic p-6 rounded-2xl text-center group hover:shadow-blue-500/20 transition-all duration-500 relative overflow-hidden cursor-pointer flex-shrink-0"
+                style={{ minWidth: '280px', width: '280px' }}
+                onClick={() => onCertificateClick(certificate)}
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                
+                <div className="relative z-10">
+                  <div className="w-20 h-16 mx-auto mb-4 neuromorphic-inset rounded-xl flex items-center justify-center group-hover:shadow-blue-500/30 transition-all duration-500">
+                    <Certificate className="w-10 h-10 text-amber-400 group-hover:text-amber-300 transition-colors duration-500" />
+                  </div>
+                  
+                  <h3 className={`text-lg font-bold mb-2 font-heading ${
+                    theme === 'dark' ? 'text-white' : 'text-gray-900'
+                  }`}>
+                    {certificate.name}
+                  </h3>
+                  
+                  <p className={`text-xs font-body mb-3 line-clamp-2 ${
+                    theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                  }`}>
+                    {certificate.description}
+                  </p>
+
+                  <motion.div
+                    className={`inline-flex items-center text-xs font-body transition-colors duration-200 ${
+                      theme === 'dark' ? 'text-amber-400 group-hover:text-amber-300' : 'text-amber-600 group-hover:text-amber-700'
+                    }`}
+                    whileHover={{ x: 2 }}
+                  >
+                    Zobacz szczegóły
+                    <ChevronRight className="w-3 h-3 ml-1" />
+                  </motion.div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
+
+
+
+        {/* Add custom scrollbar hiding styles */}
+        <style jsx>{`
+          .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+          }
+          .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+          }
+        `}</style>
       </div>
     </section>
   );
@@ -1819,6 +2348,7 @@ const ContactSection = React.memo<{ showToast: (message: string) => void }>(({ s
   const [formData, setFormData] = useState({
     email: "",
     organization: "",
+    phone: "",
     companySize: "wole-nie-mowic",
     message: ""
   });
@@ -1838,7 +2368,7 @@ const ContactSection = React.memo<{ showToast: (message: string) => void }>(({ s
     const trimmed = message.trim();
     if (trimmed === "") return "Wiadomość jest wymagana";
     if (trimmed.length < 10) return "Wiadomość musi zawierać co najmniej 10 znaków";
-    if (trimmed.length > 1000) return "Wiadomość nie może przekraczać 1000 znaków";
+    if (trimmed.length > 10000) return "Wiadomość nie może przekraczać 10000 znaków";
     return "";
   }, []);
 
@@ -1865,7 +2395,7 @@ const ContactSection = React.memo<{ showToast: (message: string) => void }>(({ s
     await new Promise(resolve => setTimeout(resolve, 1500));
     
     showToast("Wiadomość została wysłana! Skontaktujemy się wkrótce.");
-    setFormData({ email: "", organization: "", companySize: "wole-nie-mowic", message: "" });
+    setFormData({ email: "", phone: "", organization: "", companySize: "wole-nie-mowic", message: "" });
     setErrors({ email: "", message: "" });
     setIsSubmitting(false);
   }, [showToast, validateForm]);
@@ -1885,10 +2415,10 @@ const ContactSection = React.memo<{ showToast: (message: string) => void }>(({ s
   }, [errors, formData.message]);
 
   return (
-    <section id="contact" className="py-16 sm:py-24 section-bg">
+        <section id="contact" className="py-16 sm:py-24 section-bg bg-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0.8, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
@@ -1902,17 +2432,27 @@ const ContactSection = React.memo<{ showToast: (message: string) => void }>(({ s
           <p className={`text-lg sm:text-xl max-w-3xl mx-auto font-body ${
             theme === 'dark' ? 'text-gray-200' : 'text-gray-600'
           }`}>
-            To nic nie kosztuje – pozostaw wiadomość, a skontaktuje się z Tobą nasz dedykowany doradca
+            To nic nie kosztuje – pozostaw wiadomość, a skontaktuje się z Tobą nasz dedykowany doradca. Konsultacja jest całkowicie bezpłatna. Nasz ekspert pomoże zidentyfikować obszary wymagające wzmocnienia bezpieczeństwa.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+        <div className="flex flex-col md:flex-row md:items-stretch gap-8 lg:gap-12">
+            
+            <div className="w-full md:w-1/3">
+              <img 
+                src="https://i.ibb.co/cKtgny3N/obok-formularza-kontaktowego-1.png"
+                alt="Knight in full armor using a modern laptop" 
+                className="rounded-lg object-cover w-full h-full shadow-lg"
+                onError={(e) => { e.currentTarget.src = 'https://placehold.co/600x800/1f2937/a855f7?text=Image+Not+Found'; }}
+              />
+            </div>
+
           <motion.div
-            initial={{ opacity: 0, x: -30 }}
+            initial={{ opacity: 0.8, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="neuromorphic p-6 sm:p-8 rounded-2xl"
+            className="neuromorphic w-full md:w-1/2 p-6 sm:p-8 rounded-2xl flex flex-col justify-center" 
           >
             <h3 className={`text-xl sm:text-2xl font-bold mb-6 font-heading flex items-center ${
               theme === 'dark' ? 'text-white' : 'text-gray-900'
@@ -1925,7 +2465,7 @@ const ContactSection = React.memo<{ showToast: (message: string) => void }>(({ s
                 <label className={`block text-sm font-medium mb-2 font-body ${
                   theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
                 }`}>
-                  Adres e-mail (opcjonalnie)
+                  Adres e-mail *
                 </label>
                 <input
                   type="email"
@@ -1944,7 +2484,7 @@ const ContactSection = React.memo<{ showToast: (message: string) => void }>(({ s
                 />
                 {errors.email && (
                   <motion.p
-                    initial={{ opacity: 0, y: -10 }}
+                    initial={{ opacity: 0.8, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="text-red-400 text-xs mt-2 font-body flex items-center"
                   >
@@ -1954,7 +2494,7 @@ const ContactSection = React.memo<{ showToast: (message: string) => void }>(({ s
                 )}
                 {!errors.email && formData.email && formData.email.trim() !== '' && (
                   <motion.p
-                    initial={{ opacity: 0, y: -10 }}
+                    initial={{ opacity: 0.8, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="text-green-400 text-xs mt-2 font-body flex items-center"
                   >
@@ -1967,7 +2507,7 @@ const ContactSection = React.memo<{ showToast: (message: string) => void }>(({ s
                 <label className={`block text-sm font-medium mb-2 font-body ${
                   theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
                 }`}>
-                  Organizacja (opcjonalnie)
+                  NIP firmy lub nazwa (opcjonalnie)
                 </label>
                 <input
                   type="text"
@@ -1976,7 +2516,23 @@ const ContactSection = React.memo<{ showToast: (message: string) => void }>(({ s
                   className={`neuromorphic-inset w-full px-4 py-3 bg-transparent rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all duration-200 font-body text-sm sm:text-base ${
                     theme === 'dark' ? 'text-gray-100' : 'text-gray-800'
                   }`}
-                  placeholder="Nazwa firmy"
+                  placeholder="NIP lub nazwa firmy"
+                />
+              </div>
+              <div>
+                <label className={`block text-sm font-medium mb-2 font-body ${
+                  theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
+                }`}>
+                  Telefon kontaktowy (opcjonalnie)
+                </label>
+                <input
+                  type="text"
+                  value={formData.phone}
+                  onChange={(e) => handleInputChange('phone', e.target.value)}
+                  className={`neuromorphic-inset w-full px-4 py-3 bg-transparent rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all duration-200 font-body text-sm sm:text-base ${
+                    theme === 'dark' ? 'text-gray-100' : 'text-gray-800'
+                  }`}
+                  placeholder="Telefon kontaktowy"
                 />
               </div>
               <div>
@@ -1997,7 +2553,7 @@ const ContactSection = React.memo<{ showToast: (message: string) => void }>(({ s
                   <label className={`text-sm font-medium font-body ${
                     theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
                   }`}>
-                    Jak możemy pomóc? *
+                    Wiadomość do Opiekuna Klienta *
                   </label>
                   <span className={`text-xs font-body ${
                     formData.message.length > 1000 
@@ -2018,11 +2574,11 @@ const ContactSection = React.memo<{ showToast: (message: string) => void }>(({ s
                       ? 'focus:ring-2 focus:ring-red-500 border-red-500/50' 
                       : 'focus:ring-2 focus:ring-amber-500'
                   }`}
-                  placeholder="Opisz swoje potrzeby lub wyzwania..."
+                  placeholder="Podpowiemy, doradzimy..."
                 />
                 {errors.message && (
                   <motion.p
-                    initial={{ opacity: 0, y: -10 }}
+                    initial={{ opacity: 0.8, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="text-red-400 text-xs mt-2 font-body flex items-center"
                   >
@@ -2032,7 +2588,7 @@ const ContactSection = React.memo<{ showToast: (message: string) => void }>(({ s
                 )}
                 {!errors.message && formData.message.trim() && formData.message.length >= 10 && (
                   <motion.p
-                    initial={{ opacity: 0, y: -10 }}
+                    initial={{ opacity: 0.8, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="text-green-400 text-xs mt-2 font-body flex items-center"
                   >
@@ -2070,84 +2626,6 @@ const ContactSection = React.memo<{ showToast: (message: string) => void }>(({ s
               </PremiumButton>
             </div>
           </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            viewport={{ once: true }}
-            className="space-y-6 sm:space-y-8"
-          >
-            <motion.div 
-              whileHover={{ y: -2 }}
-              transition={{ duration: 0.3 }}
-              className="neuromorphic p-6 rounded-xl hover:shadow-amber-500/15 transition-all duration-300"
-            >
-              <h4 className={`text-lg font-semibold mb-4 font-heading ${
-                theme === 'dark' ? 'text-white' : 'text-gray-900'
-              }`}>
-                Dlaczego warto z nami współpracować?
-              </h4>
-              <ul className={`space-y-3 font-body ${
-                theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
-              }`}>
-                {[
-                  { icon: Shield, text: "Ponad 25 lat doświadczenia w branży" },
-                  { icon: Users, text: "Dedykowany opiekun od pierwszego dnia" },
-                  { icon: Lock, text: "Pełna ochrona poufności informacji" },
-                  { icon: Award, text: "Najwyższe standardy jakości" }
-                ].map((item, index) => (
-                  <li 
-                    key={`contact-benefit-${index}`}
-                    className="flex items-center text-sm sm:text-base"
-                  >
-                    <item.icon className="w-5 h-5 text-amber-400 mr-3 flex-shrink-0" />
-                    {item.text}
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-
-            <motion.div 
-              whileHover={{ y: -2 }}
-              transition={{ duration: 0.3 }}
-              className="neuromorphic p-6 rounded-xl hover:shadow-purple-500/15 transition-all duration-300"
-            >
-              <h4 className={`text-lg font-semibold mb-4 font-heading ${
-                theme === 'dark' ? 'text-white' : 'text-gray-900'
-              }`}>
-                Informacja o anonimowości
-              </h4>
-              <p className={`font-body text-sm sm:text-base leading-relaxed ${
-                theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
-              }`}>
-                Jeżeli na tym etapie pragniesz pozostać anonimowy, wystarczy podać dowolny adres e-mail lub telefon do kontaktu, a pozostałe pola pozostawić puste – nasz doradca zajmie się resztą.
-              </p>
-            </motion.div>
-
-            <motion.div 
-              whileHover={{ y: -2 }}
-              transition={{ duration: 0.3 }}
-              className="neuromorphic p-6 rounded-xl hover:shadow-amber-500/15 transition-all duration-300"
-            >
-              <h4 className={`text-lg font-semibold mb-4 font-heading ${
-                theme === 'dark' ? 'text-white' : 'text-gray-900'
-              }`}>
-                Bezpłatna konsultacja
-              </h4>
-              <p className={`font-body text-sm sm:text-base leading-relaxed mb-4 ${
-                theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
-              }`}>
-                Pierwsza konsultacja jest całkowicie bezpłatna. Nasz ekspert pomoże zidentyfikować obszary wymagające wzmocnienia bezpieczeństwa.
-              </p>
-              <div className={`flex items-center ${
-                theme === 'dark' ? 'text-green-400' : 'text-green-800'
-              }`}>
-                <CheckCircle className="w-4 h-4 mr-2" />
-                <span className="text-sm font-body">100% bez zobowiązań</span>
-              </div>
-            </motion.div>
-          </motion.div>
         </div>
       </div>
     </section>
@@ -2167,8 +2645,6 @@ const Footer = React.memo(() => {
   ], []);
 
   const legalList = useMemo(() => [
-    "Polityka prywatności",
-    "Regulamin", 
     "Cookies"
   ], []);
 
@@ -2182,7 +2658,7 @@ const Footer = React.memo(() => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
           <div className="sm:col-span-2 lg:col-span-1">
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0.8, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
@@ -2229,7 +2705,7 @@ const Footer = React.memo(() => {
           </motion.div>
           
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0.8, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
             viewport={{ once: true }}
@@ -2246,7 +2722,7 @@ const Footer = React.memo(() => {
               <p>Pełna poufność informacji</p>
               <p>Indywidualne podejście</p>
               <p className="text-amber-400 hover:text-amber-300 transition-colors duration-200 cursor-pointer">
-                hello@securhub.pl
+                biuro@securhub.pl
               </p>
             </div>
           </motion.div>
@@ -2290,6 +2766,7 @@ const Footer = React.memo(() => {
 });
 
 Footer.displayName = 'Footer';
+
 
 export default function SecurHubLanding() {
   const [theme, setTheme] = useState<'light' | 'dark'>('dark');
@@ -2353,6 +2830,7 @@ export default function SecurHubLanding() {
   }, []);
 
   return (
+
     <MouseProvider>
       <ThemeContext.Provider value={{ theme, toggleTheme }}>
         <div className={`min-h-screen font-body overflow-x-hidden transition-colors duration-300 ${
@@ -2387,5 +2865,6 @@ export default function SecurHubLanding() {
         </div>
       </ThemeContext.Provider>
     </MouseProvider>
+
   );
 }
