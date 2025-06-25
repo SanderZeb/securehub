@@ -26,6 +26,8 @@ import {
   FaSun as Sun,
   FaMoon as Moon,
   FaCertificate as Certificate,
+  FaGavel as Legal,
+  FaEye as SOC,
 } from "react-icons/fa";
 
 const globalStyles = `
@@ -68,6 +70,9 @@ const globalStyles = `
 .light ::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(180deg, #999999, #808080);
 }
+
+/* Fixed: Removed the problematic img height rule that was breaking object-contain */
+/* Original problematic rule was: img { height: revert-layer!important; } */
 
 .dark .neuromorphic {
   background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
@@ -346,55 +351,117 @@ const ThemeContext = React.createContext<{
 const features = [
   {
     icon: Code,
-    title: "Pentest Aplikacji",
-    description: "Weryfikacja poziomu bezpieczeństwa aplikacji webowych i mobilnych zgodnie z OWASP Top 10.",
-    details: ["Testy automatyczne i manualne", "Wykrywanie luk 0-day", "Fuzzing dostosowany do technologii"],
+    title: "Pentest Aplikacji Webowych i Mobilnych",
+    description: "Weryfikacja poziomu bezpieczeństwa aplikacji webowych i mobilnych.",
+    bulletPoints: [
+      "Testy zgodne ze standardami OWASP Top 10 i ASVS",
+      "Testy automatyczne i manualne",
+      "Wykrywanie luk 0-day poprzez fuzzing",
+      "Testowanie interfejsów i API"
+    ],
     color: "from-amber-600 to-yellow-700",
-    customImage: "https://i.postimg.cc/028QSP2c/chmurowe.png"
+    fullDescription: "Weryfikacja poziomu bezpieczeństwa aplikacji webowych i mobilnych. Testy są wykonywane zgodnie ze standardami Best Practices, OWASP Top 10 i OWASP ASVS. Testy automatyczne są przeprowadzane przy użyciu komercyjnych i open-source'owych skanerów oraz własnych skryptów. Testy manualne pomagają wykryć i potwierdzić występowanie określonych luk. Wiąże się to również z wykrywaniem nowych, nieznanych luk 0-day (poprzez fuzzing). Fuzzing będzie dostosowany do technologii wykorzystywanych przez aplikację. Testy obejmują również aspekt dostępnych interfejsów i API.",
+    customImage: '/images/web.png'
   },
   {
     icon: Network,
     title: "Pentest Sieci i Chmury",
-    description: "Ocena ryzyka, zgodności i dostępności usług w środowisku sieciowym i chmurowym.",
-    details: ["Zgodność z ISO", "Usługa OSINT", "Skanowanie podatności"],
-    color: "from-orange-600 to-amber-600",
-    customImage: "https://i.postimg.cc/bvGdvgNP/webowe.png"
+    description: "Test penetracyjny pozwala na ocenę ryzyka, zgodności i dostępności usług.",
+    bulletPoints: [
+      "Zgodność z ISO i podatnościami CVE",
+      "Usługa OSINT (biały wywiad)",
+      "Dedykowany test lub skanowanie podatności",
+      "Weryfikacja usług w sieci i chmurze"
+    ],
+    color: "from-amber-600 to-yellow-700",
+    fullDescription: "Test penetracyjny pozwala na ocenę ryzyka, zgodności i dostępności usług. Pozwala zweryfikować poziom bezpieczeństwa usług, aplikacji i protokołów w sieci i w chmurze zgodnie ze standardem ISO i powszechnymi podatnościami (CVE). W pierwszej fazie może być również uwzględniona usługa OSINT (biały wywiad, zbieranie informacji). Usługa może być wdrożona jako dedykowany test penetracyjny lub po prostu skanowanie podatności.",
+    customImage: '/images/chmurowe.png'
   },
   {
     icon: Bug,
     title: "Audyt Kodu Źródłowego",
     description: "Kompleksowa analiza kodu zgodnie z modelem DevSecOps - Security by design.",
-    details: ["Analiza ręczna i automatyczna", "Audyt Blockchain", "Wykrywanie błędów bezpieczeństwa"],
-    color: "from-yellow-600 to-orange-600",
-    customImage: "https://i.ibb.co/ZRTChdZG/kod.png"
+    bulletPoints: [
+      "Analiza ręczna i automatyczna",
+      "Zgodność z modelem DevSecOps",
+      "Audyt Blockchain",
+      "Wykrywanie błędów bezpieczeństwa"
+    ],
+    color: "from-amber-600 to-yellow-700",
+    fullDescription: "Kompleksowa analiza kodu źródłowego pozwala na odkrycie błędów bezpieczeństwa lub naruszeń konwencji programowania zgodnie z modelem DevSecOps (Security by design, security by default). Wykonywana ręcznie, a także przy pomocy komercyjnych i własnych narzędzi. Może to również obejmować audyt kodu źródłowego Blockchain.",
+    customImage: '/images/kod.png'
   },
   {
     icon: Server,
-    title: "Utwardzanie Systemów",
+    title: "Utwardzanie Systemów i Urządzeń",
     description: "Wdrażanie dodatkowych warstw ochrony zgodnie ze standardem OSSTMM.",
-    details: ["Serwery i usługi sieciowe", "Urządzenia IoT", "Środowiska chmury"],
-    color: "from-amber-700 to-yellow-600",
-    customImage: "https://i.postimg.cc/Z5sCZ2mj/utwardzenie2-png.png"
+    bulletPoints: [
+      "Serwery i usługi sieciowe",
+      "Urządzenia IoT i hosty",
+      "Środowiska chmury (Azure, AWS, GCP)",
+      "Zgodność ze standardem OSSTMM"
+    ],
+    color: "from-amber-600 to-yellow-700",
+    fullDescription: "Wdrażanie dodatkowych warstw ochrony urządzeń, aplikacji i usług, aby były zgodne z dostarczonymi wymaganiami i standardami. Dla serwerów, usług sieciowych, hostów, urządzeń IoT w celu wdrożenia najlepszej możliwej ochrony. Proces utwardzania koncentruje się również na utwardzaniu środowiska chmury (Azure, AWS, GCP itp.) zgodnie ze standardem OSSTMM.",
+    customImage: '/images/utwardzanie.png'
   },
   {
     icon: UserSecret,
     title: "Inżynieria Społeczna",
     description: "Bezpieczna symulacja prawdziwych ataków hakerskich.",
-    details: ["Symulacje phishingu", "Testy vishingu", "Włamania fizyczne"],
-    color: "from-orange-700 to-amber-700",
-    customImage: "https://i.ibb.co/0y6x0v1L/soc-1.png"
+    bulletPoints: [
+      "Symulacje phishingu i vishingu",
+      "Włamania fizyczne",
+      "Identyfikacja krytycznych ryzyk",
+      "Bezpieczne dla organizacji"
+    ],
+    color: "from-amber-600 to-yellow-700",
+    fullDescription: "Symulacja prawdziwego ataku (logicznego lub fizycznego), takiego jaki realizują prawdziwi hakerzy, ale całkowicie bezpieczna dla organizacji. Pozwala zidentyfikować najbardziej krytyczne ryzyka potencjalnej utraty danych (kradzieży) i kompromitacji. Symulacje phishingu, vishingu i włamań fizycznych.",
+    customImage: '/images/phishing.png'
   },
   {
     icon: ClipboardCheck,
-    title: "Audyt Zgodności",
+    title: "Audyty Zgodności",
     description: "Przegląd zgodności z regulacjami WCAG, ISO 27001, GDPR, DORA, NIS2.",
-    details: ["Przepisy zewnętrzne", "Wytyczne wewnętrzne", "Kontrole i procedury"],
-    color: "from-yellow-700 to-orange-700",
-    customImage: "https://i.ibb.co/b5Hf5VYF/audyt.png"
+    bulletPoints: [
+      "Przepisy zewnętrzne (WCAG, ISO 27001, GDPR)",
+      "Regulacje DORA i NIS2",
+      "Wytyczne wewnętrzne organizacji",
+      "Kontrole i procedury compliance"
+    ],
+    color: "from-amber-600 to-yellow-700",
+    fullDescription: "Kompleksowy przegląd przestrzegania przez organizację wytycznych regulacyjnych (WCAG, ISO 27001, GDPR, ISO 9001, DORA, NIS2). Celem jest zapewnienie, że organizacja przestrzega zewnętrznych przepisów, zasad i regulacji lub wewnętrznych wytycznych, takich jak statuty korporacyjne, kontrole, zasady i procedury. Audyty zgodności mogą również określić, czy organizacja przestrzega umowy, np. gdy podmiot przyjmuje finansowanie rządowe lub inne.",
+    customImage: '/images/audyt zgodnosci.png'
+  },
+  {
+    icon: Legal,
+    title: "Doradztwo Prawne i Stała Opieka",
+    description: "Utrzymanie przedsiębiorstwa w zgodności z wymogami i normami.",
+    bulletPoints: [
+      "Zgodność z wymogami prawnymi",
+      "Aktualizacja dokumentów i certyfikacji",
+      "Ciągłe wsparcie compliance",
+      "Opieka przy wdrożeniach i audytach"
+    ],
+    color: "from-amber-600 to-yellow-700",
+    fullDescription: "Ten moduł odpowiada za utrzymanie przedsiębiorstwa w zgodności z wymogami i normami w czasie, zarówno przy wdrożeniu, audycie jak i później, aby na bieżąco aktualizować wymagane dokumenty i certyfikacje. Zapewniamy ciągłe wsparcie prawne i monitorowanie zmian w przepisach, które mogą wpłynąć na działalność organizacji.",
+    customImage: '/images/libra.png'
+  },
+  {
+    icon: SOC,
+    title: "Security Operations Center",
+    description: "Całodobowe monitorowanie i reagowanie na incydenty bezpieczeństwa.",
+    bulletPoints: [
+      "Monitoring 24/7/365",
+      "Wykrywanie zagrożeń w czasie rzeczywistym",
+      "Incident response i forensyka",
+      "Threat hunting i analiza"
+    ],
+    color: "from-amber-600 to-yellow-700",
+    fullDescription: "Security Operations Center (SOC) zapewnia całodobowe monitorowanie środowiska IT organizacji w celu wykrywania, analizowania i reagowania na incydenty bezpieczeństwa cybernetycznego. Nasz SOC łączy zaawansowane technologie z doświadczeniem ekspertów, aby zapewnić najwyższy poziom ochrony przed zagrożeniami.",
+    customImage: '/images/soc.png'
   }
 ];
-
-
 
 const cyberStats = [
   {
@@ -411,7 +478,7 @@ const cyberStats = [
   },
   {
     number: 4.88,
-    suffix: "mln zł",
+    suffix: "mln USD",
     label: "Średni koszt naruszenia",
     description: "Koszt jednego incydentu bezpieczeństwa"
   },
@@ -434,7 +501,6 @@ const navigationItems = [
   { name: "O nas", target: "about" },
   { name: "Statystyki", target: "stats" },
   { name: "Współpraca", target: "features" },
-  { name: "Certyfikaty", target: "certificates" },
   { name: "Kontakt", target: "contact" }
 ];
 
@@ -450,25 +516,30 @@ const aboutBlocks = [
     title: "Rozwiązania skrojone na miarę",
     content: "Do każdego klienta podchodzimy indywidualnie rozpoznając rzeczywiste potrzeby a następnie budując indywidualny, dedykowany zespół doświadczonych ekspertów do ich wdrożenia.",
     icon: Users,
-    reverse: false
+    reverse: false,
+    customImage: '/images/img1.jpeg'
+  
   },
   {
     title: "Przeszło 25 lat doświadczenia",
     content: "Nasze zespoły opieramy wyłącznie na wyselekcjonowanych, sprawdzonych przez lata profesjonalistach objętych klauzulą ścisłej tajemnicy zawodowej. Stawiamy na najwyższe standardy jakości pracy i obsługi klienta!",
     icon: Award,
-    reverse: true
+    reverse: true,
+    customImage: '/images/img2.jpeg'
   },
   {
     title: "Twój partner w biznesie",
     content: "Koordynacja, pytania, wybory, kontakt z działem IT, raportowanie… od dziś to nie Twoje zmartwienie! SecurHUB zapewnia dedykowanego opiekuna już od pierwszego dnia współpracy. Na każdym etapie pozostaje do dyspozycji by pomóc i odpowiedzieć na wszelkie pytania.",
     icon: Headset,
-    reverse: false
+    reverse: false,
+    customImage: '/images/img3.jpeg'
   },
   {
     title: "Nam możesz zaufać",
     content: "Wiemy, jak ważna w dużym biznesie jest poufność informacji. Dlatego zespół SecurHUB zapewnia całkowitą ochronę tożsamości klienta na każdym etapie poprzedzającym ostateczne wdrożenie usługi a także minimalizuje dostęp do wrażliwych informacji na późniejszych jej etapach.",
     icon: Lock,
-    reverse: true
+    reverse: true,
+    customImage: '/images/img4.jpeg'
   }
 ];
 
@@ -512,11 +583,11 @@ const LazyImage = React.memo<{
   }, []);
 
   return (
-    <div className="relative">
+    <div className="relative w-full h-full">
       {isLoading && (
         <div 
           className={`absolute inset-0 image-placeholder rounded ${className}`}
-          style={{ width, height }}
+          style={{ width }}
         />
       )}
       {!hasError ? (
@@ -534,7 +605,7 @@ const LazyImage = React.memo<{
       ) : (
         <div 
           className={`flex items-center justify-center bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 ${className}`}
-          style={{ width, height }}
+          style={{ width }}
         >
           <span className="text-sm">Failed to load</span>
         </div>
@@ -695,7 +766,7 @@ const PremiumButton = React.memo<PremiumButtonProps>(({
       transition={{ duration: 0.2 }}
       className={buttonClassName}
     >
-      <span className="relative z-10 flex items-center">
+      <span className="relative z-10 flex items-center ">
         {children}
       </span>
     </motion.button>
@@ -710,6 +781,178 @@ interface CustomDropdownProps {
   options: { value: string; label: string }[];
   placeholder: string;
 }
+
+interface FeatureModalProps {
+  feature: typeof features[0] | null;
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+const FeatureModal = React.memo<FeatureModalProps>(({ feature, isOpen, onClose }) => {
+  const { theme } = React.useContext(ThemeContext);
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
+
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleEscape);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [isOpen, onClose]);
+
+  if (!feature) return null;
+
+  const Icon = feature.icon;
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          onClick={onClose}
+        >
+          <motion.div
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          />
+          
+          <motion.div
+            initial={{ scale: 0.95, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.95, opacity: 0, y: 20 }}
+            transition={{ duration: 0.2 }}
+            className={`relative w-full max-w-2xl max-h-[90vh] overflow-y-auto neuromorphic rounded-2xl p-6 sm:p-8 ${
+              theme === 'dark' ? 'bg-gray-900' : 'bg-white'
+            }`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-start mb-6">
+              <div className="flex items-center">
+                <div className="neuromorphic-inset w-16 h-16 rounded-xl flex items-center justify-center mr-4">
+                  <Icon className="w-8 h-8 text-amber-400" />
+                </div>
+                <div>
+                  <h3 className={`text-xl sm:text-2xl font-bold font-heading ${
+                    theme === 'dark' ? 'text-white' : 'text-gray-900'
+                  }`}>
+                    {feature.title}
+                  </h3>
+                  <p className={`text-sm ${
+                    theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                  }`}>
+                    {feature.description}
+                  </p>
+                </div>
+              </div>
+              
+              <motion.button
+                onClick={onClose}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                className={`p-2 rounded-lg transition-colors duration-200 ${
+                  theme === 'dark' 
+                    ? 'hover:bg-white/10 text-gray-300 hover:text-white' 
+                    : 'hover:bg-black/10 text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                <X className="w-5 h-5" />
+              </motion.button>
+            </div>
+
+            <div className="space-y-6">
+              {feature.customImage && (
+                <div className="relative h-48 sm:h-64 rounded-xl overflow-hidden">
+                  <LazyImage 
+                    src={feature.customImage}
+                    alt={feature.title}
+                    width={600}
+                    height={256}
+                    className="w-full h-full object-contain"
+                  />
+                  <div className={`absolute inset-0 bg-gradient-to-br opacity-20 ${feature.color}`} />
+                </div>
+              )}
+
+              <div>
+                <h4 className={`text-lg font-semibold mb-3 font-heading ${
+                  theme === 'dark' ? 'text-white' : 'text-gray-900'
+                }`}>
+                  Opis usługi
+                </h4>
+                <p className={`font-body leading-relaxed text-sm sm:text-base ${
+                  theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
+                }`}>
+                  {feature.fullDescription}
+                </p>
+              </div>
+
+              <div>
+                <h4 className={`text-lg font-semibold mb-4 font-heading ${
+                  theme === 'dark' ? 'text-white' : 'text-gray-900'
+                }`}>
+                  Kluczowe elementy
+                </h4>
+                <ul className="space-y-3">
+                  {feature.bulletPoints.map((point, index) => (
+                    <motion.li
+                      key={index}
+                      initial={{ opacity: 0.8, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.3, delay: index * 0.1 }}
+                      className={`flex items-start text-sm sm:text-base font-body ${
+                        theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
+                      }`}
+                    >
+                      <div className="w-2 h-2 bg-amber-400 rounded-full mr-3 mt-2 flex-shrink-0" />
+                      {point}
+                    </motion.li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+                <PremiumButton
+                  onClick={onClose}
+                  variant="primary"
+                  size="md"
+                  className="w-full"
+                >
+                  Zamknij
+                </PremiumButton>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+});
+
+FeatureModal.displayName = 'FeatureModal';
 
 interface CertificateModalProps {
   certificate: typeof certificates[0] | null;
@@ -779,9 +1022,18 @@ const CertificateModal = React.memo<CertificateModalProps>(({ certificate, isOpe
           >
             <div className="flex justify-between items-start mb-6">
               <div className="flex items-center">
-                <div className="neuromorphic-inset w-16 h-16 rounded-xl flex items-center justify-center mr-4">
-                  <Certificate className="w-8 h-8 text-amber-400" />
-                </div>
+                     <div className="w-12 h-12 mx-auto mb-3 glass-effect rounded-lg flex items-center justify-center group-hover:shadow-blue-500/30 transition-all duration-300">
+                        {certificate.image ? (
+                          <img
+                            src={certificate.image}
+                            alt={certificate.name}
+                            className="rounded-md object-contain w-full"
+                          />
+                        ) : (
+                          <Certificate className="w-6 h-6 text-amber-400 group-hover:text-amber-300 transition-colors duration-300" />
+                        )}
+                      </div>
+            
                 <div>
                   <h3 className={`text-xl sm:text-2xl font-bold font-heading ${
                     theme === 'dark' ? 'text-white' : 'text-gray-900'
@@ -898,7 +1150,8 @@ const CyberStatsSection = React.memo(() => {
           <p className={`text-lg sm:text-xl max-w-3xl mx-auto font-body ${
             theme === 'dark' ? 'text-gray-200' : 'text-gray-600'
           }`}>
-            Poznaj aktualne statystyki zagrożeń cybernetycznych na świecie
+            W erze globalnych napięć i cyfrowej transformacji, bezpieczeństwo informacji stało się jednym z filarów odporności państw i przedsiębiorstw. Przestępczość gospodarcza, niegdyś lokalna, dziś działa ponad granicami – cicho, skutecznie, bez ostrzeżenia. Codziennie powstają nowe wektory ataku, a skala zagrożeń rośnie wykładniczo.
+Wielu incydentów nie widać w nagłówkach – firmy często nie informują, że zapłaciły okup lub doświadczyły utraty danych. Milczenie nie oznacza braku problemu – przeciwnie, stanowi dziś część krajobrazu ryzyka.
           </p>
         </motion.div>
 
@@ -1090,7 +1343,7 @@ const NavigationBar = React.memo<{
               <div className="flex items-center">
                 <span className="flex-shrink-0">
                   <LazyImage 
-                    src="https://i.ibb.co/cXXYY8mg/logo2.png" 
+                    src="images/logo.png" 
                     alt="Secur" 
                     width={96}
                     height={96}
@@ -1127,8 +1380,8 @@ const NavigationBar = React.memo<{
                 variant="primary"
                 size="sm"
               >
-                Skontaktuj się
-                <ArrowRight className="w-4 h-4 ml-2" />
+                <span className="text-amber-300">Napisz do nas</span>
+                <ArrowRight className="w-4 h-4 ml-2 text-amber-300" />
               </PremiumButton>
             </div>
             <div className="md:hidden">
@@ -1189,7 +1442,15 @@ const NavigationBar = React.memo<{
 
 NavigationBar.displayName = 'NavigationBar';
 
-const HeroSection = React.memo<{ scrollToSection: (sectionId: string) => void }>(({ scrollToSection }) => {
+const HeroSection = React.memo<{
+  scrollToSection: (sectionId: string) => void;
+  onCertificateClick: (certificate: typeof certificates[0]) => void;
+}>(({ scrollToSection, onCertificateClick }) => {
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  // Corrected line
+  const animationRef = useRef<number | undefined>(undefined);
+  const scrollPositionRef = useRef(0);
+
   const handleContactClick = useCallback(() => {
     scrollToSection("contact");
   }, [scrollToSection]);
@@ -1200,11 +1461,11 @@ const HeroSection = React.memo<{ scrollToSection: (sectionId: string) => void }>
 
   const mouseXLocal = useMotionValue(0);
   const mouseYLocal = useMotionValue(0);
-  
+
   const springConfig = { damping: 25, stiffness: 150 };
   const x = useSpring(mouseXLocal, springConfig);
   const y = useSpring(mouseYLocal, springConfig);
-  
+
   const xTransform = useTransform(x, [-0.5, 0.5], [-12, 12]);
   const yTransform = useTransform(y, [-0.5, 0.5], [-8, 8]);
   const rotateX = useTransform(y, [-0.5, 0.5], [5, -5]);
@@ -1214,7 +1475,7 @@ const HeroSection = React.memo<{ scrollToSection: (sectionId: string) => void }>
     const rect = e.currentTarget.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
-    
+
     mouseXLocal.set((e.clientX - centerX) / rect.width);
     mouseYLocal.set((e.clientY - centerY) / rect.height);
   }, [mouseXLocal, mouseYLocal]);
@@ -1224,15 +1485,40 @@ const HeroSection = React.memo<{ scrollToSection: (sectionId: string) => void }>
     mouseYLocal.set(0);
   }, [mouseXLocal, mouseYLocal]);
 
+  // Auto-scroll effect for certificates (right to left)
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const animate = () => {
+      scrollPositionRef.current += 0.5; // Scroll speed
+
+      // Reset position for seamless loop
+      if (scrollPositionRef.current >= container.scrollWidth / 2) {
+        scrollPositionRef.current = 0;
+      }
+
+      container.scrollLeft = scrollPositionRef.current;
+      animationRef.current = requestAnimationFrame(animate);
+    };
+
+    animationRef.current = requestAnimationFrame(animate);
+
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, []);
   return (
     <section id="hero" className="min-h-screen hero-section text-white overflow-hidden relative select-none">
-      <div 
+      <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat select-none"
         style={{
-          backgroundImage: `url('https://i.ibb.co/nMxDZ9M3/Whats-App-Image-2025-06-20-at-13-38-36-2.jpg')`
+          backgroundImage: `url('/images/bgr.png')`
         }}
       />
-      
+
       <div className="hero-overlay absolute inset-0" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-20 flex items-center min-h-screen">
@@ -1253,55 +1539,41 @@ const HeroSection = React.memo<{ scrollToSection: (sectionId: string) => void }>
                 onMouseLeave={handleMouseLeave}
                 style={{ perspective: "1000px" }}
               >
-                <motion.div
-                  className="absolute inset-0 rounded-full blur-3xl"
-                  style={{
-                    x: useTransform(x, [-0.5, 0.5], [-8, 8]),
-                    y: useTransform(y, [-0.5, 0.5], [-6, 6]),
-                    scale: useTransform(x, [-0.5, 0, 0.5], [1.1, 1.2, 1.1])
-                  }}
-                />
-                
-                <motion.div
-                  className="relative z-10"
-                  style={{
-                    x: xTransform,
-                    y: yTransform,
-                    rotateX,
-                    rotateY,
-                    transformStyle: "preserve-3d"
-                  }}
-                  whileHover={{ 
-                    scale: 1.05,
-                    transition: { duration: 0.3, ease: "easeOut" }
-                  }}
-                >
-                  <LazyImage 
-                    src="https://i.ibb.co/j9T7prmF/logo.png" 
-                    alt="SecurHUB Logo" 
-                    width={512}
-                    height={512}
-                    className="w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 lg:w-[28rem] lg:h-[28rem] xl:w-[32rem] xl:h-[32rem] object-contain filter drop-shadow-2xl transition-all duration-300"
-                    priority={true}
+                {/* Central Logo Container */}
+                <div className="relative">
+                  <motion.div
+                    className="absolute inset-0 rounded-full blur-3xl"
+                    style={{
+                      x: useTransform(x, [-0.5, 0.5], [-8, 8]),
+                      y: useTransform(y, [-0.5, 0.5], [-6, 6]),
+                      scale: useTransform(x, [-0.5, 0, 0.5], [1.1, 1.2, 1.1])
+                    }}
                   />
-                </motion.div>
 
-                <motion.div
-                  className="absolute inset-0 rounded-full border border-amber-400/20"
-                  style={{
-                    x: useTransform(x, [-0.5, 0.5], [4, -4]),
-                    y: useTransform(y, [-0.5, 0.5], [3, -3]),
-                    scale: useTransform(x, [-0.5, 0, 0.5], [1.02, 1.05, 1.02]),
-                  }}
-                  animate={{
-                    rotate: [0, 360],
-                  }}
-                  transition={{
-                    duration: 20,
-                    repeat: Infinity,
-                    ease: "linear",
-                  }}
-                />
+                  <motion.div
+                    className="relative z-10"
+                    style={{
+                      x: xTransform,
+                      y: yTransform,
+                      rotateX,
+                      rotateY,
+                      transformStyle: "preserve-3d"
+                    }}
+                    whileHover={{
+                      scale: 1.05,
+                      transition: { duration: 0.3, ease: "easeOut" }
+                    }}
+                  >
+                    <LazyImage
+                      src="images/logo.png"
+                      alt="SecurHUB Logo"
+                      width={512}
+                      height={512}
+                      className="w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 lg:w-[28rem] lg:h-[28rem] xl:w-[32rem] xl:h-[32rem] object-contain filter drop-shadow-2xl transition-all duration-300"
+                      priority={true}
+                    />
+                  </motion.div>
+                </div>
               </motion.div>
             </motion.h1>
           </div>
@@ -1312,39 +1584,36 @@ const HeroSection = React.memo<{ scrollToSection: (sectionId: string) => void }>
             transition={{ duration: 0.8, delay: 0.6 }}
             className="text-lg sm:text-xl md:text-2xl mb-12 text-gray-100 max-w-4xl mx-auto font-body leading-relaxed px-4"
           >
-            Platforma dedykowana dla dużych przedsiębiorstw, zrzeszająca{" "}
+            SecurHUB to innowacyjna platforma skierowana do średnich i dużych przedsiebiorstw. Zrzeszamy wyłącznie certyfikowanych specjalistów oraz  {" "}
             <span className="text-amber-300 font-semibold">wyselekcjonowanych dostawców</span>{" "}
-            usług cybersecurity z{" "}
-            <span className="text-yellow-300 font-semibold">ponad 25-letnim doświadczeniem</span>
+            z wieloletnim doświadczeniem. Gwarantujemy tym samym {" "}
+            <span className="text-yellow-300 font-semibold">najwyższą jakość i bezpieczeństwo wykonywanych usług!</span>
           </motion.p>
 
           <motion.div
             initial={{ opacity: 0.8, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.9 }}
-            className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center px-4"
+            transition={{ duration: 0.8, delay: 0.8 }}
+            className="flex flex-col sm:flex-row gap-4 justify-center mb-16"
           >
             <PremiumButton
               onClick={handleContactClick}
               variant="primary"
               size="lg"
-              className="w-full sm:w-auto min-w-[250px]"
+              className="transform hover:scale-105 transition-transform duration-200"
             >
-              Sprawdź jak możemy pomóc
-              <ChevronRight className="w-5 h-5 ml-2" />
+              Rozpocznij współpracę
+              <ArrowRight className="w-5 h-5 ml-2" />
             </PremiumButton>
-            
-            <motion.button
+            <PremiumButton
               onClick={handleFeaturesClick}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="flex items-center text-gray-200 hover:text-white transition-colors duration-200 font-body group"
+              variant="ghost"
+              size="lg"
+              className="transform hover:scale-105 transition-transform duration-200"
             >
-              <div className="w-12 h-12 glass-effect rounded-full flex items-center justify-center mr-3 group-hover:bg-white/15 transition-all duration-200">
-                <Play className="w-5 h-5 ml-1" />
-              </div>
-              <span className="hidden sm:block">Zobacz więcej</span>
-            </motion.button>
+              <Play className="w-5 h-5 mr-2" />
+              Zobacz ofertę
+            </PremiumButton>
           </motion.div>
 
           <motion.div
@@ -1369,12 +1638,114 @@ const HeroSection = React.memo<{ scrollToSection: (sectionId: string) => void }>
               </motion.div>
             ))}
           </motion.div>
+
+          {/* Certificates Section Integrated */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 1.8 }}
+            className="mt-12 relative"
+          >
+            <div className="relative">
+              <div
+                ref={scrollContainerRef}
+                className="flex gap-4 overflow-x-hidden scrollbar-hide"
+                style={{
+                  scrollBehavior: 'auto',
+                  WebkitOverflowScrolling: 'touch'
+                }}
+              >
+                {/* Original certificates */}
+                {certificates.map((certificate, index) => (
+                  <motion.div
+                    key={`${certificate.name}-${index}`}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.4, delay: 2.0 + index * 0.05 }}
+                    whileHover={{ y: -3, scale: 1.05 }}
+                    className="p-4 rounded-xl text-center group hover:shadow-blue-500/20 transition-all duration-300 cursor-pointer flex-shrink-0"
+                    style={{ minWidth: '180px', width: '180px' }}
+                    onClick={() => onCertificateClick(certificate)}
+                  >
+                    <div className="absolute inset-0  opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl" />
+
+                    <div className="relative z-10">
+                      <div className="w-12 h-12 mx-auto mb-3 glass-effect rounded-lg flex items-center justify-center group-hover:shadow-blue-500/30 transition-all duration-300">
+                        {certificate.image ? (
+                          <img
+                            src={certificate.image}
+                            alt={certificate.name}
+                            className="rounded-md object-contain w-full "
+                          />
+                        ) : (
+                          <Certificate className="w-6 h-6 text-amber-400 group-hover:text-amber-300 transition-colors duration-300" />
+                        )}
+                      </div>
+
+                      <h3 className="text-sm font-bold mb-1 font-heading line-clamp-1 text-white">
+                        {certificate.name}
+                      </h3>
+
+                    </div>
+                  </motion.div>
+                ))}
+
+                {certificates.map((certificate, index) => (
+                  <motion.div
+                    key={`duplicate-${certificate.name}-${index}`}
+                    whileHover={{ y: -3, scale: 1.05 }}
+                    className="hero-section glass-effect p-4 rounded-xl text-center group hover:shadow-blue-500/20 transition-all duration-300 cursor-pointer flex-shrink-0"
+                    style={{ minWidth: '180px', width: '180px' }}
+                    onClick={() => onCertificateClick(certificate)}
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl" />
+
+                    <div className="relative z-10">
+                      <div className="w-12 h-12 mx-auto mb-3 glass-effect rounded-lg flex items-center justify-center group-hover:shadow-blue-500/30 transition-all duration-300">
+                        {certificate.image ? (
+                          <img
+                            src={certificate.image}
+                            alt={certificate.name}
+                            className="rounded-md object-contain w-full"
+                          />
+                        ) : (
+                          <Certificate className="w-6 h-6 text-amber-400 group-hover:text-amber-300 transition-colors duration-300" />
+                        )}
+                      </div>
+
+                      <h3 className="text-sm font-bold mb-1 font-heading line-clamp-1 text-white">
+                        {certificate.name}
+                      </h3>
+
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+
+            {/* Custom scrollbar hiding styles */}
+            <style jsx>{`
+              .scrollbar-hide {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+              }
+              .scrollbar-hide::-webkit-scrollbar {
+                display: none;
+              }
+              .line-clamp-1 {
+                overflow: hidden;
+                display: -webkit-box;
+                -webkit-line-clamp: 1;
+                -webkit-box-orient: vertical;
+              }
+            `}</style>
+          </motion.div>
         </div>
       </div>
-
     </section>
   );
 });
+
 
 HeroSection.displayName = 'HeroSection';
 
@@ -1457,94 +1828,117 @@ const AboutSection = React.memo(() => {
                       }`} />
                       
                       <div className="relative neuromorphic-inset rounded-2xl overflow-hidden shadow-2xl">
-                        <div className={`h-48 sm:h-64 bg-gradient-to-br ${
-                          theme === 'dark'
-                            ? 'from-amber-900/40 via-yellow-800/40 to-orange-900/40'
-                            : 'from-amber-200/60 via-yellow-200/60 to-orange-200/60'
-                        } relative`}>
-                          
-                          <motion.div
-                            className="absolute inset-0 opacity-30"
-                            animate={{
-                              background: [
-                                "radial-gradient(circle at 20% 80%, rgba(251, 191, 36, 0.3) 0%, transparent 50%)",
-                                "radial-gradient(circle at 80% 20%, rgba(251, 191, 36, 0.3) 0%, transparent 50%)",
-                                "radial-gradient(circle at 40% 40%, rgba(251, 191, 36, 0.3) 0%, transparent 50%)"
-                              ]
-                            }}
-                            transition={{
-                              duration: 4,
-                              repeat: Infinity,
-                              repeatType: "reverse"
-                            }}
-                          />
+                        {block.customImage ? (
+                          <div className="h-48 sm:h-64 relative">
 
-                          <div className="relative h-full flex items-center justify-center group">
-                            <MouseParallax strength={0.1} className="relative">
-                              <motion.div
-                                className="absolute inset-0 rounded-full"
-                                animate={{
-                                  boxShadow: [
-                                    "0 0 20px rgba(251, 191, 36, 0.0)",
-                                    "0 0 40px rgba(251, 191, 36, 0.3)",
-                                    "0 0 20px rgba(251, 191, 36, 0.0)"
-                                  ]
-                                }}
-                                transition={{
-                                  duration: 3,
-                                  repeat: Infinity,
-                                  ease: "easeInOut"
-                                }}
-                              />
-                              
-                              <motion.div
-                                whileHover={{ 
-                                  scale: 1.1,
-                                  rotate: [0, -5, 5, 0]
-                                }}
-                                transition={{ 
-                                  scale: { duration: 0.3 },
-                                  rotate: { duration: 0.6, ease: "easeInOut" }
-                                }}
-                                className="relative z-10"
-                              >
-                                <Icon className={`w-16 sm:w-20 h-16 sm:h-20 transition-all duration-500 ${
-                                  theme === 'dark'
-                                    ? 'text-amber-400 drop-shadow-[0_0_15px_rgba(251,191,36,0.5)]'
-                                    : 'text-amber-600 drop-shadow-[0_0_15px_rgba(217,119,6,0.3)]'
-                                }`} />
-                              </motion.div>
-
-                              {[...Array(3)].map((_, i) => (
-                                <motion.div
-                                  key={i}
-                                  className="absolute w-2 h-2 bg-amber-400/60 rounded-full"
-                                  animate={{
-                                    x: [0, 20, -20, 0],
-                                    y: [0, -15, 10, 0],
-                                    opacity: [0, 1, 1, 0]
-                                  }}
-                                  transition={{
-                                    duration: 4,
-                                    repeat: Infinity,
-                                    delay: i * 1.3,
-                                    ease: "easeInOut"
-                                  }}
-                                  style={{
-                                    left: `${20 + i * 20}%`,
-                                    top: `${30 + i * 15}%`
-                                  }}
-                                />
-                              ))}
-                            </MouseParallax>
-
-                            <div className={`absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-20 transition-opacity duration-500 ${
+                          <div className={`opacity-40 ${
                               theme === 'dark'
-                                ? 'from-amber-500/20 to-yellow-500/20'
-                                : 'from-amber-400/20 to-yellow-400/20'
+                                ? 'from-amber-900/40 via-yellow-800/40 to-orange-900/40'
+                                : 'from-amber-200/60 via-yellow-200/60 to-orange-200/60'
+                            }`} >
+                            <LazyImage 
+                              src={block.customImage}
+                              alt={block.title}
+                              width={400}
+                              height={256}
+                              className="w-full object-contain"
+                            />
+                            <div className={`absolute inset-0 bg-gradient-to-br opacity-20 ${
+                              theme === 'dark'
+                                ? 'from-amber-900/40 via-yellow-800/40 to-orange-900/40'
+                                : 'from-amber-200/60 via-yellow-200/60 to-orange-200/60'
                             }`} />
                           </div>
-                        </div>
+                          </div>
+                        ) : (
+                          <div className={`h-48 sm:h-64 bg-gradient-to-br ${
+                            theme === 'dark'
+                              ? 'from-amber-900/40 via-yellow-800/40 to-orange-900/40'
+                              : 'from-amber-200/60 via-yellow-200/60 to-orange-200/60'
+                          } relative`}>
+                            <motion.div
+                              className="absolute inset-0 opacity-30"
+                              animate={{
+                                background: [
+                                  "radial-gradient(circle at 20% 80%, rgba(251, 191, 36, 0.3) 0%, transparent 50%)",
+                                  "radial-gradient(circle at 80% 20%, rgba(251, 191, 36, 0.3) 0%, transparent 50%)",
+                                  "radial-gradient(circle at 40% 40%, rgba(251, 191, 36, 0.3) 0%, transparent 50%)"
+                                ]
+                              }}
+                              transition={{
+                                duration: 4,
+                                repeat: Infinity,
+                                repeatType: "reverse"
+                              }}
+                            />
+
+                            <div className="relative h-full flex items-center justify-center group">
+                              <MouseParallax strength={0.1} className="relative">
+                                <motion.div
+                                  className="absolute inset-0 rounded-full"
+                                  animate={{
+                                    boxShadow: [
+                                      "0 0 20px rgba(251, 191, 36, 0.0)",
+                                      "0 0 40px rgba(251, 191, 36, 0.3)",
+                                      "0 0 20px rgba(251, 191, 36, 0.0)"
+                                    ]
+                                  }}
+                                  transition={{
+                                    duration: 3,
+                                    repeat: Infinity,
+                                    ease: "easeInOut"
+                                  }}
+                                />
+                                
+                                <motion.div
+                                  whileHover={{ 
+                                    scale: 1.1,
+                                    rotate: [0, -5, 5, 0]
+                                  }}
+                                  transition={{ 
+                                    scale: { duration: 0.3 },
+                                    rotate: { duration: 0.6, ease: "easeInOut" }
+                                  }}
+                                  className="relative z-10"
+                                >
+                                  <Icon className={`w-16 sm:w-20 h-16 sm:h-20 transition-all duration-500 ${
+                                    theme === 'dark'
+                                      ? 'text-amber-400 drop-shadow-[0_0_15px_rgba(251,191,36,0.5)]'
+                                      : 'text-amber-600 drop-shadow-[0_0_15px_rgba(217,119,6,0.3)]'
+                                  }`} />
+                                </motion.div>
+
+                                {[...Array(3)].map((_, i) => (
+                                  <motion.div
+                                    key={i}
+                                    className="absolute w-2 h-2 bg-amber-400/60 rounded-full"
+                                    animate={{
+                                      x: [0, 20, -20, 0],
+                                      y: [0, -15, 10, 0],
+                                      opacity: [0, 1, 1, 0]
+                                    }}
+                                    transition={{
+                                      duration: 4,
+                                      repeat: Infinity,
+                                      delay: i * 1.3,
+                                      ease: "easeInOut"
+                                    }}
+                                    style={{
+                                      left: `${20 + i * 20}%`,
+                                      top: `${30 + i * 15}%`
+                                    }}
+                                  />
+                                ))}
+                              </MouseParallax>
+
+                              <div className={`absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-20 transition-opacity duration-500 ${
+                                theme === 'dark'
+                                  ? 'from-amber-500/20 to-yellow-500/20'
+                                  : 'from-amber-400/20 to-yellow-400/20'
+                              }`} />
+                            </div>
+                          </div>
+                        )}
 
                         <motion.div
                           className="h-1 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-400"
@@ -1571,9 +1965,9 @@ AboutSection.displayName = 'AboutSection';
 const FeatureCard = React.memo<{
   feature: typeof features[0];
   index: number;
-}>(({ feature, index }) => {
+  onDetailsClick: (feature: typeof features[0]) => void;
+}>(({ feature, index, onDetailsClick }) => {
   const { theme } = React.useContext(ThemeContext);
-  const Icon = feature.icon;
   
   return (
     <motion.div
@@ -1581,54 +1975,133 @@ const FeatureCard = React.memo<{
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: index * 0.05 }}
       viewport={{ once: true }}
-      whileHover={{ y: -5 }}
-      className="neuromorphic-inset p-8 sm:p-10 rounded-3xl group hover:shadow-amber-500/20 transition-all duration-500 relative overflow-hidden min-h-[400px] flex flex-col"
+      whileHover={{ y: -8, scale: 1.02 }}
+      className="neuromorphic-inset p-6 sm:p-8 rounded-3xl group hover:shadow-amber-500/20 transition-all duration-500 relative overflow-hidden h-full"
     >
-      <div className={`absolute inset-0 bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-10 transition-opacity duration-500`} />
-      
-      <div className="relative z-10 flex flex-col h-full">
-        <div className="w-40 h-40 rounded-2xl flex items-center justify-center mb-8 mx-auto group-hover:shadow-amber-500/30 transition-all duration-500 neuromorphic">
-          {feature.customImage ? (
-            <LazyImage 
-              src={feature.customImage} 
-              alt={feature.title}
-              width={128}
-              height={128}
-              className="object-contain group-hover:scale-105 transition-transform duration-500 filter drop-shadow-lg"
+      <div className={`absolute inset-0 bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-15 transition-opacity duration-500`} />
+      <div className="relative z-10 flex flex-col sm:flex-row sm:gap-8 h-full">
+        
+        <div className="flex-shrink-0 self-center py-16">
+          <motion.div 
+            className="neuromorphic w-36 h-36 sm:w-44 sm:h-44 rounded-2xl overflow-hidden group-hover:shadow-amber-500/30 transition-all duration-500 relative"
+            whileHover={{ scale: 1.05 }}
+            transition={{ duration: 0.3 }}
+          >
+            {feature.customImage ? (
+              <>
+                <LazyImage
+                  src={feature.customImage}
+                  alt={feature.title}
+                  width={176}
+                  height={176}
+                  className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              </>
+            ) : (
+              <div className={`w-full h-full bg-gradient-to-br ${feature.color} flex items-center justify-center relative`}>
+                <feature.icon className="w-16 h-16 text-white/90 group-hover:scale-110 transition-transform duration-500" />
+                <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              </div>
+            )}
+            
+            <motion.div
+              className="absolute inset-0 border-2 border-amber-400/0 rounded-2xl group-hover:border-amber-400/50 transition-all duration-500"
+              whileHover={{
+                boxShadow: "0 0 30px rgba(251, 191, 36, 0.3)"
+              }}
             />
-          ) : (
-            <Icon className="w-20 h-20 text-amber-400 group-hover:scale-105 group-hover:text-amber-300 transition-all duration-500" />
-          )}
+          </motion.div>
         </div>
+
+        {/* --- Right Column: Content (Title, Description, Button) --- */}
+        {/* flex-1 allows this column to take up the remaining space. */}
+        {/* flex flex-col arranges the text and button vertically. */}
         <div className="flex-1 flex flex-col">
-          <h3 className={`text-xl sm:text-2xl font-bold mb-6 font-heading text-center group-hover:text-amber-50 transition-colors duration-300 ${
-            theme === 'dark' ? 'text-white' : 'text-gray-900'
-          }`}>
+          <motion.h3 
+            className={`text-xl sm:text-2xl lg:text-3xl font-bold mb-3 font-heading group-hover:text-amber-100 transition-all duration-300 leading-tight ${
+              theme === 'dark' ? 'text-white' : 'text-gray-900'
+            }`}
+            whileHover={{ x: 5 }}
+            transition={{ duration: 0.2 }}
+          >
             {feature.title}
-          </h3>
-          <p className={`mb-8 font-body leading-relaxed text-base sm:text-lg text-center transition-colors duration-300 flex-1 ${
-            theme === 'dark' 
-              ? 'text-gray-200 group-hover:text-gray-100' 
+          </motion.h3>
+
+          <p className={`mb-6 font-body leading-relaxed text-base sm:text-lg transition-colors duration-300 ${
+            theme === 'dark'
+              ? 'text-gray-200 group-hover:text-gray-100'
               : 'text-gray-700 group-hover:text-gray-600'
           }`}>
             {feature.description}
           </p>
-          <ul className="space-y-4 mt-auto">
-            {feature.details.map((detail, detailIndex) => (
-              <li 
-                key={`${detail}-${detailIndex}`}
-                className={`flex items-center text-sm sm:text-base font-body transition-colors duration-300 ${
+
+          {/* Button is pushed to the bottom of this column.
+            - mt-auto pushes this element to the end of the flex container (the bottom).
+            - pt-6 adds vertical space above the button.
+          */}
+          <div className="mt-auto pt-6">
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <PremiumButton
+                onClick={() => onDetailsClick(feature)}
+                variant="ghost"
+                size="md"
+                className={`w-full sm:w-auto group-hover:bg-amber-500/20 transition-all duration-300 border border-transparent group-hover:border-amber-400/30 ${
                   theme === 'dark' 
-                    ? 'text-gray-300 group-hover:text-gray-200' 
-                    : 'text-gray-600 group-hover:text-gray-700'
+                    ? 'hover:text-amber-200' 
+                    : 'hover:text-amber-600'
                 }`}
               >
-                <div className="w-2 h-2 bg-amber-400 rounded-full mr-4 flex-shrink-0 group-hover:bg-amber-300 transition-colors duration-300" />
-                {detail}
-              </li>
-            ))}
-          </ul>
+                Zobacz szczegóły
+                <motion.div
+                  className="ml-2"
+                  animate={{ x: [0, 5, 0] }}
+                  transition={{ 
+                    duration: 2, 
+                    repeat: Infinity, 
+                    ease: "easeInOut" 
+                  }}
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </motion.div>
+              </PremiumButton>
+            </motion.div>
+          </div>
         </div>
+      </div>
+
+      {/* Decorative corner elements */}
+      <div className="absolute top-4 right-4 w-3 h-3">
+        <motion.div
+          className="w-full h-full bg-amber-400/20 rounded-full"
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.3, 0.6, 0.3]
+          }}
+          transition={{
+            duration: 3,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
+      </div>
+      <div className="absolute bottom-4 left-4 w-2 h-2">
+        <motion.div
+          className="w-full h-full bg-amber-400/30 rounded-full"
+          animate={{
+            scale: [1, 1.5, 1],
+            opacity: [0.2, 0.5, 0.2]
+          }}
+          transition={{
+            duration: 2,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 1
+          }}
+        />
       </div>
     </motion.div>
   );
@@ -1636,7 +2109,7 @@ const FeatureCard = React.memo<{
 
 FeatureCard.displayName = 'FeatureCard';
 
-const FeaturesSection = React.memo(() => {
+const FeaturesSection = React.memo<{ onFeatureClick: (feature: typeof features[0]) => void }>(({ onFeatureClick }) => {
   const { theme } = React.useContext(ThemeContext);
   
   return (
@@ -1658,18 +2131,23 @@ const FeaturesSection = React.memo(() => {
           <h2 className={`text-3xl sm:text-4xl md:text-5xl font-bold mb-4 font-heading ${
             theme === 'dark' ? 'text-white' : 'text-gray-900'
           }`}>
-            Współpraca
+            Działamy kompleksowo
           </h2>
           <p className={`text-lg sm:text-xl max-w-3xl mx-auto font-body ${
             theme === 'dark' ? 'text-gray-200' : 'text-gray-600'
           }`}>
-            Kompleksowe rozwiązania cybersecurity dla nowoczesnych przedsiębiorstw
+            Najnowocześniejsze rozwiązania - bądź o krok naprzód!
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 lg:gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-8 lg:gap-10">
           {features.map((feature, index) => (
-            <FeatureCard key={feature.title} feature={feature} index={index} />
+            <FeatureCard 
+              key={feature.title} 
+              feature={feature} 
+              index={index} 
+              onDetailsClick={onFeatureClick}
+            />
           ))}
         </div>
       </div>
@@ -1683,7 +2161,7 @@ const certificates = [
   {
     name: "OSEP",
     description: "Offensive Security Experienced Penetration Tester",
-    image: "/api/placeholder/200/150",
+    image: "/images/logos/osep.png",
     fullDescription: "OSEP to zaawansowany certyfikat penetration testingu od Offensive Security, koncentrujący się na evasion techniques i advanced exploitation w środowiskach korporacyjnych.",
     details: [
       "Zaawansowane techniki evasion",
@@ -1707,7 +2185,7 @@ const certificates = [
   {
     name: "AWS Architect Associate",
     description: "AWS Solutions Architect Associate",
-    image: "/api/placeholder/200/150",
+    image: "/images/logos/AWS Architect Associate.png",
     fullDescription: "Certyfikat AWS Solutions Architect Associate potwierdza umiejętności projektowania i wdrażania skalowalnych systemów w chmurze AWS.",
     details: [
       "Projektowanie architektur chmurowych",
@@ -1719,7 +2197,7 @@ const certificates = [
   {
     name: "AWS Security Specialty",
     description: "AWS Certified Security – Specialty",
-    image: "/api/placeholder/200/150",
+    image: "/images/logos/AWS Security Specialty.png",
     fullDescription: "Zaawansowany certyfikat AWS koncentrujący się na bezpieczeństwie w chmurze, obejmujący identity management, data protection i incident response.",
     details: [
       "Bezpieczeństwo danych w chmurze",
@@ -1731,7 +2209,7 @@ const certificates = [
   {
     name: "Android Forensics",
     description: "Android Forensics with Belkasoft",
-    image: "/api/placeholder/200/150",
+    image: "/images/logos/belkasoft.png",
     fullDescription: "Specjalistyczny certyfikat w dziedzinie kryminalistyki cyfrowej na platformie Android z wykorzystaniem narzędzi Belkasoft.",
     details: [
       "Analiza urządzeń mobilnych Android",
@@ -1743,7 +2221,7 @@ const certificates = [
   {
     name: "ISO 27001 Lead Auditor",
     description: "Audytor wiodący ISO 27001",
-    image: "/api/placeholder/200/150",
+    image: "/images/logos/iso.png",
     fullDescription: "Certyfikat audytora wiodącego ISO 27001 umożliwia przeprowadzanie audytów systemów zarządzania bezpieczeństwem informacji.",
     details: [
       "Audyty ISMS zgodne z ISO 27001",
@@ -1755,7 +2233,7 @@ const certificates = [
   {
     name: "CARTP",
     description: "Certified Azure Red Team Professional",
-    image: "/api/placeholder/200/150",
+    image: "/images/logos/cartp.png",
     fullDescription: "Certyfikat Red Team Professional dla środowiska Microsoft Azure, koncentrujący się na zaawansowanych technikach ataków w chmurze.",
     details: [
       "Red teaming w środowisku Azure",
@@ -1767,7 +2245,7 @@ const certificates = [
   {
     name: "CEH",
     description: "Certified Ethical Hacker",
-    image: "/api/placeholder/200/150",
+    image: "/images/logos/ceh.png",
     fullDescription: "CEH to globalnie uznawany certyfikat ethical hackera, pokrywający szeroki zakres technik testowania penetracyjnego i analizy bezpieczeństwa.",
     details: [
       "Etyczne hackowanie i penetration testing",
@@ -1791,7 +2269,7 @@ const certificates = [
   {
     name: "Chainanalysis CRC",
     description: "Chainanalysis Reactor Certification",
-    image: "/api/placeholder/200/150",
+    image: "/images/logos/chainalysis.png",
     fullDescription: "Certyfikat Chainanalysis Reactor Certification (CRC) potwierdza umiejętności w zakresie analizy transakcji kryptowalutowych i śledztw blockchain.",
     details: [
       "Analiza transakcji blockchain",
@@ -1803,7 +2281,7 @@ const certificates = [
   {
     name: "CISSP",
     description: "Certified Information Systems Security Professional",
-    image: "/api/placeholder/200/150",
+    image: "/images/logos/cissp.png",
     fullDescription: "CISSP to prestiżowy certyfikat bezpieczeństwa informacji, pokrywający osiem domen bezpieczeństwa i wymagający znacznego doświadczenia praktycznego.",
     details: [
       "Zarządzanie bezpieczeństwem i ryzykiem",
@@ -1815,7 +2293,7 @@ const certificates = [
   {
     name: "CRTP",
     description: "Certified Red Team Professional",
-    image: "/api/placeholder/200/150",
+    image: "/images/logos/crtp.png",
     fullDescription: "CRTP koncentruje się na zaawansowanych technikach Red Team, symulujących rzeczywiste ataki przeciwko środowiskom Active Directory.",
     details: [
       "Red Team operations",
@@ -1839,7 +2317,7 @@ const certificates = [
   {
     name: "eWPTX",
     description: "eLearnSecurity Web Application Penetration Tester eXtreme",
-    image: "/api/placeholder/200/150",
+    image: "/images/logos/wptx.png",
     fullDescription: "eWPTX to zaawansowany certyfikat testowania penetracyjnego aplikacji webowych, koncentrujący się na skomplikowanych scenariuszach ataków.",
     details: [
       "Zaawansowane testy aplikacji web",
@@ -1875,7 +2353,7 @@ const certificates = [
   {
     name: "ISO 27001",
     description: "Information Security Management Systems",
-    image: "/api/placeholder/200/150",
+    image: "/images/logos/iso.png",
     fullDescription: "ISO 27001 to międzynarodowy standard dla systemów zarządzania bezpieczeństwem informacji (ISMS), definiujący wymagania dla skutecznego zarządzania bezpieczeństwem.",
     details: [
       "Systemy zarządzania bezpieczeństwem",
@@ -1899,7 +2377,7 @@ const certificates = [
   {
     name: "OSCE",
     description: "Offensive Security Certified Expert",
-    image: "/api/placeholder/200/150",
+    image: "/images/logos/osce.png",
     fullDescription: "OSCE to bardzo zaawansowany certyfikat od Offensive Security, wymagający umiejętności w zakresie custom exploit development i advanced penetration testing.",
     details: [
       "Advanced exploit development",
@@ -1911,7 +2389,7 @@ const certificates = [
   {
     name: "OSCP",
     description: "Offensive Security Certified Professional",
-    image: "/api/placeholder/200/150",
+    image: "/images/logos/oscp.png",
     fullDescription: "OSCP to jeden z najbardziej szanowanych certyfikatów penetration testing, wymagający praktycznych umiejętności w zakresie ethical hackingu.",
     details: [
       "Practical penetration testing",
@@ -1923,7 +2401,7 @@ const certificates = [
   {
     name: "OSWE",
     description: "Offensive Security Web Expert",
-    image: "/api/placeholder/200/150",
+    image: "/images/logos/oswe.png",
     fullDescription: "OSWE koncentruje się na zaawansowanym testowaniu bezpieczeństwa aplikacji webowych, w tym white-box testing i source code review.",
     details: [
       "Advanced web application testing",
@@ -1935,7 +2413,7 @@ const certificates = [
   {
     name: "OSWP",
     description: "Offensive Security Wireless Professional",
-    image: "/api/placeholder/200/150",
+    image: "/images/logos/oswp.png",
     fullDescription: "OSWP to certyfikat specjalizujący się w testowaniu bezpieczeństwa sieci bezprzewodowych i technikach ataków wireless.",
     details: [
       "Wireless network security testing",
@@ -1947,7 +2425,7 @@ const certificates = [
   {
     name: "OWASP",
     description: "Open Web Application Security Project",
-    image: "/api/placeholder/200/150",
+    image: "/images/logos/owasp.png",
     fullDescription: "Certyfikacje OWASP koncentrują się na bezpieczeństwie aplikacji webowych zgodnie z najlepszymi praktykami i standardami OWASP.",
     details: [
       "OWASP Top 10 vulnerabilities",
@@ -1959,7 +2437,7 @@ const certificates = [
   {
     name: "Security Analyst",
     description: "Security Analyst (Blue Team)",
-    image: "/api/placeholder/200/150",
+    image: "/images/logos/blue.png",
     fullDescription: "Certyfikat Blue Team Security Analyst koncentruje się na obronie, monitoringu i analizie incydentów bezpieczeństwa w organizacji.",
     details: [
       "Security monitoring i analysis",
@@ -1971,7 +2449,7 @@ const certificates = [
   {
     name: "Security Essentials",
     description: "Information Security Essentials",
-    image: "/api/placeholder/200/150",
+    image: "/images/logos/cyberess.png",
     fullDescription: "Security Essentials pokrywa fundamentalne koncepcje bezpieczeństwa informacji, stanowiąc solidną podstawę dla specjalistów bezpieczeństwa.",
     details: [
       "Fundamenty bezpieczeństwa informacji",
@@ -2005,343 +2483,6 @@ const certificates = [
     ]
   }
 ];
-
-const CertificatesSection = React.memo<{ onCertificateClick: (certificate: typeof certificates[0]) => void }>(({ onCertificateClick }) => {
-  const { theme } = React.useContext(ThemeContext);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [isPaused, setIsPaused] = useState(false);
-  const [isUserInteracting, setIsUserInteracting] = useState(false);
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0, scrollLeft: 0 });
-  const userInteractionTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  // Auto-scroll effect
-  useEffect(() => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
-
-    let animationId: number;
-    let scrollPosition = container.scrollLeft;
-    const scrollSpeed = 0.5; // Adjust speed as needed
-
-    const animate = () => {
-      if (!isPaused && !isUserInteracting && !isDragging && container) {
-        scrollPosition += scrollSpeed;
-        
-        // Reset scroll position when reaching the end
-        if (scrollPosition >= container.scrollWidth - container.clientWidth) {
-          scrollPosition = 0;
-        }
-        
-        container.scrollLeft = scrollPosition;
-      } else if (container) {
-        // Update scrollPosition to current position when paused
-        scrollPosition = container.scrollLeft;
-      }
-      animationId = requestAnimationFrame(animate);
-    };
-
-    animationId = requestAnimationFrame(animate);
-
-    return () => {
-      if (animationId) {
-        cancelAnimationFrame(animationId);
-      }
-    };
-  }, [isPaused, isUserInteracting, isDragging]);
-
-  // Handle user interaction timeout
-  const resetUserInteraction = useCallback(() => {
-    if (userInteractionTimeoutRef.current) {
-      clearTimeout(userInteractionTimeoutRef.current);
-    }
-    userInteractionTimeoutRef.current = setTimeout(() => {
-      setIsUserInteracting(false);
-    }, 2000); // Resume auto-scroll after 2 seconds of no interaction
-  }, []);
-
-  // Mouse wheel scrolling
-  const handleWheel = useCallback((e: React.WheelEvent) => {
-    e.preventDefault();
-    const container = scrollContainerRef.current;
-    if (!container) return;
-
-    setIsUserInteracting(true);
-    
-    // Horizontal scrolling (convert vertical wheel to horizontal)
-    const scrollAmount = e.deltaY !== 0 ? e.deltaY : e.deltaX;
-    container.scrollLeft += scrollAmount;
-    
-    resetUserInteraction();
-  }, [resetUserInteraction]);
-
-  // Drag functionality
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
-
-    setIsDragging(true);
-    setIsUserInteracting(true);
-    setDragStart({
-      x: e.pageX - container.offsetLeft,
-      scrollLeft: container.scrollLeft
-    });
-    
-    container.style.cursor = 'grabbing';
-    container.style.userSelect = 'none';
-  }, []);
-
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    if (!isDragging) return;
-    
-    e.preventDefault();
-    const container = scrollContainerRef.current;
-    if (!container) return;
-
-    const x = e.pageX - container.offsetLeft;
-    const walk = (x - dragStart.x) * 2; // Multiply for faster scrolling
-    container.scrollLeft = dragStart.scrollLeft - walk;
-  }, [isDragging, dragStart]);
-
-  const handleMouseUp = useCallback(() => {
-    setIsDragging(false);
-    const container = scrollContainerRef.current;
-    if (container) {
-      container.style.cursor = 'grab';
-      container.style.userSelect = 'auto';
-    }
-    resetUserInteraction();
-  }, [resetUserInteraction]);
-
-  const handleMouseLeave = useCallback(() => {
-    if (isDragging) {
-      setIsDragging(false);
-      const container = scrollContainerRef.current;
-      if (container) {
-        container.style.cursor = 'grab';
-        container.style.userSelect = 'auto';
-      }
-    }
-    setIsPaused(false);
-    resetUserInteraction();
-  }, [isDragging, resetUserInteraction]);
-
-  const handleMouseEnter = useCallback(() => {
-    setIsPaused(true);
-    const container = scrollContainerRef.current;
-    if (container) {
-      container.style.cursor = 'grab';
-    }
-  }, []);
-
-  // Touch support for mobile
-  const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
-
-    setIsDragging(true);
-    setIsUserInteracting(true);
-    const touch = e.touches[0];
-    setDragStart({
-      x: touch.pageX - container.offsetLeft,
-      scrollLeft: container.scrollLeft
-    });
-  }, []);
-
-  const handleTouchMove = useCallback((e: React.TouchEvent) => {
-    if (!isDragging) return;
-    
-    e.preventDefault();
-    const container = scrollContainerRef.current;
-    if (!container) return;
-
-    const touch = e.touches[0];
-    const x = touch.pageX - container.offsetLeft;
-    const walk = (x - dragStart.x) * 2;
-    container.scrollLeft = dragStart.scrollLeft - walk;
-  }, [isDragging, dragStart]);
-
-  const handleTouchEnd = useCallback(() => {
-    setIsDragging(false);
-    resetUserInteraction();
-  }, [resetUserInteraction]);
-
-  // Handle scroll events (for trackpad, etc.)
-  const handleScroll = useCallback(() => {
-    setIsUserInteracting(true);
-    resetUserInteraction();
-  }, [resetUserInteraction]);
-
-  // Cleanup timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (userInteractionTimeoutRef.current) {
-        clearTimeout(userInteractionTimeoutRef.current);
-      }
-    };
-  }, []);
-
-  return (
-    <section id="certificates" className="py-16 sm:py-24 section-bg overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0.8, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
-        >
-          <h2 className={`text-3xl sm:text-4xl md:text-5xl font-bold mb-4 font-heading ${
-            theme === 'dark' ? 'text-white' : 'text-gray-900'
-          }`}>
-            Certyfikaty
-          </h2>
-          <p className={`text-lg sm:text-xl max-w-3xl mx-auto font-body ${
-            theme === 'dark' ? 'text-gray-200' : 'text-gray-600'
-          }`}>
-            Potwierdzamy nasze kompetencje uznawanymi certyfikatami branżowymi
-          </p>
-        </motion.div>
-
-        <div 
-          className="relative"
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-        >
-          {/* Gradient overlays for smooth edge effect */}
-          <div className={`absolute left-0 top-0 w-20 h-full bg-gradient-to-r z-10 pointer-events-none ${
-            theme === 'dark' 
-              ? 'from-black via-black/90 to-transparent' 
-              : 'from-gray-50 via-gray-50/90 to-transparent'
-          }`} />
-          <div className={`absolute right-0 top-0 w-20 h-full bg-gradient-to-l z-10 pointer-events-none ${
-            theme === 'dark' 
-              ? 'from-black via-black/90 to-transparent' 
-              : 'from-gray-50 via-gray-50/90 to-transparent'
-          }`} />
-
-          <div 
-            ref={scrollContainerRef}
-            className="flex gap-6 overflow-x-auto scrollbar-hide pb-4 select-none"
-            style={{ 
-              scrollBehavior: 'auto',
-              WebkitOverflowScrolling: 'touch',
-              cursor: 'grab'
-            }}
-            onWheel={handleWheel}
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
-            onScroll={handleScroll}
-          >
-            {certificates.map((certificate, index) => (
-              <motion.div
-                key={`${certificate.name}-${index}`}
-                initial={{ opacity: 0.8, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: index * 0.02 }}
-                viewport={{ once: true }}
-                whileHover={{ y: -5, scale: 1.02 }}
-                className="neuromorphic p-6 rounded-2xl text-center group hover:shadow-blue-500/20 transition-all duration-500 relative overflow-hidden cursor-pointer flex-shrink-0"
-                style={{ minWidth: '280px', width: '280px' }}
-                onClick={() => onCertificateClick(certificate)}
-              >
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                
-                <div className="relative z-10">
-                  <div className="w-20 h-16 mx-auto mb-4 neuromorphic-inset rounded-xl flex items-center justify-center group-hover:shadow-blue-500/30 transition-all duration-500">
-                    <Certificate className="w-10 h-10 text-amber-400 group-hover:text-amber-300 transition-colors duration-500" />
-                  </div>
-                  
-                  <h3 className={`text-lg font-bold mb-2 font-heading ${
-                    theme === 'dark' ? 'text-white' : 'text-gray-900'
-                  }`}>
-                    {certificate.name}
-                  </h3>
-                  
-                  <p className={`text-xs font-body mb-3 line-clamp-2 ${
-                    theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-                  }`}>
-                    {certificate.description}
-                  </p>
-
-                  <motion.div
-                    className={`inline-flex items-center text-xs font-body transition-colors duration-200 ${
-                      theme === 'dark' ? 'text-amber-400 group-hover:text-amber-300' : 'text-amber-600 group-hover:text-amber-700'
-                    }`}
-                    whileHover={{ x: 2 }}
-                  >
-                    Zobacz szczegóły
-                    <ChevronRight className="w-3 h-3 ml-1" />
-                  </motion.div>
-                </div>
-              </motion.div>
-            ))}
-            
-            {/* Duplicate certificates for seamless loop */}
-            {certificates.slice(0, 10).map((certificate, index) => (
-              <motion.div
-                key={`duplicate-${certificate.name}-${index}`}
-                whileHover={{ y: -5, scale: 1.02 }}
-                className="neuromorphic p-6 rounded-2xl text-center group hover:shadow-blue-500/20 transition-all duration-500 relative overflow-hidden cursor-pointer flex-shrink-0"
-                style={{ minWidth: '280px', width: '280px' }}
-                onClick={() => onCertificateClick(certificate)}
-              >
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                
-                <div className="relative z-10">
-                  <div className="w-20 h-16 mx-auto mb-4 neuromorphic-inset rounded-xl flex items-center justify-center group-hover:shadow-blue-500/30 transition-all duration-500">
-                    <Certificate className="w-10 h-10 text-amber-400 group-hover:text-amber-300 transition-colors duration-500" />
-                  </div>
-                  
-                  <h3 className={`text-lg font-bold mb-2 font-heading ${
-                    theme === 'dark' ? 'text-white' : 'text-gray-900'
-                  }`}>
-                    {certificate.name}
-                  </h3>
-                  
-                  <p className={`text-xs font-body mb-3 line-clamp-2 ${
-                    theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-                  }`}>
-                    {certificate.description}
-                  </p>
-
-                  <motion.div
-                    className={`inline-flex items-center text-xs font-body transition-colors duration-200 ${
-                      theme === 'dark' ? 'text-amber-400 group-hover:text-amber-300' : 'text-amber-600 group-hover:text-amber-700'
-                    }`}
-                    whileHover={{ x: 2 }}
-                  >
-                    Zobacz szczegóły
-                    <ChevronRight className="w-3 h-3 ml-1" />
-                  </motion.div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-
-
-
-        {/* Add custom scrollbar hiding styles */}
-        <style jsx>{`
-          .scrollbar-hide {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-          }
-          .scrollbar-hide::-webkit-scrollbar {
-            display: none;
-          }
-        `}</style>
-      </div>
-    </section>
-  );
-});
-
-CertificatesSection.displayName = 'CertificatesSection';
 
 const ContactSection = React.memo<{ showToast: (message: string) => void }>(({ showToast }) => {
   const { theme } = React.useContext(ThemeContext);
@@ -2440,9 +2581,9 @@ const ContactSection = React.memo<{ showToast: (message: string) => void }>(({ s
             
             <div className="w-full md:w-1/3">
               <img 
-                src="https://i.ibb.co/cKtgny3N/obok-formularza-kontaktowego-1.png"
+                src='/images/obok formularza kontaktowego.png'
                 alt="Knight in full armor using a modern laptop" 
-                className="rounded-lg object-cover w-full h-full shadow-lg"
+                className="rounded-lg object-contain w-full shadow-lg"
                 onError={(e) => { e.currentTarget.src = 'https://placehold.co/600x800/1f2937/a855f7?text=Image+Not+Found'; }}
               />
             </div>
@@ -2637,12 +2778,7 @@ ContactSection.displayName = 'ContactSection';
 const Footer = React.memo(() => {
   const { theme } = React.useContext(ThemeContext);
   
-  const servicesList = useMemo(() => [
-    "Pentesting aplikacji",
-    "Audyty bezpieczeństwa", 
-    "Inżynieria społeczna",
-    "Audyty zgodności"
-  ], []);
+
 
   const legalList = useMemo(() => [
     "Cookies"
@@ -2655,78 +2791,7 @@ const Footer = React.memo(() => {
         : 'bg-gray-50 border-gray-300'
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
-          <div className="sm:col-span-2 lg:col-span-1">
-            <motion.div
-              initial={{ opacity: 0.8, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-            >
-              <div className="flex items-center mb-4">
-                <div className="flex items-center mr-3">
-                  <LazyImage 
-                    src="https://i.ibb.co/cXXYY8mg/logo2.png" 
-                    alt="Secur" 
-                    width={96}
-                    height={96}
-                    className="object-contain filter drop-shadow-lg"
-                  />
-                </div>
-              </div>
-              <p className={`font-body text-sm sm:text-base mb-4 ${
-                theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-              }`}>
-                Innowacyjna platforma cybersecurity dla dużych przedsiębiorstw i korporacji.
-              </p>
-            </motion.div>
-          </div>
-          
-          <motion.div
-            initial={{ opacity: 1, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            viewport={{ once: true }}
-          >
-            <h4 className={`text-lg font-semibold mb-4 font-heading ${
-              theme === 'dark' ? 'text-white' : 'text-gray-900'
-            }`}>
-              Współpraca
-            </h4>
-            <ul className={`space-y-2 font-body text-sm ${
-              theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-            }`}>
-              {servicesList.map((service, index) => (
-                <li key={`service-${index}`} className="hover:text-amber-400 transition-colors duration-200 cursor-pointer">
-                  {service}
-                </li>
-              ))}
-            </ul>
-          </motion.div>
-          
-          <motion.div
-            initial={{ opacity: 0.8, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            viewport={{ once: true }}
-          >
-            <h4 className={`text-lg font-semibold mb-4 font-heading ${
-              theme === 'dark' ? 'text-white' : 'text-gray-900'
-            }`}>
-              Kontakt
-            </h4>
-            <div className={`space-y-2 font-body text-sm ${
-              theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-            }`}>
-              <p>Dedykowany doradca dostępny</p>
-              <p>Pełna poufność informacji</p>
-              <p>Indywidualne podejście</p>
-              <p className="text-amber-400 hover:text-amber-300 transition-colors duration-200 cursor-pointer">
-                biuro@securhub.pl
-              </p>
-            </div>
-          </motion.div>
-        </div>
+        
         
         <motion.div 
           initial={{ opacity: 0 }}
@@ -2775,7 +2840,9 @@ export default function SecurHubLanding() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOverHero, setIsOverHero] = useState(true);
   const [selectedCertificate, setSelectedCertificate] = useState<typeof certificates[0] | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedFeature, setSelectedFeature] = useState<typeof features[0] | null>(null);
+  const [isCertModalOpen, setIsCertModalOpen] = useState(false);
+  const [isFeatureModalOpen, setIsFeatureModalOpen] = useState(false);
   const { scrollY } = useScroll();
 
   const toggleTheme = useCallback(() => {
@@ -2821,16 +2888,25 @@ export default function SecurHubLanding() {
 
   const handleCertificateClick = useCallback((certificate: typeof certificates[0]) => {
     setSelectedCertificate(certificate);
-    setIsModalOpen(true);
+    setIsCertModalOpen(true);
   }, []);
 
-  const handleCloseModal = useCallback(() => {
-    setIsModalOpen(false);
+  const handleFeatureClick = useCallback((feature: typeof features[0]) => {
+    setSelectedFeature(feature);
+    setIsFeatureModalOpen(true);
+  }, []);
+
+  const handleCloseCertModal = useCallback(() => {
+    setIsCertModalOpen(false);
     setSelectedCertificate(null);
   }, []);
 
-  return (
+  const handleCloseFeatureModal = useCallback(() => {
+    setIsFeatureModalOpen(false);
+    setSelectedFeature(null);
+  }, []);
 
+   return (
     <MouseProvider>
       <ThemeContext.Provider value={{ theme, toggleTheme }}>
         <div className={`min-h-screen font-body overflow-x-hidden transition-colors duration-300 ${
@@ -2844,18 +2920,25 @@ export default function SecurHubLanding() {
             isOverHero={isOverHero}
           />
           <main>
-            <HeroSection scrollToSection={scrollToSection} />
+            <HeroSection 
+              scrollToSection={scrollToSection} 
+              onCertificateClick={handleCertificateClick}
+            />
             <AboutSection />
             <CyberStatsSection />
-            <FeaturesSection />
-            <CertificatesSection onCertificateClick={handleCertificateClick} />
+            <FeaturesSection onFeatureClick={handleFeatureClick} />
             <ContactSection showToast={showToast} />
           </main>
           <Footer />
           <CertificateModal
             certificate={selectedCertificate}
-            isOpen={isModalOpen}
-            onClose={handleCloseModal}
+            isOpen={isCertModalOpen}
+            onClose={handleCloseCertModal}
+          />
+          <FeatureModal
+            feature={selectedFeature}
+            isOpen={isFeatureModalOpen}
+            onClose={handleCloseFeatureModal}
           />
           <AnimatePresence>
             {toastMessage && (
@@ -2865,6 +2948,5 @@ export default function SecurHubLanding() {
         </div>
       </ThemeContext.Provider>
     </MouseProvider>
-
   );
 }
