@@ -72,7 +72,6 @@ const globalStyles = `
 }
 
 .dark .neuromorphic {
-  background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
   box-shadow: 
     20px 20px 40px rgba(0, 0, 0, 0.9),
     -20px -20px 40px rgba(255, 255, 255, 0.08);
@@ -80,7 +79,6 @@ const globalStyles = `
 }
 
 .dark .neuromorphic-inset {
-  background: linear-gradient(145deg, #1a1a1a, #2a2a2a);
   box-shadow: 
     inset 20px 20px 40px rgba(0, 0, 0, 0.9),
     inset -20px -20px 40px rgba(255, 255, 255, 0.08);
@@ -98,8 +96,8 @@ const globalStyles = `
 .light .neuromorphic-inset {
   background: linear-gradient(145deg, #f0f4f8, #ffffff);
   box-shadow: 
-    inset 20px 20px 40px rgba(0, 0, 0, 0.15),
-    inset -20px -20px 40px rgba(255, 255, 255, 0.9);
+    inset 20px 20px 20px rgba(0, 0, 0, 0.15),
+    inset -20px -20px 20px rgba(255, 255, 255, 0.9);
   border: 1px solid rgba(0, 0, 0, 0.08);
 }
 
@@ -132,7 +130,6 @@ const globalStyles = `
 .dark .premium-button {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, #1e1e1e, #2a2a2a);
   border: 1px solid rgba(106, 64, 27, 0.4);
   box-shadow: 
     0 8px 32px rgba(0, 0, 0, 0.4),
@@ -174,7 +171,7 @@ const globalStyles = `
 }
 
 .hero-overlay {
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0);
 }
 
 .hero-section {
@@ -182,7 +179,7 @@ const globalStyles = `
 }
 
 .dark .section-bg {
-  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0f0f0f 100%);
+  background: linear-gradient(90deg, #0a0a0a 0%,rgb(41, 40, 40) 50%, #0a0a0a 100%);
 }
 
 .light .section-bg {
@@ -241,9 +238,23 @@ const globalStyles = `
   position: relative;
   display: block;
   width: calc(100% + 1.3px);
-  height: 100px;
+  height: 120px;
+}
+.u-transition {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  line-height: 0;
+  z-index: 2; /* above background, below content */
 }
 
+.u-transition svg {
+  display: block;
+  width: 100%;
+  height: 120px;
+  pointer-events: none;
+}
 @media (max-width: 768px) {
   .dark .neuromorphic {
     box-shadow: 
@@ -267,6 +278,16 @@ const globalStyles = `
     box-shadow: 
       inset 10px 10px 20px rgba(0, 0, 0, 0.15),
       inset -10px -10px 20px rgba(255, 255, 255, 0.9);
+  }
+
+  .wave-transition svg {
+    height: 80px;
+  }
+}
+
+@media (max-width: 480px) {
+  .wave-transition svg {
+    height: 60px;
   }
 }
 `;
@@ -303,7 +324,7 @@ const translations = {
     },
     hero: {
       desc1: "Platforma dedykowana dla dużych przedsiębiorstw, zrzeszająca",
-      desc2: "wyselekcjonowanych dostawców",
+      desc2: "wyselekcjonowanych specjalistów oraz dostawców",
       desc3: "usług cybersecurity z",
       desc4: "ponad 25-letnim doświadczeniem",
       yearsExperience: "Lat doświadczenia",
@@ -333,7 +354,7 @@ const translations = {
     },
     stats: {
       title: "Cyberbezpieczeństwo w liczbach",
-      subtitle: "W erze globalnych napięć i cyfrowej transformacji, bezpieczeństwo informacji stało się jednym z filarów odporności państw i przedsiębiorstw.",
+      subtitle: "W erze globalnych napięć i cyfrowej transformacji, bezpieczeństwo informacji stało się jednym z filarów odporności państw i przedsiębiorstw. Przestępczość gospodarcza, niegdyś lokalna, dziś działa ponad granicami – cicho, skutecznie, bez ostrzeżenia. Codziennie powstają nowe wektory ataku, a skala zagrożeń rośnie wykładniczo. Wielu incydentów nie widać w nagłówkach – firmy często nie informują, że zapłaciły okup lub doświadczyły utraty danych. Milczenie nie oznacza braku problemu – przeciwnie, stanowi dziś część krajobrazu ryzyka.",
       incidents: "Incydentów cyber w 2024",
       incidentsDesc: "Globalna liczba ataków cybernetycznych",
       growth: "Wzrost ataków RdR", 
@@ -352,7 +373,7 @@ const translations = {
       keyElements: "Kluczowe elementy"
     },
     contact: {
-      title: "Sprawdźmy, jak możemy Ci pomóc!",
+      title: "Przekonaj się sam!",
       subtitle: "Pozostaw wiadomość, a skontaktuje się z Tobą nasz dedykowany doradca.",
       sendMessage: "Wyślij nam wiadomość",
       email: "Adres e-mail",
@@ -701,7 +722,7 @@ const companySizeOptions = [
 
 const statsData = [
   { number: 25, suffix: "+", label: "Lat doświadczenia", labelEn: "Years of experience" },
-  { number: 500, suffix: "+", label: "Zadowolonych klientów", labelEn: "Satisfied clients" },
+  { number: 80, suffix: "+", label: "Zadowolonych klientów", labelEn: "Satisfied clients" },
   { number: 99, suffix: "%", label: "Skuteczność testów", labelEn: "Test efficiency" },
   { number: 24, suffix: "/7", label: "Wsparcie techniczne", labelEn: "Technical support" }
 ];
@@ -1084,23 +1105,23 @@ const FeatureModal = React.memo<FeatureModalProps>(({ feature, isOpen, onClose }
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.95, opacity: 0, y: 20 }}
             transition={{ duration: 0.2 }}
-            className={`relative w-full max-w-2xl max-h-[90vh] overflow-y-auto neuromorphic rounded-2xl p-6 sm:p-8 ${
+            className={`relative w-full max-w-2xl max-h-[90vh] overflow-y-auto neuromorphic rounded-2xl p-4 sm:p-6 md:p-8 ${
               theme === 'dark' ? 'bg-gray-900' : 'bg-white'
             }`}
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex justify-between items-start mb-6">
-              <div className="flex items-center">
-                <div className="neuromorphic-inset w-16 h-16 rounded-xl flex items-center justify-center mr-4">
+              <div className="flex items-center flex-1 mr-4">
+                <div className="neuromorphic-inset w-16 h-16 rounded-xl flex items-center justify-center mr-4 flex-shrink-0">
                   <Icon className="w-8 h-8 text-amber-400" />
                 </div>
-                <div>
-                  <h3 className={`text-lg sm:text-xl font-bold font-heading ${
+                <div className="min-w-0">
+                  <h3 className={`text-lg sm:text-xl font-bold font-heading break-words ${
                     theme === 'dark' ? 'text-white' : 'text-gray-900'
                   }`}>
                     {language === 'pl' ? feature.title : feature.titleEn}
                   </h3>
-                  <p className={`text-sm ${
+                  <p className={`text-sm break-words ${
                     theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
                   }`}>
                     {language === 'pl' ? feature.description : feature.descriptionEn}
@@ -1112,7 +1133,7 @@ const FeatureModal = React.memo<FeatureModalProps>(({ feature, isOpen, onClose }
                 onClick={onClose}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
-                className={`p-2 rounded-lg transition-colors duration-200 ${
+                className={`p-2 rounded-lg transition-colors duration-200 flex-shrink-0 ${
                   theme === 'dark' 
                     ? 'hover:bg-white/10 text-gray-300 hover:text-white' 
                     : 'hover:bg-black/10 text-gray-600 hover:text-gray-900'
@@ -1154,7 +1175,7 @@ const FeatureModal = React.memo<FeatureModalProps>(({ feature, isOpen, onClose }
                       }`}
                     >
                       <div className="w-2 h-2 bg-amber-400 rounded-full mr-3 mt-2 flex-shrink-0" />
-                      {point}
+                      <span className="break-words">{point}</span>
                     </motion.li>
                   ))}
                 </ul>
@@ -1364,14 +1385,14 @@ const CertificateModal = React.memo<CertificateModalProps>(({ certificate, isOpe
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.95, opacity: 0, y: 20 }}
             transition={{ duration: 0.2 }}
-            className={`relative w-full max-w-lg max-h-[90vh] overflow-y-auto neuromorphic rounded-2xl p-6 sm:p-8 ${
+            className={`relative w-full max-w-lg max-h-[90vh] overflow-y-auto neuromorphic rounded-2xl p-4 sm:p-6 md:p-8 ${
               theme === 'dark' ? 'bg-gray-900' : 'bg-white'
             }`}
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex justify-between items-start mb-6">
-              <div className="flex items-center">
-                <div className="w-12 h-12 mx-auto mb-3 glass-effect rounded-lg flex items-center justify-center group-hover:shadow-blue-500/30 transition-all duration-300">
+              <div className="flex items-center flex-1 mr-4">
+                <div className="w-12 h-12 mb-3 glass-effect rounded-lg flex items-center justify-center group-hover:shadow-blue-500/30 transition-all duration-300 mr-4 flex-shrink-0">
                   {certificate.image ? (
                     <img
                       src={certificate.image}
@@ -1383,13 +1404,13 @@ const CertificateModal = React.memo<CertificateModalProps>(({ certificate, isOpe
                   )}
                 </div>
             
-                <div>
-                  <h3 className={`text-lg sm:text-xl font-bold font-heading ${
+                <div className="min-w-0">
+                  <h3 className={`text-lg sm:text-xl font-bold font-heading break-words ${
                     theme === 'dark' ? 'text-white' : 'text-gray-900'
                   }`}>
                     {certificate.name}
                   </h3>
-                  <p className={`text-sm ${
+                  <p className={`text-sm break-words ${
                     theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
                   }`}>
                     {certificate.description}
@@ -1401,7 +1422,7 @@ const CertificateModal = React.memo<CertificateModalProps>(({ certificate, isOpe
                 onClick={onClose}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
-                className={`p-2 rounded-lg transition-colors duration-200 ${
+                className={`p-2 rounded-lg transition-colors duration-200 flex-shrink-0 ${
                   theme === 'dark' 
                     ? 'hover:bg-white/10 text-gray-300 hover:text-white' 
                     : 'hover:bg-black/10 text-gray-600 hover:text-gray-900'
@@ -1443,7 +1464,7 @@ const CertificateModal = React.memo<CertificateModalProps>(({ certificate, isOpe
                       }`}
                     >
                       <div className="w-2 h-2 bg-blue-400 rounded-full mr-3 mt-2 flex-shrink-0" />
-                      {detail}
+                      <span className="break-words">{detail}</span>
                     </motion.li>
                   ))}
                 </ul>
@@ -1585,12 +1606,12 @@ const CertificateScrolling = React.memo<{
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, delay: 1.8 }}
-      className="mt-12 relative"
+      className="mt-8 sm:mt-12 relative"
     >
       <div className="relative">
         <div
           ref={scrollContainerRef}
-          className={`flex gap-4 overflow-x-auto scrollbar-hide ${
+          className={`flex gap-3 sm:gap-4 overflow-x-auto scrollbar-hide ${
             isDragging ? 'dragging' : 'grab-cursor'
           }`}
           style={{
@@ -1615,27 +1636,27 @@ const CertificateScrolling = React.memo<{
                 y: isDragging ? 0 : -3, 
                 scale: isDragging ? 1 : 1.05 
               }}
-              className="p-4 rounded-xl text-center group transition-all duration-300 cursor-pointer flex-shrink-0 select-none"
-              style={{ minWidth: '180px', width: '180px' }}
+              className="p-3 sm:p-4 rounded-xl text-center group transition-all duration-300 cursor-pointer flex-shrink-0 select-none"
+              style={{ minWidth: '140px', width: '140px' }}
               onClick={() => handleCertificateClick(certificate)}
             >
               <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl" />
 
               <div className="relative z-10">
-                <div className="w-12 h-12 mx-auto mb-3 rounded-lg flex items-center justify-center transition-all duration-300">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-2 sm:mb-3 rounded-lg flex items-center justify-center transition-all duration-300">
                   {certificate.image ? (
                     <img
                       src={certificate.image}
                       alt={certificate.name}
-                      className="rounded-md object-contain w-full"
+                      className="rounded-md object-contain w-full h-full"
                       draggable={false}
                     />
                   ) : (
-                    <Certificate className="w-6 h-6 text-amber-400 group-hover:text-amber-300 transition-colors duration-300" />
+                    <Certificate className="w-5 h-5 sm:w-6 sm:h-6 text-amber-400 group-hover:text-amber-300 transition-colors duration-300" />
                   )}
                 </div>
 
-                <h3 className="text-sm font-bold mb-1 font-heading line-clamp-1 text-white">
+                <h3 className="text-xs sm:text-sm font-bold mb-1 font-heading line-clamp-1 text-white">
                   {certificate.name}
                 </h3>
               </div>
@@ -1649,27 +1670,27 @@ const CertificateScrolling = React.memo<{
                 y: isDragging ? 0 : -3, 
                 scale: isDragging ? 1 : 1.05 
               }}
-              className="p-4 rounded-xl text-center group transition-all duration-300 cursor-pointer flex-shrink-0 select-none"
-              style={{ minWidth: '180px', width: '180px' }}
+              className="p-3 sm:p-4 rounded-xl text-center group transition-all duration-300 cursor-pointer flex-shrink-0 select-none"
+              style={{ minWidth: '140px', width: '140px' }}
               onClick={() => handleCertificateClick(certificate)}
             >
               <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl" />
 
               <div className="relative z-10">
-                <div className="w-12 h-12 mx-auto mb-3 rounded-lg flex items-center justify-center transition-all duration-300">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-2 sm:mb-3 rounded-lg flex items-center justify-center transition-all duration-300">
                   {certificate.image ? (
                     <img
                       src={certificate.image}
                       alt={certificate.name}
-                      className="rounded-md object-contain w-full"
+                      className="rounded-md object-contain w-full h-full"
                       draggable={false}
                     />
                   ) : (
-                    <Certificate className="w-6 h-6 text-amber-400 group-hover:text-amber-300 transition-colors duration-300" />
+                    <Certificate className="w-5 h-5 sm:w-6 sm:h-6 text-amber-400 group-hover:text-amber-300 transition-colors duration-300" />
                   )}
                 </div>
 
-                <h3 className="text-sm font-bold mb-1 font-heading line-clamp-1 text-white">
+                <h3 className="text-xs sm:text-sm font-bold mb-1 font-heading line-clamp-1 text-white">
                   {certificate.name}
                 </h3>
               </div>
@@ -1689,14 +1710,10 @@ const CyberStatsSection = React.memo(() => {
   const t = translations[language];
   
   return (
-    <section id="stats" className="py-16 sm:py-20 section-bg relative overflow-hidden">
+    <section id="stats" className="py-12 sm:py-16 md:py-20 section-bg relative overflow-hidden">
       <div className="absolute inset-0">
-        <div className={`absolute inset-0 bg-gradient-to-r ${
-          theme === 'dark' 
-            ? 'from-red-900/10 via-orange-900/5 to-amber-900/10' 
-            : 'from-red-100/30 via-orange-100/20 to-amber-100/30'
-        }`} />
-        <div className={`absolute inset-0 bg-[linear-gradient(rgba(255,100,100,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,100,100,0.02)_1px,transparent_1px)] bg-[size:60px_60px]`} />
+        <div className={`absolute inset-0 `} />
+        <div className={`absolute inset-0 `} />
       </div>
       
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -1705,21 +1722,21 @@ const CyberStatsSection = React.memo(() => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="text-center mb-12 sm:mb-16"
         >
           <h2 className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-4 font-heading ${
             theme === 'dark' ? 'text-white' : 'text-gray-900'
           }`}>
             {t.stats.title}
           </h2>
-          <p className={`text-base sm:text-lg max-w-4xl mx-auto font-body leading-relaxed ${
+          <p className={`text-base sm:text-lg max-w-4xl mx-auto font-body leading-relaxed px-4 ${
             theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
           }`}>
             {t.stats.subtitle}
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
           {cyberStats.map((stat, index) => (
             <motion.div
               key={`${stat.label}-${index}`}
@@ -1728,35 +1745,35 @@ const CyberStatsSection = React.memo(() => {
               transition={{ duration: 0.5, delay: index * 0.1 }}
               viewport={{ once: true }}
               whileHover={{ y: -5 }}
-              className="neuromorphic p-6 sm:p-8 rounded-2xl text-center group hover:shadow-red-500/20 transition-all duration-500 relative overflow-hidden"
+              className="neuromorphic p-4 sm:p-6 md:p-8 rounded-2xl text-center group hover:shadow-red-500/20 transition-all duration-500 relative overflow-hidden"
             >
               <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-orange-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               
               <div className="relative z-10">
-                <div className="neuromorphic-inset w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:shadow-red-500/30 transition-all duration-500">
-                  <Shield className="w-8 h-8 text-red-400 group-hover:text-red-300 transition-colors duration-500" />
+                <div className="neuromorphic-inset w-12 h-12 sm:w-16 sm:h-16 rounded-xl flex items-center justify-center mx-auto mb-3 sm:mb-4 group-hover:shadow-red-500/30 transition-all duration-500">
+                  <Shield className="w-6 h-6 sm:w-8 sm:h-8 text-red-400 group-hover:text-red-300 transition-colors duration-500" />
                 </div>
                 
                 <div className="mb-2">
-                  <span className={`text-2xl sm:text-3xl md:text-4xl font-bold font-heading ${
+                  <span className={`text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold font-heading ${
                     theme === 'dark' ? 'text-white' : 'text-gray-900'
                   }`}>
                     <AnimatedCounter target={stat.number} />
                   </span>
-                  <span className={`text-2xl sm:text-3xl md:text-4xl font-bold font-heading ${
+                  <span className={`text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold font-heading ${
                     theme === 'dark' ? 'text-white' : 'text-gray-900'
                   }`}>
                     {language === 'pl' ? stat.suffix : stat.suffixEn}
                   </span>
                 </div>
                 
-                <h3 className={`text-base sm:text-lg font-semibold mb-2 font-heading ${
+                <h3 className={`text-sm sm:text-base lg:text-lg font-semibold mb-2 font-heading ${
                   theme === 'dark' ? 'text-white' : 'text-gray-900'
                 }`}>
                   {language === 'pl' ? stat.label : stat.labelEn}
                 </h3>
                 
-                <p className={`text-sm font-body ${
+                <p className={`text-xs sm:text-sm font-body ${
                   theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
                 }`}>
                   {language === 'pl' ? stat.description : stat.descriptionEn}
@@ -1925,7 +1942,7 @@ const NavigationBar = React.memo<{
                     alt="Secur" 
                     width={96}
                     height={96}
-                    className="object-contain filter drop-shadow-lg"
+                    className="object-contain filter drop-shadow-lg w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24"
                     priority={true}
                   />
                 </span>
@@ -2029,27 +2046,97 @@ const NavigationBar = React.memo<{
 
 NavigationBar.displayName = 'NavigationBar';
 
-const WaveTransition = React.memo<{ theme: 'light' | 'dark' }>(({ theme }) => {
+
+const WaveTransition = React.memo(({ theme }) => {
+  const containerRef = useRef(null);
+  const [dimensions, setDimensions] = useState({ width: 1200, height: 120 });
+
+  useEffect(() => {
+    function updateSize() {
+      if (containerRef.current) {
+        const { width } = containerRef.current.getBoundingClientRect();
+        setDimensions({
+          width,
+          height: Math.max(60, Math.min(160, width / 10)), 
+        });
+      }
+    }
+    updateSize();
+    window.addEventListener("resize", updateSize);
+    return () => window.removeEventListener("resize", updateSize);
+  }, []);
+
+  const { height } = dimensions;
+
   return (
-    <div className="wave-transition">
+    <div
+      ref={containerRef}
+      className="u-transition section-bg"
+      style={{
+        width: "100%",
+        minHeight: 60,
+        maxHeight: 160,
+        height: height,
+        position: "relative",
+        overflow: "hidden",
+      }}
+    >
       <svg
-        data-name="Layer 1"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 1200 120"
+        width="100%"
+        height={height}
+        viewBox={`0 0 1200 120`}
         preserveAspectRatio="none"
-        style={{ transform: 'rotate(180deg)' }}
+        xmlns="http://www.w3.org/2000/svg"
+        style={{ display: "block" }}
       >
+        <defs>
+          <pattern
+            id="imgPattern"
+            patternUnits="userSpaceOnUse"
+            width="100%"
+            height="120"
+          >
+            <image
+              href="/images/bgr.png"
+              x="0"
+              y="0"
+              width="100%"
+              height="120"
+              preserveAspectRatio="none"
+            />
+          </pattern>
+          <linearGradient id="uGradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#0a0a0a" />
+            <stop offset="100%" stopColor="#1a1a1a" />
+          </linearGradient>
+        </defs>
         <path
-          d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z"
-          className={theme === 'dark' 
-            ? 'fill-current text-gray-900' 
-            : 'fill-current text-gray-100'
-          }
+          d="
+            M0,0 
+            L0,60 
+            Q600,140 1200,60 
+            L1200,0 
+            Z
+          "
+          fill="url(#imgPattern)"
+        />
+        <path
+          d="
+            M0,0 
+            L0,60 
+            Q600,140 1200,60 
+            L1200,0 
+            Z
+          "
+          fill="url(#uGradient)"
+          opacity="0"
+          className="hero-overlay bg-center bg-no-repeat select-none bg-cover"
         />
       </svg>
     </div>
   );
 });
+
 
 WaveTransition.displayName = 'WaveTransition';
 
@@ -2097,9 +2184,9 @@ const HeroSection = React.memo<{
 
       <div className="hero-overlay absolute inset-0" />
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-20 flex items-center min-h-screen">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-32 pb-16 sm:pb-20 flex items-center min-h-screen">
         <div className="text-center w-full">
-          <div className="overflow-hidden mb-6">
+          <div className="overflow-hidden mb-4 sm:mb-6">
             <motion.h1
               initial={{ y: 100, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
@@ -2144,7 +2231,7 @@ const HeroSection = React.memo<{
                       alt="SecurHUB Logo"
                       width={512}
                       height={512}
-                      className="w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 xl:w-[28rem] xl:h-[28rem] object-contain filter drop-shadow-2xl transition-all duration-300"
+                      className="w-32 h-32 sm:w-48 sm:h-48 md:w-64 md:h-64 lg:w-80 lg:h-80 xl:w-96 xl:h-96 object-contain filter drop-shadow-2xl transition-all duration-300"
                       priority={true}
                     />
                   </motion.div>
@@ -2157,7 +2244,7 @@ const HeroSection = React.memo<{
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="text-base sm:text-lg md:text-xl mb-10 text-gray-100 max-w-4xl mx-auto font-body leading-relaxed px-4"
+            className="text-sm sm:text-base md:text-lg lg:text-xl mb-8 sm:mb-10 text-gray-100 max-w-4xl mx-auto font-body leading-relaxed px-4"
           >
             {t.hero.desc1} {" "}
             <span className="text-amber-300 font-semibold">
@@ -2173,7 +2260,7 @@ const HeroSection = React.memo<{
             initial={{ opacity: 0.8, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 1.2 }}
-            className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-6 px-4"
+            className="mt-8 sm:mt-12 grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 px-4"
           >
             {statsData.map((stat, index) => (
               <motion.div
@@ -2183,7 +2270,7 @@ const HeroSection = React.memo<{
                 transition={{ duration: 0.6, delay: 1.4 + index * 0.1 }}
                 className="text-center"
               >
-                <div className="text-xl sm:text-2xl md:text-3xl font-bold text-white font-heading mb-2">
+                <div className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-white font-heading mb-1 sm:mb-2">
                   <AnimatedCounter target={stat.number} />
                   {stat.suffix}
                 </div>
@@ -2200,7 +2287,6 @@ const HeroSection = React.memo<{
           />
         </div>
       </div>
-      <WaveTransition theme={theme} />
     </section>
   );
 });
@@ -2213,28 +2299,28 @@ const AboutSection = React.memo(() => {
   const t = translations[language];
   
   return (
-    <section id="about" className="py-16 sm:py-20 section-bg">
+    <section id="about" className="py-12 sm:py-16 md:py-20 section-bg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0.8, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="text-center mb-12 sm:mb-16"
         >
           <h2 className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-4 font-heading ${
             theme === 'dark' ? 'text-white' : 'text-gray-900'
           }`}>
             {t.about.title}
           </h2>
-          <p className={`text-base sm:text-lg max-w-3xl mx-auto font-body ${
+          <p className={`text-base sm:text-lg max-w-3xl mx-auto font-body px-4 ${
             theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
           }`}>
             {t.about.subtitle}
           </p>
         </motion.div>
 
-        <div className="space-y-16 sm:space-y-20">
+        <div className="space-y-12 sm:space-y-16 md:space-y-20">
           {aboutBlocks.map((block, index) => {
             const Icon = block.icon;
             return (
@@ -2244,7 +2330,7 @@ const AboutSection = React.memo(() => {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.05 }}
                 viewport={{ once: true }}
-                className={`flex flex-col lg:flex-row items-center gap-10 lg:gap-12 ${
+                className={`flex flex-col lg:flex-row items-center gap-8 lg:gap-12 ${
                   block.reverse ? "lg:flex-row-reverse" : ""
                 }`}
               >
@@ -2252,19 +2338,19 @@ const AboutSection = React.memo(() => {
                   <motion.div 
                     whileHover={{ y: -3 }}
                     transition={{ duration: 0.3 }}
-                    className="neuromorphic p-6 sm:p-8 rounded-3xl hover:shadow-amber-500/15 transition-all duration-300"
+                    className="neuromorphic p-4 sm:p-6 md:p-8 rounded-3xl hover:shadow-amber-500/15 transition-all duration-300"
                   >
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center mb-6">
-                      <div className="neuromorphic-inset w-16 h-16 rounded-xl flex items-center justify-center mr-0 sm:mr-6 mb-4 sm:mb-0">
-                        <Icon className="w-8 h-8 text-amber-400" />
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center mb-4 sm:mb-6">
+                      <div className="neuromorphic-inset w-12 h-12 sm:w-16 sm:h-16 rounded-xl flex items-center justify-center mr-0 sm:mr-6 mb-4 sm:mb-0">
+                        <Icon className="w-6 h-6 sm:w-8 sm:h-8 text-amber-400" />
                       </div>
-                      <h3 className={`text-xl sm:text-2xl font-bold font-heading ${
+                      <h3 className={`text-lg sm:text-xl md:text-2xl font-bold font-heading ${
                         theme === 'dark' ? 'text-white' : 'text-gray-900'
                       }`}>
                         {language === 'pl' ? block.title : block.titleEn}
                       </h3>
                     </div>
-                    <p className={`leading-relaxed font-body text-base sm:text-lg ${
+                    <p className={`leading-relaxed font-body text-sm sm:text-base md:text-lg ${
                       theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
                     }`}>
                       {language === 'pl' ? block.content : block.contentEn}
@@ -2284,7 +2370,7 @@ const AboutSection = React.memo(() => {
                       whileHover={{ scale: 1.02 }}
                       transition={{ duration: 0.3 }}
                     >
-                      <div className={`absolute inset-0 rounded-3xl transform translate-x-4 translate-y-4 ${
+                      <div className={`absolute inset-0 rounded-3xl transform translate-x-3 sm:translate-x-4 translate-y-3 sm:translate-y-4 ${
                         theme === 'dark' 
                           ? 'bg-gradient-to-br from-amber-600/30 to-yellow-600/30' 
                           : 'bg-gradient-to-br from-amber-400/30 to-yellow-400/30'
@@ -2292,7 +2378,7 @@ const AboutSection = React.memo(() => {
                       
                       <div className="relative neuromorphic-inset rounded-3xl overflow-hidden shadow-2xl">
                         {block.customImage ? (
-                          <div className="h-48 sm:h-64 relative">
+                          <div className="h-40 sm:h-48 md:h-64 relative">
                             <LazyImage 
                               src={block.customImage}
                               alt={language === 'pl' ? block.title : block.titleEn}
@@ -2307,7 +2393,7 @@ const AboutSection = React.memo(() => {
                             }`} />
                           </div>
                         ) : (
-                          <div className={`h-48 sm:h-64 bg-gradient-to-br ${
+                          <div className={`h-40 sm:h-48 md:h-64 bg-gradient-to-br ${
                             theme === 'dark'
                               ? 'from-amber-900/40 via-yellow-800/40 to-orange-900/40'
                               : 'from-amber-200/60 via-yellow-200/60 to-orange-200/60'
@@ -2324,7 +2410,7 @@ const AboutSection = React.memo(() => {
                                 }}
                                 className="relative z-10"
                               >
-                                <Icon className={`w-16 sm:w-20 h-16 sm:h-20 transition-all duration-500 ${
+                                <Icon className={`w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 transition-all duration-500 ${
                                   theme === 'dark'
                                     ? 'text-amber-400 drop-shadow-[0_0_15px_rgba(251,191,36,0.5)]'
                                     : 'text-amber-600 drop-shadow-[0_0_15px_rgba(217,119,6,0.3)]'
@@ -2372,14 +2458,14 @@ const FeatureCard = React.memo<{
       transition={{ duration: 0.5, delay: index * 0.05 }}
       viewport={{ once: true }}
       whileHover={{ y: -8, scale: 1.02 }}
-      className="neuromorphic-inset p-6 sm:p-8 rounded-3xl group hover:shadow-amber-500/20 transition-all duration-500 relative overflow-hidden h-full"
+      className="neuromorphic-inset p-4 sm:p-6 md:p-8 rounded-3xl group hover:shadow-amber-500/20 transition-all duration-500 relative overflow-hidden h-full"
     >
       <div className={`absolute inset-0 bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-15 transition-opacity duration-500`} />
-      <div className="relative z-10 flex flex-col sm:flex-row sm:gap-8 h-full">
+      <div className="relative z-10 flex flex-col sm:flex-row sm:gap-6 md:gap-8 h-full">
         
-        <div className="flex-shrink-0 self-center py-6">
+        <div className="flex-shrink-0 self-center py-4 sm:py-6">
           <motion.div 
-            className="w-32 h-32 sm:w-40 sm:h-40 rounded-3xl overflow-hidden group-hover:shadow-amber-500/30 transition-all duration-500 relative"
+            className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 rounded-3xl overflow-hidden group-hover:shadow-amber-500/30 transition-all duration-500 relative mx-auto sm:mx-0"
             whileHover={{ scale: 1.05 }}
             transition={{ duration: 0.3 }}
           >
@@ -2396,7 +2482,7 @@ const FeatureCard = React.memo<{
               </>
             ) : (
               <div className={`w-full h-full bg-gradient-to-br ${feature.color} flex items-center justify-center relative`}>
-                <feature.icon className="w-16 h-16 text-white/90 group-hover:scale-110 transition-transform duration-500" />
+                <feature.icon className="w-12 h-12 sm:w-16 sm:h-16 text-white/90 group-hover:scale-110 transition-transform duration-500" />
                 <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               </div>
             )}
@@ -2408,7 +2494,7 @@ const FeatureCard = React.memo<{
               }}
             />
           </motion.div>
-          <div className="mt-auto pt-6">
+          <div className="mt-4 sm:mt-6 pt-4 sm:pt-6">
             <motion.div
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -2440,9 +2526,9 @@ const FeatureCard = React.memo<{
           </div>
         </div>
 
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col mt-4 sm:mt-0">
           <motion.h3 
-            className={`text-lg sm:text-xl lg:text-2xl font-bold mb-3 font-heading group-hover:text-amber-100 transition-all duration-300 leading-tight ${
+            className={`text-base sm:text-lg md:text-xl lg:text-2xl font-bold mb-3 font-heading group-hover:text-amber-100 transition-all duration-300 leading-tight ${
               theme === 'dark' ? 'text-white' : 'text-gray-900'
             }`}
             whileHover={{ x: 5 }}
@@ -2451,7 +2537,7 @@ const FeatureCard = React.memo<{
             {language === 'pl' ? feature.title : feature.titleEn}
           </motion.h3>
 
-          <ul className={`mb-6 font-body leading-relaxed text-sm sm:text-base transition-colors duration-300 ${
+          <ul className={`mb-4 sm:mb-6 font-body leading-relaxed text-xs sm:text-sm md:text-base transition-colors duration-300 ${
             theme === 'dark'
               ? 'text-gray-200 group-hover:text-gray-100'
               : 'text-gray-700 group-hover:text-gray-600'
@@ -2465,7 +2551,7 @@ const FeatureCard = React.memo<{
         </div>
       </div>
 
-      <div className="absolute top-6 right-6 w-3 h-3">
+      <div className="absolute top-4 sm:top-6 right-4 sm:right-6 w-3 h-3">
         <motion.div
           className="w-full h-full bg-amber-400/20 rounded-full"
           animate={{
@@ -2479,7 +2565,7 @@ const FeatureCard = React.memo<{
           }}
         />
       </div>
-      <div className="absolute bottom-6 left-6 w-2 h-2">
+      <div className="absolute bottom-4 sm:bottom-6 left-4 sm:left-6 w-2 h-2">
         <motion.div
           className="w-full h-full bg-amber-400/30 rounded-full"
           animate={{
@@ -2506,7 +2592,7 @@ const FeaturesSection = React.memo<{ onFeatureClick: (feature: typeof features[0
   const t = translations[language];
   
   return (
-    <section id="features" className="py-16 sm:py-20 section-bg relative overflow-hidden">
+    <section id="features" className="py-12 sm:py-16 md:py-20 section-bg relative overflow-hidden">
       <div className="absolute inset-0">
         <div className={`absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px] ${
           theme === 'light' ? 'opacity-30' : ''
@@ -2519,21 +2605,21 @@ const FeaturesSection = React.memo<{ onFeatureClick: (feature: typeof features[0
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="text-center mb-12 sm:mb-16"
         >
           <h2 className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-4 font-heading ${
             theme === 'dark' ? 'text-white' : 'text-gray-900'
           }`}>
             {t.features.title}
           </h2>
-          <p className={`text-base sm:text-lg max-w-3xl mx-auto font-body ${
+          <p className={`text-base sm:text-lg max-w-3xl mx-auto font-body px-4 ${
             theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
           }`}>
             {t.features.subtitle}
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-8 lg:gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-6 sm:gap-8 lg:gap-10">
           {features.map((feature, index) => (
             <FeatureCard 
               key={feature.title} 
@@ -2648,42 +2734,42 @@ const ContactSection = React.memo<{ showToast: (message: string) => void }>(({ s
   }, [errors, formData.message]);
 
   return (
-    <section id="contact" className="py-16 sm:py-20 section-bg">
+    <section id="contact" className="py-12 sm:py-16 md:py-20 section-bg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0.8, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="text-center mb-12 sm:mb-16"
         >
           <h2 className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-4 font-heading ${
             theme === 'dark' ? 'text-white' : 'text-gray-900'
           }`}>
             {t.contact.title}
           </h2>
-          <p className={`text-base sm:text-lg max-w-4xl mx-auto font-body leading-relaxed ${
+          <p className={`text-base sm:text-lg max-w-4xl mx-auto font-body leading-relaxed px-4 ${
             theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
           }`}>
             {t.contact.subtitle}
           </p>
         </motion.div>
 
-        <div className="flex flex-col items-center gap-10 lg:gap-12">
+        <div className="flex flex-col items-center gap-8 sm:gap-10 lg:gap-12">
           <motion.div
             initial={{ opacity: 0.8, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="neuromorphic w-full max-w-2xl p-6 sm:p-8 rounded-3xl flex flex-col justify-center" 
+            className="neuromorphic w-full max-w-2xl p-4 sm:p-6 md:p-8 rounded-3xl flex flex-col justify-center" 
           >
-            <h3 className={`text-xl sm:text-2xl font-bold mb-6 font-heading flex items-center ${
+            <h3 className={`text-lg sm:text-xl md:text-2xl font-bold mb-4 sm:mb-6 font-heading flex items-center ${
               theme === 'dark' ? 'text-white' : 'text-gray-900'
             }`}>
-              <Mail className="w-6 h-6 text-amber-400 mr-3" />
+              <Mail className="w-5 h-5 sm:w-6 sm:h-6 text-amber-400 mr-3" />
               {t.contact.sendMessage}
             </h3>
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               <div>
                 <label className={`block text-sm font-medium mb-2 font-body ${
                   theme === 'dark' ? 'text-gray-200' : 'text-gray-800'
@@ -2867,7 +2953,7 @@ const Footer = React.memo(() => {
   ], [t.footer.cookies]);
 
   return (
-    <footer className={`border-t py-12 ${
+    <footer className={`border-t py-8 sm:py-12 ${
       theme === 'dark' 
         ? 'bg-black border-gray-700' 
         : 'bg-gray-50 border-gray-300'
@@ -2878,7 +2964,7 @@ const Footer = React.memo(() => {
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className={`border-t pt-6 ${
+          className={`border-t pt-4 sm:pt-6 ${
             theme === 'dark' ? 'border-gray-700' : 'border-gray-300'
           }`}
         >
