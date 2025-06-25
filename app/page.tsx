@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
-import { motion, AnimatePresence, useScroll, useInView, useMotionValue, useSpring, useTransform, MotionValue } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useInView, useMotionValue, useSpring, useTransform } from "framer-motion";
 import Image from "next/image";
 
 import {
@@ -205,20 +205,43 @@ const globalStyles = `
   100% { background-position: -200% 0; }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .premium-button::before {
-    transition: none;
-  }
-  
-  .image-placeholder {
-    animation: none;
-  }
-  
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
+.dragging {
+  cursor: grabbing !important;
+  user-select: none;
+}
+
+.grab-cursor {
+  cursor: grab;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.line-clamp-1 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
+
+.wave-transition {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+}
+
+.wave-transition svg {
+  position: relative;
+  display: block;
+  width: calc(100% + 1.3px);
+  height: 100px;
 }
 
 @media (max-width: 768px) {
@@ -246,29 +269,6 @@ const globalStyles = `
       inset -10px -10px 20px rgba(255, 255, 255, 0.9);
   }
 }
-
-.dragging {
-  cursor: grabbing !important;
-  user-select: none;
-}
-
-.grab-cursor {
-  cursor: grab;
-}
-
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-.line-clamp-1 {
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  -webkit-box-orient: vertical;
-}
 `;
 
 if (typeof document !== "undefined") {
@@ -276,89 +276,6 @@ if (typeof document !== "undefined") {
   styleElement.textContent = globalStyles;
   document.head.appendChild(styleElement);
 }
-
-const MouseContext = React.createContext<{
-  mouseX: MotionValue<number>;
-  mouseY: MotionValue<number>;
-}>({
-  mouseX: {} as MotionValue<number>,
-  mouseY: {} as MotionValue<number>
-});
-
-const MouseProvider = React.memo<{ children: React.ReactNode }>(({ children }) => {
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const updateMousePosition = (e: MouseEvent) => {
-        mouseX.set(e.clientX);
-        mouseY.set(e.clientY);
-      };
-      
-      window.addEventListener('mousemove', updateMousePosition);
-      return () => window.removeEventListener('mousemove', updateMousePosition);
-    }
-  }, [mouseX, mouseY]);
-
-  return (
-    <MouseContext.Provider value={{ mouseX, mouseY }}>
-      {children}
-    </MouseContext.Provider>
-  );
-});
-
-MouseProvider.displayName = 'MouseProvider';
-
-const MouseParallax = React.memo<{ 
-  children: React.ReactNode; 
-  strength?: number;
-  className?: string;
-}>(({ children, strength = 0.05, className = "" }) => {
-  const elementRef = useRef<HTMLDivElement>(null);
-
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-
-  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    if (!elementRef.current) return;
-    
-    const rect = elementRef.current.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    
-    const mouseX = e.clientX - centerX;
-    const mouseY = e.clientY - centerY;
-    
-    x.set(mouseX * strength);
-    y.set(mouseY * strength);
-  }, [strength, x, y]);
-
-  const handleMouseEnter = useCallback(() => {
-    // Mouse enter logic can be added here if needed
-  }, []);
-
-  const handleMouseLeave = useCallback(() => {
-    x.set(0);
-    y.set(0);
-  }, [x, y]);
-
-  return (
-    <motion.div 
-      ref={elementRef}
-      style={{ x, y }} 
-      className={className}
-      onMouseMove={handleMouseMove}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      transition={{ type: "spring", stiffness: 150, damping: 15 }}
-    >
-      {children}
-    </motion.div>
-  );
-});
-
-MouseParallax.displayName = 'MouseParallax';
 
 const ThemeContext = React.createContext<{
   theme: 'light' | 'dark';
@@ -384,7 +301,6 @@ const translations = {
       features: "Współpraca",
       contact: "Kontakt"
     },
-
     hero: {
       desc1: "Platforma dedykowana dla dużych przedsiębiorstw, zrzeszająca",
       desc2: "wyselekcjonowanych dostawców",
@@ -417,7 +333,7 @@ const translations = {
     },
     stats: {
       title: "Cyberbezpieczeństwo w liczbach",
-      subtitle: "W erze globalnych napięć i cyfrowej transformacji, bezpieczeństwo informacji stało się jednym z filarów odporności państw i przedsiębiorstw. Przestępczość gospodarcza, niegdyś lokalna, dziś działa ponad granicami – cicho, skutecznie, bez ostrzeżenia. Codziennie powstają nowe wektory ataku, a skala zagrożeń rośnie wykładniczo. Wielu incydentów nie widać w nagłówkach – firmy często nie informują, że zapłaciły okup lub doświadczyły utraty danych. Milczenie nie oznacza braku problemu – przeciwnie, stanowi dziś część krajobrazu ryzyka.",
+      subtitle: "W erze globalnych napięć i cyfrowej transformacji, bezpieczeństwo informacji stało się jednym z filarów odporności państw i przedsiębiorstw.",
       incidents: "Incydentów cyber w 2024",
       incidentsDesc: "Globalna liczba ataków cybernetycznych",
       growth: "Wzrost ataków RdR", 
@@ -437,7 +353,7 @@ const translations = {
     },
     contact: {
       title: "Sprawdźmy, jak możemy Ci pomóc!",
-      subtitle: "Pozostaw wiadomość, a skontaktuje się z Tobą nasz dedykowany doradca. Nasz ekspert pomoże zidentyfikować obszary wymagające wzmocnienia bezpieczeństwa.",
+      subtitle: "Pozostaw wiadomość, a skontaktuje się z Tobą nasz dedykowany doradca.",
       sendMessage: "Wyślij nam wiadomość",
       email: "Adres e-mail",
       organization: "NIP firmy lub nazwa (opcjonalnie)",
@@ -471,10 +387,10 @@ const translations = {
       contact: "Contact"
     },
     hero: {
-desc1: "A platform dedicated to large enterprises, bringing together",
-desc2: "carefully selected providers",
-desc3: "of cybersecurity services with",
-desc4: "over 25 years of experience",
+      desc1: "A platform dedicated to large enterprises, bringing together",
+      desc2: "carefully selected providers",
+      desc3: "of cybersecurity services with",
+      desc4: "over 25 years of experience",
       yearsExperience: "Years of experience",
       satisfiedClients: "Satisfied clients",
       testEfficiency: "Test efficiency", 
@@ -493,16 +409,16 @@ desc4: "over 25 years of experience",
       },
       partner: {
         title: "Your business partner", 
-        content: "Coordination, questions, choices, contact with IT department, reporting... from now on, this is not your worry! SecurHUB provides a dedicated guardian from the first day of cooperation. At every stage, they remain available to help and answer any questions."
+        content: "Coordination, questions, choices, contact with IT department, reporting... from now on, this is not your worry! SecurHUB provides a dedicated guardian from the first day of cooperation."
       },
       trust: {
         title: "You can trust us",
-        content: "We know how important confidentiality of information is in big business. Therefore, the SecurHUB team ensures complete protection of client identity at every stage preceding the final implementation of the service and also minimizes access to sensitive information at its later stages."
+        content: "We know how important confidentiality of information is in big business. Therefore, the SecurHUB team ensures complete protection of client identity at every stage preceding the final implementation of the service."
       }
     },
     stats: {
       title: "Cybersecurity in numbers",
-      subtitle: "In the era of global tensions and digital transformation, information security has become one of the pillars of resilience for states and enterprises. Economic crime, once local, now operates across borders – quietly, effectively, without warning. New attack vectors emerge daily, and the scale of threats is growing exponentially. Many incidents are not visible in headlines – companies often do not report that they paid ransom or experienced data loss. Silence does not mean lack of problems – on the contrary, it is now part of the risk landscape.",
+      subtitle: "In the era of global tensions and digital transformation, information security has become one of the pillars of resilience for states and enterprises.",
       incidents: "Cyber incidents in 2024",
       incidentsDesc: "Global number of cyber attacks",
       growth: "RdR attacks growth",
@@ -522,7 +438,7 @@ desc4: "over 25 years of experience",
     },
     contact: {
       title: "Let's see how we can help you!",
-      subtitle: "Leave a message and our dedicated advisor will contact you. Our expert will help identify areas requiring security enhancement.",
+      subtitle: "Leave a message and our dedicated advisor will contact you.",
       sendMessage: "Send us a message",
       email: "Email address",
       organization: "Company VAT number or name (optional)",
@@ -570,8 +486,8 @@ const features = [
       "Interface and API testing"
     ],
     color: "from-amber-600 to-yellow-700",
-    fullDescription: "Weryfikacja poziomu bezpieczeństwa aplikacji webowych i mobilnych. Testy są wykonywane zgodnie ze standardami Best Practices, OWASP Top 10 i OWASP ASVS. Testy automatyczne są przeprowadzane przy użyciu komercyjnych i open-source'owych skanerów oraz własnych skryptów. Testy manualne pomagają wykryć i potwierdzić występowanie określonych luk. Wiąże się to również z wykrywaniem nowych, nieznanych luk 0-day (poprzez fuzzing). Fuzzing będzie dostosowany do technologii wykorzystywanych przez aplikację. Testy obejmują również aspekt dostępnych interfejsów i API.",
-    fullDescriptionEn: "Verification of security level of web and mobile applications. Tests are performed according to Best Practices, OWASP Top 10 and OWASP ASVS standards. Automatic tests are conducted using commercial and open-source scanners as well as custom scripts. Manual tests help detect and confirm the presence of specific vulnerabilities. This also involves detecting new, unknown 0-day vulnerabilities (through fuzzing). Fuzzing will be adapted to the technologies used by the application. Tests also cover available interfaces and APIs.",
+    fullDescription: "Weryfikacja poziomu bezpieczeństwa aplikacji webowych i mobilnych. Testy są wykonywane zgodnie ze standardami Best Practices, OWASP Top 10 i OWASP ASVS.",
+    fullDescriptionEn: "Verification of security level of web and mobile applications. Tests are performed according to Best Practices, OWASP Top 10 and OWASP ASVS standards.",
     customImage: '/images/web.png'
   },
   {
@@ -593,8 +509,8 @@ const features = [
       "Verification of network and cloud services"
     ],
     color: "from-amber-600 to-yellow-700",
-    fullDescription: "Test penetracyjny pozwala na ocenę ryzyka, zgodności i dostępności usług. Pozwala zweryfikować poziom bezpieczeństwa usług, aplikacji i protokołów w sieci i w chmurze zgodnie ze standardem ISO i powszechnymi podatnościami (CVE). W pierwszej fazie może być również uwzględniona usługa OSINT (biały wywiad, zbieranie informacji). Usługa może być wdrożona jako dedykowany test penetracyjny lub po prostu skanowanie podatności.",
-    fullDescriptionEn: "Penetration testing allows assessment of risk, compliance and service availability. It allows verification of the security level of services, applications and protocols in the network and cloud according to ISO standards and common vulnerabilities (CVE). In the first phase, OSINT service (white intelligence, information gathering) may also be included. The service can be implemented as a dedicated penetration test or simply vulnerability scanning.",
+    fullDescription: "Test penetracyjny pozwala na ocenę ryzyka, zgodności i dostępności usług. Pozwala zweryfikować poziom bezpieczeństwa usług, aplikacji i protokołów w sieci i w chmurze.",
+    fullDescriptionEn: "Penetration testing allows assessment of risk, compliance and service availability. It allows verification of the security level of services, applications and protocols in the network and cloud.",
     customImage: '/images/chmurowe.png'
   },
   {
@@ -616,8 +532,8 @@ const features = [
       "Security error detection"
     ],
     color: "from-amber-600 to-yellow-700",
-    fullDescription: "Kompleksowa analiza kodu źródłowego pozwala na odkrycie błędów bezpieczeństwa lub naruszeń konwencji programowania zgodnie z modelem DevSecOps (Security by design, security by default). Wykonywana ręcznie, a także przy pomocy komercyjnych i własnych narzędzi. Może to również obejmować audyt kodu źródłowego Blockchain.",
-    fullDescriptionEn: "Comprehensive source code analysis allows discovery of security errors or programming convention violations according to the DevSecOps model (Security by design, security by default). Performed manually and with commercial and proprietary tools. This may also include Blockchain source code audit.",
+    fullDescription: "Kompleksowa analiza kodu źródłowego pozwala na odkrycie błędów bezpieczeństwa lub naruszeń konwencji programowania zgodnie z modelem DevSecOps.",
+    fullDescriptionEn: "Comprehensive source code analysis allows discovery of security errors or programming convention violations according to the DevSecOps model.",
     customImage: '/images/kod.png'
   },
   {
@@ -639,8 +555,8 @@ const features = [
       "OSSTMM standard compliance"
     ],
     color: "from-amber-600 to-yellow-700",
-    fullDescription: "Wdrażanie dodatkowych warstw ochrony urządzeń, aplikacji i usług, aby były zgodne z dostarczonymi wymaganiami i standardami. Dla serwerów, usług sieciowych, hostów, urządzeń IoT w celu wdrożenia najlepszej możliwej ochrony. Proces utwardzania koncentruje się również na utwardzaniu środowiska chmury (Azure, AWS, GCP itp.) zgodnie ze standardem OSSTMM.",
-    fullDescriptionEn: "Implementation of additional protection layers for devices, applications and services to comply with provided requirements and standards. For servers, network services, hosts, IoT devices to implement the best possible protection. The hardening process also focuses on cloud environment hardening (Azure, AWS, GCP, etc.) according to OSSTMM standard.",
+    fullDescription: "Wdrażanie dodatkowych warstw ochrony urządzeń, aplikacji i usług, aby były zgodne z dostarczonymi wymaganiami i standardami.",
+    fullDescriptionEn: "Implementation of additional protection layers for devices, applications and services to comply with provided requirements and standards.",
     customImage: '/images/utwardzanie.png'
   },
   {
@@ -662,8 +578,8 @@ const features = [
       "Safe for organization"
     ],
     color: "from-amber-600 to-yellow-700",
-    fullDescription: "Symulacja prawdziwego ataku (logicznego lub fizycznego), takiego jaki realizują prawdziwi hakerzy, ale całkowicie bezpieczna dla organizacji. Pozwala zidentyfikować najbardziej krytyczne ryzyka potencjalnej utraty danych (kradzieży) i kompromitacji. Symulacje phishingu, vishingu i włamań fizycznych.",
-    fullDescriptionEn: "Simulation of real attack (logical or physical), such as performed by real hackers, but completely safe for the organization. Allows identification of the most critical risks of potential data loss (theft) and compromise. Phishing, vishing and physical break-in simulations.",
+    fullDescription: "Symulacja prawdziwego ataku (logicznego lub fizycznego), takiego jaki realizują prawdziwi hakerzy, ale całkowicie bezpieczna dla organizacji.",
+    fullDescriptionEn: "Simulation of real attack (logical or physical), such as performed by real hackers, but completely safe for the organization.",
     customImage: '/images/phishing.png'
   },
   {
@@ -685,8 +601,8 @@ const features = [
       "Compliance controls and procedures"
     ],
     color: "from-amber-600 to-yellow-700",
-    fullDescription: "Kompleksowy przegląd przestrzegania przez organizację wytycznych regulacyjnych (WCAG, ISO 27001, GDPR, ISO 9001, DORA, NIS2). Celem jest zapewnienie, że organizacja przestrzega zewnętrznych przepisów, zasad i regulacji lub wewnętrznych wytycznych, takich jak statuty korporacyjne, kontrole, zasady i procedury. Audyty zgodności mogą również określić, czy organizacja przestrzega umowy, np. gdy podmiot przyjmuje finansowanie rządowe lub inne.",
-    fullDescriptionEn: "Comprehensive review of organization's compliance with regulatory guidelines (WCAG, ISO 27001, GDPR, ISO 9001, DORA, NIS2). The goal is to ensure that the organization complies with external laws, rules and regulations or internal guidelines, such as corporate statutes, controls, policies and procedures. Compliance audits can also determine whether the organization complies with agreements, e.g., when an entity accepts government or other funding.",
+    fullDescription: "Kompleksowy przegląd przestrzegania przez organizację wytycznych regulacyjnych (WCAG, ISO 27001, GDPR, ISO 9001, DORA, NIS2).",
+    fullDescriptionEn: "Comprehensive review of organization's compliance with regulatory guidelines (WCAG, ISO 27001, GDPR, ISO 9001, DORA, NIS2).",
     customImage: '/images/audyt zgodnosci.png'
   },
   {
@@ -708,8 +624,8 @@ const features = [
       "Implementation and audit support"
     ],
     color: "from-amber-600 to-yellow-700",
-    fullDescription: "Ten moduł odpowiada za utrzymanie przedsiębiorstwa w zgodności z wymogami i normami w czasie, zarówno przy wdrożeniu, audycie jak i później, aby na bieżąco aktualizować wymagane dokumenty i certyfikacje. Zapewniamy ciągłe wsparcie prawne i monitorowanie zmian w przepisach, które mogą wpłynąć na działalność organizacji.",
-    fullDescriptionEn: "This module is responsible for maintaining enterprise compliance with requirements and standards over time, both during implementation, audit and later, to continuously update required documents and certifications. We provide continuous legal support and monitoring of regulatory changes that may affect the organization's operations.",
+    fullDescription: "Ten moduł odpowiada za utrzymanie przedsiębiorstwa w zgodności z wymogami i normami w czasie, zarówno przy wdrożeniu, audycie jak i później.",
+    fullDescriptionEn: "This module is responsible for maintaining enterprise compliance with requirements and standards over time, both during implementation, audit and later.",
     customImage: '/images/libra.png'
   },
   {
@@ -731,8 +647,8 @@ const features = [
       "Threat hunting and analysis"
     ],
     color: "from-amber-600 to-yellow-700",
-    fullDescription: "Security Operations Center (SOC) zapewnia całodobowe monitorowanie środowiska IT organizacji w celu wykrywania, analizowania i reagowania na incydenty bezpieczeństwa cybernetycznego. Nasz SOC łączy zaawansowane technologie z doświadczeniem ekspertów, aby zapewnić najwyższy poziom ochrony przed zagrożeniami.",
-    fullDescriptionEn: "Security Operations Center (SOC) provides 24/7 monitoring of the organization's IT environment to detect, analyze and respond to cybersecurity incidents. Our SOC combines advanced technologies with expert experience to provide the highest level of protection against threats.",
+    fullDescription: "Security Operations Center (SOC) zapewnia całodobowe monitorowanie środowiska IT organizacji w celu wykrywania, analizowania i reagowania na incydenty bezpieczeństwa cybernetycznego.",
+    fullDescriptionEn: "Security Operations Center (SOC) provides 24/7 monitoring of the organization's IT environment to detect, analyze and respond to cybersecurity incidents.",
     customImage: '/images/soc.png'
   }
 ];
@@ -1179,7 +1095,7 @@ const FeatureModal = React.memo<FeatureModalProps>(({ feature, isOpen, onClose }
                   <Icon className="w-8 h-8 text-amber-400" />
                 </div>
                 <div>
-                  <h3 className={`text-xl sm:text-2xl font-bold font-heading ${
+                  <h3 className={`text-lg sm:text-xl font-bold font-heading ${
                     theme === 'dark' ? 'text-white' : 'text-gray-900'
                   }`}>
                     {language === 'pl' ? feature.title : feature.titleEn}
@@ -1207,15 +1123,13 @@ const FeatureModal = React.memo<FeatureModalProps>(({ feature, isOpen, onClose }
             </div>
 
             <div className="space-y-6">
-             
-
               <div>
-                <h4 className={`text-lg font-semibold mb-3 font-heading ${
+                <h4 className={`text-base font-semibold mb-3 font-heading ${
                   theme === 'dark' ? 'text-white' : 'text-gray-900'
                 }`}>
                   {t.features.serviceDescription}
                 </h4>
-                <p className={`font-body leading-relaxed text-sm sm:text-base ${
+                <p className={`font-body leading-relaxed text-sm ${
                   theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
                 }`}>
                   {language === 'pl' ? feature.fullDescription : feature.fullDescriptionEn}
@@ -1223,7 +1137,7 @@ const FeatureModal = React.memo<FeatureModalProps>(({ feature, isOpen, onClose }
               </div>
 
               <div>
-                <h4 className={`text-lg font-semibold mb-4 font-heading ${
+                <h4 className={`text-base font-semibold mb-4 font-heading ${
                   theme === 'dark' ? 'text-white' : 'text-gray-900'
                 }`}>
                   {t.features.keyElements}
@@ -1235,7 +1149,7 @@ const FeatureModal = React.memo<FeatureModalProps>(({ feature, isOpen, onClose }
                       initial={{ opacity: 0.8, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ duration: 0.3, delay: index * 0.1 }}
-                      className={`flex items-start text-sm sm:text-base font-body ${
+                      className={`flex items-start text-sm font-body ${
                         theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
                       }`}
                     >
@@ -1386,162 +1300,6 @@ const certificates = [
       "Identyfikacja podejrzanych adresów",
       "Compliance w kryptowalutach"
     ]
-  },
-  {
-    name: "CISSP",
-    description: "Certified Information Systems Security Professional",
-    image: "/images/logos/cissp.png",
-    fullDescription: "CISSP to prestiżowy certyfikat bezpieczeństwa informacji, pokrywający osiem domen bezpieczeństwa i wymagający znacznego doświadczenia praktycznego.",
-    details: [
-      "Zarządzanie bezpieczeństwem i ryzykiem",
-      "Bezpieczeństwo aktywów", 
-      "Inżynieria bezpieczeństwa",
-      "Bezpieczeństwo operacyjne"
-    ]
-  },
-  {
-    name: "CRTP",
-    description: "Certified Red Team Professional",
-    image: "/images/logos/missing/crtp.png",
-    fullDescription: "CRTP koncentruje się na zaawansowanych technikach Red Team, symulujących rzeczywiste ataki przeciwko środowiskom Active Directory.",
-    details: [
-      "Red Team operations",
-      "Active Directory exploitation", 
-      "Lateral movement techniques",
-      "Persistence i evasion"
-    ]
-  },
-  {
-    name: "DSOC",
-    description: "Drone Security Operations Certificate",
-    image: "/images/logos/missing/DSOC.png",
-    fullDescription: "Certyfikat DSOC potwierdza umiejętności w zakresie [...].",
-    details: [
-      "...",
-      "...",
-      "...",
-      "..."
-    ]
-  },
-  {
-    name: "eWPTX",
-    description: "eLearnSecurity Web Application Penetration Tester eXtreme",
-    image: "/images/logos/wptx.png",
-    fullDescription: "eWPTX to zaawansowany certyfikat testowania penetracyjnego aplikacji webowych, koncentrujący się na skomplikowanych scenariuszach ataków.",
-    details: [
-      "Zaawansowane testy aplikacji web",
-      "Complex exploitation scenarios", 
-      "Manual testing techniques",
-      "Advanced web vulnerabilities"
-    ]
-  },
-  {
-    name: "HKT",
-    description: "Hacker Techniques",
-    image: "/images/logos/missing/HKT.png",
-    fullDescription: "HKT obejmuje szerokie spektrum technik hackerskich, od podstawowych po zaawansowane, używanych w profesjonalnych testach bezpieczeństwa.",
-    details: [
-      "Zaawansowane techniki hackerskie",
-      "Social engineering", 
-      "Physical security testing",
-      "Wireless network attacks"
-    ]
-  },
-  {
-    name: "ISO 27001",
-    description: "Information Security Management Systems",
-    image: "/images/logos/iso.png",
-    fullDescription: "ISO 27001 to międzynarodowy standard dla systemów zarządzania bezpieczeństwem informacji (ISMS), definiujący wymagania dla skutecznego zarządzania bezpieczeństwem.",
-    details: [
-      "Systemy zarządzania bezpieczeństwem",
-      "Zarządzanie ryzykiem informacyjnym", 
-      "Ciągłe doskonalenie ISMS",
-      "Compliance i audyty"
-    ]
-  },
-  {
-    name: "OSCE",
-    description: "Offensive Security Certified Expert",
-    image: "/images/logos/osce.png",
-    fullDescription: "OSCE to bardzo zaawansowany certyfikat od Offensive Security, wymagający umiejętności w zakresie custom exploit development i advanced penetration testing.",
-    details: [
-      "Advanced exploit development",
-      "Custom payload creation", 
-      "Bypass security mechanisms",
-      "Advanced penetration testing"
-    ]
-  },
-  {
-    name: "OSCP",
-    description: "Offensive Security Certified Professional",
-    image: "/images/logos/oscp.png",
-    fullDescription: "OSCP to jeden z najbardziej szanowanych certyfikatów penetration testing, wymagający praktycznych umiejętności w zakresie ethical hackingu.",
-    details: [
-      "Practical penetration testing",
-      "Manual exploitation techniques", 
-      "Linux i Windows exploitation",
-      "Network penetration testing"
-    ]
-  },
-  {
-    name: "OSWE",
-    description: "Offensive Security Web Expert",
-    image: "/images/logos/oswe.png",
-    fullDescription: "OSWE koncentruje się na zaawansowanym testowaniu bezpieczeństwa aplikacji webowych, w tym white-box testing i source code review.",
-    details: [
-      "Advanced web application testing",
-      "Source code review", 
-      "White-box testing methodologies",
-      "Custom web exploitation"
-    ]
-  },
-  {
-    name: "OSWP",
-    description: "Offensive Security Wireless Professional",
-    image: "/images/logos/oswp.png",
-    fullDescription: "OSWP to certyfikat specjalizujący się w testowaniu bezpieczeństwa sieci bezprzewodowych i technikach ataków wireless.",
-    details: [
-      "Wireless network security testing",
-      "WiFi penetration testing", 
-      "Wireless encryption attacks",
-      "Rogue access point detection"
-    ]
-  },
-  {
-    name: "OWASP",
-    description: "Open Web Application Security Project",
-    image: "/images/logos/owasp.webp",
-    fullDescription: "Certyfikacje OWASP koncentrują się na bezpieczeństwie aplikacji webowych zgodnie z najlepszymi praktykami i standardami OWASP.",
-    details: [
-      "OWASP Top 10 vulnerabilities",
-      "Secure coding practices", 
-      "Web application security testing",
-      "Application security standards"
-    ]
-  },
-  {
-    name: "Security Analyst",
-    description: "Security Analyst (Blue Team)",
-    image: "/images/logos/blue.png",
-    fullDescription: "Certyfikat Blue Team Security Analyst koncentruje się na obronie, monitoringu i analizie incydentów bezpieczeństwa w organizacji.",
-    details: [
-      "Security monitoring i analysis",
-      "Incident detection i response", 
-      "Threat hunting",
-      "Defense strategies"
-    ]
-  },
-  {
-    name: "Security Essentials",
-    description: "Information Security Essentials",
-    image: "/images/logos/cyberess.png",
-    fullDescription: "Security Essentials pokrywa fundamentalne koncepcje bezpieczeństwa informacji, stanowiąc solidną podstawę dla specjalistów bezpieczeństwa.",
-    details: [
-      "Fundamenty bezpieczeństwa informacji",
-      "Security governance", 
-      "Risk management basics",
-      "Security awareness"
-    ]
   }
 ];
 
@@ -1613,20 +1371,20 @@ const CertificateModal = React.memo<CertificateModalProps>(({ certificate, isOpe
           >
             <div className="flex justify-between items-start mb-6">
               <div className="flex items-center">
-                     <div className="w-12 h-12 mx-auto mb-3 glass-effect rounded-lg flex items-center justify-center group-hover:shadow-blue-500/30 transition-all duration-300">
-                        {certificate.image ? (
-                          <img
-                            src={certificate.image}
-                            alt={certificate.name}
-                            className="rounded-md object-contain w-full"
-                          />
-                        ) : (
-                          <Certificate className="w-6 h-6 text-amber-400 group-hover:text-amber-300 transition-colors duration-300" />
-                        )}
-                      </div>
+                <div className="w-12 h-12 mx-auto mb-3 glass-effect rounded-lg flex items-center justify-center group-hover:shadow-blue-500/30 transition-all duration-300">
+                  {certificate.image ? (
+                    <img
+                      src={certificate.image}
+                      alt={certificate.name}
+                      className="rounded-md object-contain w-full"
+                    />
+                  ) : (
+                    <Certificate className="w-6 h-6 text-amber-400 group-hover:text-amber-300 transition-colors duration-300" />
+                  )}
+                </div>
             
                 <div>
-                  <h3 className={`text-xl sm:text-2xl font-bold font-heading ${
+                  <h3 className={`text-lg sm:text-xl font-bold font-heading ${
                     theme === 'dark' ? 'text-white' : 'text-gray-900'
                   }`}>
                     {certificate.name}
@@ -1655,12 +1413,12 @@ const CertificateModal = React.memo<CertificateModalProps>(({ certificate, isOpe
 
             <div className="space-y-6">
               <div>
-                <h4 className={`text-lg font-semibold mb-3 font-heading ${
+                <h4 className={`text-base font-semibold mb-3 font-heading ${
                   theme === 'dark' ? 'text-white' : 'text-gray-900'
                 }`}>
                   Opis certyfikatu
                 </h4>
-                <p className={`font-body leading-relaxed text-sm sm:text-base ${
+                <p className={`font-body leading-relaxed text-sm ${
                   theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
                 }`}>
                   {certificate.fullDescription}
@@ -1668,7 +1426,7 @@ const CertificateModal = React.memo<CertificateModalProps>(({ certificate, isOpe
               </div>
 
               <div>
-                <h4 className={`text-lg font-semibold mb-4 font-heading ${
+                <h4 className={`text-base font-semibold mb-4 font-heading ${
                   theme === 'dark' ? 'text-white' : 'text-gray-900'
                 }`}>
                   Kluczowe obszary
@@ -1680,7 +1438,7 @@ const CertificateModal = React.memo<CertificateModalProps>(({ certificate, isOpe
                       initial={{ opacity: 0.8, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ duration: 0.3, delay: index * 0.1 }}
-                      className={`flex items-start text-sm sm:text-base font-body ${
+                      className={`flex items-start text-sm font-body ${
                         theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
                       }`}
                     >
@@ -1711,7 +1469,6 @@ const CertificateModal = React.memo<CertificateModalProps>(({ certificate, isOpe
 
 CertificateModal.displayName = 'CertificateModal';
 
-// NEW IMPROVED CERTIFICATE SCROLLING COMPONENT
 const CertificateScrolling = React.memo<{
   certificates: typeof certificates;
   onCertificateClick: (certificate: typeof certificates[0]) => void;
@@ -1723,21 +1480,19 @@ const CertificateScrolling = React.memo<{
   const [dragStart, setDragStart] = useState({ x: 0, scrollLeft: 0 });
   const [userInteracted, setUserInteracted] = useState(false);
   
-  const SCROLL_SPEED = 0.5; // pixels per frame
-  const INTERACTION_TIMEOUT = 2000; // ms before auto-scroll resumes after interaction
+  const SCROLL_SPEED = 0.5;
+  const INTERACTION_TIMEOUT = 2000;
 
-  // Auto-scroll function
   const autoScroll = useCallback(() => {
     if (!scrollContainerRef.current || isHovered || isDragging || userInteracted) {
       return;
     }
 
     const container = scrollContainerRef.current;
-    const maxScroll = container.scrollWidth / 2; // Half because we have duplicated items
+    const maxScroll = container.scrollWidth / 2;
     
     container.scrollLeft += SCROLL_SPEED;
     
-    // Reset to beginning when we've scrolled through original items
     if (container.scrollLeft >= maxScroll) {
       container.scrollLeft = 0;
     }
@@ -1745,7 +1500,6 @@ const CertificateScrolling = React.memo<{
     animationRef.current = requestAnimationFrame(autoScroll);
   }, [isHovered, isDragging, userInteracted]);
 
-  // Start auto-scroll
   useEffect(() => {
     if (!isHovered && !isDragging && !userInteracted) {
       animationRef.current = requestAnimationFrame(autoScroll);
@@ -1758,7 +1512,6 @@ const CertificateScrolling = React.memo<{
     };
   }, [autoScroll, isHovered, isDragging, userInteracted]);
 
-  // Handle mouse enter (pause auto-scroll)
   const handleMouseEnter = useCallback(() => {
     setIsHovered(true);
     if (animationRef.current) {
@@ -1766,7 +1519,6 @@ const CertificateScrolling = React.memo<{
     }
   }, []);
 
-  // Handle mouse leave (resume auto-scroll after delay)
   const handleMouseLeave = useCallback(() => {
     setIsHovered(false);
     if (!isDragging && !userInteracted) {
@@ -1774,7 +1526,6 @@ const CertificateScrolling = React.memo<{
     }
   }, [autoScroll, isDragging, userInteracted]);
 
-  // Handle drag start
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     if (!scrollContainerRef.current) return;
     
@@ -1787,47 +1538,40 @@ const CertificateScrolling = React.memo<{
       scrollLeft: container.scrollLeft
     });
     
-    // Cancel auto-scroll
     if (animationRef.current) {
       cancelAnimationFrame(animationRef.current);
     }
     
-    // Prevent text selection
     e.preventDefault();
   }, []);
 
-  // Handle dragging
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
     if (!isDragging || !scrollContainerRef.current) return;
     
     e.preventDefault();
     const container = scrollContainerRef.current;
     const x = e.pageX - container.offsetLeft;
-    const walk = (x - dragStart.x) * 2; // Multiply by 2 for faster scrolling
+    const walk = (x - dragStart.x) * 2;
     
     container.scrollLeft = dragStart.scrollLeft - walk;
   }, [isDragging, dragStart]);
 
-  // Handle drag end
   const handleMouseUp = useCallback(() => {
     if (!isDragging) return;
     
     setIsDragging(false);
     
-    // Resume auto-scroll after timeout
     setTimeout(() => {
       setUserInteracted(false);
     }, INTERACTION_TIMEOUT);
   }, [isDragging]);
 
-  // Handle certificate click
   const handleCertificateClick = useCallback((certificate: typeof certificates[0]) => {
     if (!isDragging) {
       onCertificateClick(certificate);
     }
   }, [isDragging, onCertificateClick]);
 
-  // Cleanup on unmount
   useEffect(() => {
     return () => {
       if (animationRef.current) {
@@ -1861,7 +1605,6 @@ const CertificateScrolling = React.memo<{
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
         >
-          {/* Original certificates */}
           {certificates.map((certificate, index) => (
             <motion.div
               key={`original-${certificate.name}-${index}`}
@@ -1899,7 +1642,6 @@ const CertificateScrolling = React.memo<{
             </motion.div>
           ))}
 
-          {/* Duplicate certificates for seamless loop */}
           {certificates.map((certificate, index) => (
             <motion.div
               key={`duplicate-${certificate.name}-${index}`}
@@ -1947,7 +1689,7 @@ const CyberStatsSection = React.memo(() => {
   const t = translations[language];
   
   return (
-    <section id="stats" className="py-20 sm:py-28 section-bg relative overflow-hidden">
+    <section id="stats" className="py-16 sm:py-20 section-bg relative overflow-hidden">
       <div className="absolute inset-0">
         <div className={`absolute inset-0 bg-gradient-to-r ${
           theme === 'dark' 
@@ -1963,21 +1705,21 @@ const CyberStatsSection = React.memo(() => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="text-center mb-20"
+          className="text-center mb-16"
         >
-          <h2 className={`text-3xl sm:text-4xl md:text-5xl font-bold mb-6 font-heading ${
+          <h2 className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-4 font-heading ${
             theme === 'dark' ? 'text-white' : 'text-gray-900'
           }`}>
             {t.stats.title}
           </h2>
-          <p className={`text-lg sm:text-xl max-w-4xl mx-auto font-body leading-relaxed ${
+          <p className={`text-base sm:text-lg max-w-4xl mx-auto font-body leading-relaxed ${
             theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
           }`}>
             {t.stats.subtitle}
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
           {cyberStats.map((stat, index) => (
             <motion.div
               key={`${stat.label}-${index}`}
@@ -1986,35 +1728,35 @@ const CyberStatsSection = React.memo(() => {
               transition={{ duration: 0.5, delay: index * 0.1 }}
               viewport={{ once: true }}
               whileHover={{ y: -5 }}
-              className="neuromorphic p-8 sm:p-10 rounded-2xl text-center group hover:shadow-red-500/20 transition-all duration-500 relative overflow-hidden"
+              className="neuromorphic p-6 sm:p-8 rounded-2xl text-center group hover:shadow-red-500/20 transition-all duration-500 relative overflow-hidden"
             >
               <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-orange-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               
               <div className="relative z-10">
-                <div className="neuromorphic-inset w-20 h-20 rounded-xl flex items-center justify-center mx-auto mb-6 group-hover:shadow-red-500/30 transition-all duration-500">
-                  <Shield className="w-10 h-10 text-red-400 group-hover:text-red-300 transition-colors duration-500" />
+                <div className="neuromorphic-inset w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:shadow-red-500/30 transition-all duration-500">
+                  <Shield className="w-8 h-8 text-red-400 group-hover:text-red-300 transition-colors duration-500" />
                 </div>
                 
-                <div className="mb-3">
-                  <span className={`text-3xl sm:text-4xl md:text-5xl font-bold font-heading ${
+                <div className="mb-2">
+                  <span className={`text-2xl sm:text-3xl md:text-4xl font-bold font-heading ${
                     theme === 'dark' ? 'text-white' : 'text-gray-900'
                   }`}>
                     <AnimatedCounter target={stat.number} />
                   </span>
-                  <span className={`text-3xl sm:text-4xl md:text-5xl font-bold font-heading ${
+                  <span className={`text-2xl sm:text-3xl md:text-4xl font-bold font-heading ${
                     theme === 'dark' ? 'text-white' : 'text-gray-900'
                   }`}>
                     {language === 'pl' ? stat.suffix : stat.suffixEn}
                   </span>
                 </div>
                 
-                <h3 className={`text-lg sm:text-xl font-semibold mb-3 font-heading ${
+                <h3 className={`text-base sm:text-lg font-semibold mb-2 font-heading ${
                   theme === 'dark' ? 'text-white' : 'text-gray-900'
                 }`}>
                   {language === 'pl' ? stat.label : stat.labelEn}
                 </h3>
                 
-                <p className={`text-sm sm:text-base font-body ${
+                <p className={`text-sm font-body ${
                   theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
                 }`}>
                   {language === 'pl' ? stat.description : stat.descriptionEn}
@@ -2023,7 +1765,6 @@ const CyberStatsSection = React.memo(() => {
             </motion.div>
           ))}
         </div>
-
       </div>
     </section>
   );
@@ -2060,7 +1801,7 @@ const CustomDropdown = React.memo<CustomDropdownProps>(({
       <motion.button
         type="button"
         onClick={handleToggle}
-        className={`neuromorphic-inset w-full px-4 py-3 bg-transparent rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all duration-200 font-body text-sm sm:text-base flex items-center justify-between ${
+        className={`neuromorphic-inset w-full px-4 py-3 bg-transparent rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all duration-200 font-body text-sm flex items-center justify-between ${
           theme === 'dark' ? 'text-gray-100' : 'text-gray-800'
         }`}
         whileTap={{ scale: 0.98 }}
@@ -2090,7 +1831,7 @@ const CustomDropdown = React.memo<CustomDropdownProps>(({
                 key={option.value}
                 type="button"
                 onClick={() => handleOptionSelect(option.value)}
-                className={`w-full px-4 py-3 text-left transition-colors duration-200 font-body text-sm sm:text-base border-b last:border-b-0 ${
+                className={`w-full px-4 py-3 text-left transition-colors duration-200 font-body text-sm border-b last:border-b-0 ${
                   theme === 'dark' 
                     ? 'text-gray-100 hover:bg-white/8 border-gray-600' 
                     : 'text-gray-800 hover:bg-black/8 border-gray-300'
@@ -2217,9 +1958,17 @@ const NavigationBar = React.memo<{
                 onClick={handleContactClick}
                 variant="primary"
                 size="sm"
-              >
-                <span className="text-amber-300">{t.contact.writeToUs}</span>
-                <ArrowRight className="w-4 h-4 ml-2 text-amber-300" />
+              >         
+              
+              <span className={` ${
+                                theme === 'dark' ? 'text-amber-300' : 'text-amber-600'
+                              }`}>
+                {t.contact.writeToUs}
+              </span>
+                <ArrowRight className={`w-4 h-4 ml-2 ${
+                                theme === 'dark' ? 'text-amber-300' : 'text-amber-600'
+                              }`}/>
+
               </PremiumButton>
             </div>
             <div className="md:hidden">
@@ -2280,10 +2029,35 @@ const NavigationBar = React.memo<{
 
 NavigationBar.displayName = 'NavigationBar';
 
+const WaveTransition = React.memo<{ theme: 'light' | 'dark' }>(({ theme }) => {
+  return (
+    <div className="wave-transition">
+      <svg
+        data-name="Layer 1"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 1200 120"
+        preserveAspectRatio="none"
+        style={{ transform: 'rotate(180deg)' }}
+      >
+        <path
+          d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z"
+          className={theme === 'dark' 
+            ? 'fill-current text-gray-900' 
+            : 'fill-current text-gray-100'
+          }
+        />
+      </svg>
+    </div>
+  );
+});
+
+WaveTransition.displayName = 'WaveTransition';
+
 const HeroSection = React.memo<{
   onCertificateClick: (certificate: typeof certificates[0]) => void;
-}>(({ onCertificateClick }) => { // <-- removed scrollToSection here
+}>(({ onCertificateClick }) => {
   const { language } = React.useContext(LanguageContext);
+  const { theme } = React.useContext(ThemeContext);
   const t = translations[language];
 
   const mouseXLocal = useMotionValue(0);
@@ -2325,7 +2099,7 @@ const HeroSection = React.memo<{
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-20 flex items-center min-h-screen">
         <div className="text-center w-full">
-          <div className="overflow-hidden mb-8">
+          <div className="overflow-hidden mb-6">
             <motion.h1
               initial={{ y: 100, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
@@ -2370,7 +2144,7 @@ const HeroSection = React.memo<{
                       alt="SecurHUB Logo"
                       width={512}
                       height={512}
-                      className="w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 lg:w-[28rem] lg:h-[28rem] xl:w-[32rem] xl:h-[32rem] object-contain filter drop-shadow-2xl transition-all duration-300"
+                      className="w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 xl:w-[28rem] xl:h-[28rem] object-contain filter drop-shadow-2xl transition-all duration-300"
                       priority={true}
                     />
                   </motion.div>
@@ -2383,7 +2157,7 @@ const HeroSection = React.memo<{
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="text-lg sm:text-xl md:text-2xl mb-12 text-gray-100 max-w-4xl mx-auto font-body leading-relaxed px-4"
+            className="text-base sm:text-lg md:text-xl mb-10 text-gray-100 max-w-4xl mx-auto font-body leading-relaxed px-4"
           >
             {t.hero.desc1} {" "}
             <span className="text-amber-300 font-semibold">
@@ -2399,7 +2173,7 @@ const HeroSection = React.memo<{
             initial={{ opacity: 0.8, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 1.2 }}
-            className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 px-4"
+            className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-6 px-4"
           >
             {statsData.map((stat, index) => (
               <motion.div
@@ -2409,11 +2183,11 @@ const HeroSection = React.memo<{
                 transition={{ duration: 0.6, delay: 1.4 + index * 0.1 }}
                 className="text-center"
               >
-                <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-white font-heading mb-2">
+                <div className="text-xl sm:text-2xl md:text-3xl font-bold text-white font-heading mb-2">
                   <AnimatedCounter target={stat.number} />
                   {stat.suffix}
                 </div>
-                <div className="text-sm text-gray-200 font-body">
+                <div className="text-xs sm:text-sm text-gray-200 font-body">
                   {language === 'pl' ? stat.label : stat.labelEn}
                 </div>
               </motion.div>
@@ -2426,10 +2200,10 @@ const HeroSection = React.memo<{
           />
         </div>
       </div>
+      <WaveTransition theme={theme} />
     </section>
   );
-})
-
+});
 
 HeroSection.displayName = 'HeroSection';
 
@@ -2439,30 +2213,28 @@ const AboutSection = React.memo(() => {
   const t = translations[language];
   
   return (
-    <section id="about" className="py-20 sm:py-28 section-bg">
-      
+    <section id="about" className="py-16 sm:py-20 section-bg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
         <motion.div
           initial={{ opacity: 0.8, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="text-center mb-20"
+          className="text-center mb-16"
         >
-          <h2 className={`text-3xl sm:text-4xl md:text-5xl font-bold mb-6 font-heading ${
+          <h2 className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-4 font-heading ${
             theme === 'dark' ? 'text-white' : 'text-gray-900'
           }`}>
             {t.about.title}
           </h2>
-          <p className={`text-lg sm:text-xl max-w-3xl mx-auto font-body ${
+          <p className={`text-base sm:text-lg max-w-3xl mx-auto font-body ${
             theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
           }`}>
             {t.about.subtitle}
           </p>
         </motion.div>
 
-        <div className="space-y-20 sm:space-y-28">
+        <div className="space-y-16 sm:space-y-20">
           {aboutBlocks.map((block, index) => {
             const Icon = block.icon;
             return (
@@ -2472,7 +2244,7 @@ const AboutSection = React.memo(() => {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.05 }}
                 viewport={{ once: true }}
-                className={`flex flex-col lg:flex-row items-center gap-12 lg:gap-16 ${
+                className={`flex flex-col lg:flex-row items-center gap-10 lg:gap-12 ${
                   block.reverse ? "lg:flex-row-reverse" : ""
                 }`}
               >
@@ -2480,19 +2252,19 @@ const AboutSection = React.memo(() => {
                   <motion.div 
                     whileHover={{ y: -3 }}
                     transition={{ duration: 0.3 }}
-                    className="neuromorphic p-8 sm:p-10 rounded-3xl hover:shadow-amber-500/15 transition-all duration-300"
+                    className="neuromorphic p-6 sm:p-8 rounded-3xl hover:shadow-amber-500/15 transition-all duration-300"
                   >
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center mb-8">
-                      <div className="neuromorphic-inset w-20 h-20 rounded-xl flex items-center justify-center mr-0 sm:mr-6 mb-6 sm:mb-0">
-                        <Icon className="w-10 h-10 text-amber-400" />
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center mb-6">
+                      <div className="neuromorphic-inset w-16 h-16 rounded-xl flex items-center justify-center mr-0 sm:mr-6 mb-4 sm:mb-0">
+                        <Icon className="w-8 h-8 text-amber-400" />
                       </div>
-                      <h3 className={`text-2xl sm:text-3xl font-bold font-heading ${
+                      <h3 className={`text-xl sm:text-2xl font-bold font-heading ${
                         theme === 'dark' ? 'text-white' : 'text-gray-900'
                       }`}>
                         {language === 'pl' ? block.title : block.titleEn}
                       </h3>
                     </div>
-                    <p className={`leading-relaxed font-body text-lg sm:text-xl ${
+                    <p className={`leading-relaxed font-body text-base sm:text-lg ${
                       theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
                     }`}>
                       {language === 'pl' ? block.content : block.contentEn}
@@ -2508,8 +2280,11 @@ const AboutSection = React.memo(() => {
                     viewport={{ once: true }}
                     className="relative"
                   >
-                    <MouseParallax strength={0.15}>
-                      <div className={`absolute inset-0 rounded-3xl transform translate-x-6 translate-y-6 ${
+                    <motion.div
+                      whileHover={{ scale: 1.02 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <div className={`absolute inset-0 rounded-3xl transform translate-x-4 translate-y-4 ${
                         theme === 'dark' 
                           ? 'bg-gradient-to-br from-amber-600/30 to-yellow-600/30' 
                           : 'bg-gradient-to-br from-amber-400/30 to-yellow-400/30'
@@ -2517,112 +2292,44 @@ const AboutSection = React.memo(() => {
                       
                       <div className="relative neuromorphic-inset rounded-3xl overflow-hidden shadow-2xl">
                         {block.customImage ? (
-                          <div className="h-64 sm:h-80 relative">
-                            <div className={`opacity-40 ${
-                                theme === 'dark'
-                                  ? 'from-amber-900/40 via-yellow-800/40 to-orange-900/40'
-                                  : 'from-amber-200/60 via-yellow-200/60 to-orange-200/60'
-                              }`} >
-                              <LazyImage 
-                                src={block.customImage}
-                                alt={language === 'pl' ? block.title : block.titleEn}
-                                width={400}
-                                height={320}
-                                className="w-full object-contain"
-                              />
-                              <div className={`absolute inset-0 bg-gradient-to-br opacity-20 ${
-                                theme === 'dark'
-                                  ? 'from-amber-900/40 via-yellow-800/40 to-orange-900/40'
-                                  : 'from-amber-200/60 via-yellow-200/60 to-orange-200/60'
-                              }`} />
-                            </div>
+                          <div className="h-48 sm:h-64 relative">
+                            <LazyImage 
+                              src={block.customImage}
+                              alt={language === 'pl' ? block.title : block.titleEn}
+                              width={400}
+                              height={256}
+                              className="w-full h-full object-cover"
+                            />
+                            <div className={`absolute inset-0 bg-gradient-to-br opacity-20 ${
+                              theme === 'dark'
+                                ? 'from-amber-900/40 via-yellow-800/40 to-orange-900/40'
+                                : 'from-amber-200/60 via-yellow-200/60 to-orange-200/60'
+                            }`} />
                           </div>
                         ) : (
-                          <div className={`h-64 sm:h-80 bg-gradient-to-br ${
+                          <div className={`h-48 sm:h-64 bg-gradient-to-br ${
                             theme === 'dark'
                               ? 'from-amber-900/40 via-yellow-800/40 to-orange-900/40'
                               : 'from-amber-200/60 via-yellow-200/60 to-orange-200/60'
                           } relative`}>
-                            <motion.div
-                              className="absolute inset-0 opacity-30"
-                              animate={{
-                                background: [
-                                  "radial-gradient(circle at 20% 80%, rgba(251, 191, 36, 0.3) 0%, transparent 50%)",
-                                  "radial-gradient(circle at 80% 20%, rgba(251, 191, 36, 0.3) 0%, transparent 50%)",
-                                  "radial-gradient(circle at 40% 40%, rgba(251, 191, 36, 0.3) 0%, transparent 50%)"
-                                ]
-                              }}
-                              transition={{
-                                duration: 4,
-                                repeat: Infinity,
-                                repeatType: "reverse"
-                              }}
-                            />
-
                             <div className="relative h-full flex items-center justify-center group">
-                              <MouseParallax strength={0.1} className="relative">
-                                <motion.div
-                                  className="absolute inset-0 rounded-full"
-                                  animate={{
-                                    boxShadow: [
-                                      "0 0 20px rgba(251, 191, 36, 0.0)",
-                                      "0 0 40px rgba(251, 191, 36, 0.3)",
-                                      "0 0 20px rgba(251, 191, 36, 0.0)"
-                                    ]
-                                  }}
-                                  transition={{
-                                    duration: 3,
-                                    repeat: Infinity,
-                                    ease: "easeInOut"
-                                  }}
-                                />
-                                
-                                <motion.div
-                                  whileHover={{ 
-                                    scale: 1.1,
-                                    rotate: [0, -5, 5, 0]
-                                  }}
-                                  transition={{ 
-                                    scale: { duration: 0.3 },
-                                    rotate: { duration: 0.6, ease: "easeInOut" }
-                                  }}
-                                  className="relative z-10"
-                                >
-                                  <Icon className={`w-20 sm:w-24 h-20 sm:h-24 transition-all duration-500 ${
-                                    theme === 'dark'
-                                      ? 'text-amber-400 drop-shadow-[0_0_15px_rgba(251,191,36,0.5)]'
-                                      : 'text-amber-600 drop-shadow-[0_0_15px_rgba(217,119,6,0.3)]'
-                                  }`} />
-                                </motion.div>
-
-                                {[...Array(3)].map((_, i) => (
-                                  <motion.div
-                                    key={i}
-                                    className="absolute w-2 h-2 bg-amber-400/60 rounded-full"
-                                    animate={{
-                                      x: [0, 20, -20, 0],
-                                      y: [0, -15, 10, 0],
-                                      opacity: [0, 1, 1, 0]
-                                    }}
-                                    transition={{
-                                      duration: 4,
-                                      repeat: Infinity,
-                                      delay: i * 1.3,
-                                      ease: "easeInOut"
-                                    }}
-                                    style={{
-                                      left: `${20 + i * 20}%`,
-                                      top: `${30 + i * 15}%`
-                                    }}
-                                  />
-                                ))}
-                              </MouseParallax>
-
-                              <div className={`absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-20 transition-opacity duration-500 ${
-                                theme === 'dark'
-                                  ? 'from-amber-500/20 to-yellow-500/20'
-                                  : 'from-amber-400/20 to-yellow-400/20'
-                              }`} />
+                              <motion.div
+                                whileHover={{ 
+                                  scale: 1.1,
+                                  rotate: [0, -5, 5, 0]
+                                }}
+                                transition={{ 
+                                  scale: { duration: 0.3 },
+                                  rotate: { duration: 0.6, ease: "easeInOut" }
+                                }}
+                                className="relative z-10"
+                              >
+                                <Icon className={`w-16 sm:w-20 h-16 sm:h-20 transition-all duration-500 ${
+                                  theme === 'dark'
+                                    ? 'text-amber-400 drop-shadow-[0_0_15px_rgba(251,191,36,0.5)]'
+                                    : 'text-amber-600 drop-shadow-[0_0_15px_rgba(217,119,6,0.3)]'
+                                }`} />
+                              </motion.div>
                             </div>
                           </div>
                         )}
@@ -2635,7 +2342,7 @@ const AboutSection = React.memo(() => {
                           viewport={{ once: true }}
                         />
                       </div>
-                    </MouseParallax>
+                    </motion.div>
                   </motion.div>
                 </div>
               </motion.div>
@@ -2665,14 +2372,14 @@ const FeatureCard = React.memo<{
       transition={{ duration: 0.5, delay: index * 0.05 }}
       viewport={{ once: true }}
       whileHover={{ y: -8, scale: 1.02 }}
-      className="neuromorphic-inset p-8 sm:p-10 rounded-3xl group hover:shadow-amber-500/20 transition-all duration-500 relative overflow-hidden h-full"
+      className="neuromorphic-inset p-6 sm:p-8 rounded-3xl group hover:shadow-amber-500/20 transition-all duration-500 relative overflow-hidden h-full"
     >
       <div className={`absolute inset-0 bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-15 transition-opacity duration-500`} />
-      <div className="relative z-10 flex flex-col sm:flex-row sm:gap-10 h-full">
+      <div className="relative z-10 flex flex-col sm:flex-row sm:gap-8 h-full">
         
-        <div className="flex-shrink-0 self-center py-8">
+        <div className="flex-shrink-0 self-center py-6">
           <motion.div 
-            className=" w-44 h-44 sm:w-52 sm:h-52 rounded-3xl overflow-hidden group-hover:shadow-amber-500/30 transition-all duration-500 relative"
+            className="w-32 h-32 sm:w-40 sm:h-40 rounded-3xl overflow-hidden group-hover:shadow-amber-500/30 transition-all duration-500 relative"
             whileHover={{ scale: 1.05 }}
             transition={{ duration: 0.3 }}
           >
@@ -2681,15 +2388,15 @@ const FeatureCard = React.memo<{
                 <LazyImage
                   src={feature.customImage}
                   alt={language === 'pl' ? feature.title : feature.titleEn}
-                  width={208}
-                  height={208}
+                  width={160}
+                  height={160}
                   className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-700"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               </>
             ) : (
               <div className={`w-full h-full bg-gradient-to-br ${feature.color} flex items-center justify-center relative`}>
-                <feature.icon className="w-20 h-20 text-white/90 group-hover:scale-110 transition-transform duration-500" />
+                <feature.icon className="w-16 h-16 text-white/90 group-hover:scale-110 transition-transform duration-500" />
                 <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               </div>
             )}
@@ -2701,7 +2408,7 @@ const FeatureCard = React.memo<{
               }}
             />
           </motion.div>
-          <div className="mt-auto pt-8">
+          <div className="mt-auto pt-6">
             <motion.div
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -2735,7 +2442,7 @@ const FeatureCard = React.memo<{
 
         <div className="flex-1 flex flex-col">
           <motion.h3 
-            className={`text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 font-heading group-hover:text-amber-100 transition-all duration-300 leading-tight ${
+            className={`text-lg sm:text-xl lg:text-2xl font-bold mb-3 font-heading group-hover:text-amber-100 transition-all duration-300 leading-tight ${
               theme === 'dark' ? 'text-white' : 'text-gray-900'
             }`}
             whileHover={{ x: 5 }}
@@ -2744,20 +2451,17 @@ const FeatureCard = React.memo<{
             {language === 'pl' ? feature.title : feature.titleEn}
           </motion.h3>
 
-<ul className={`mb-8 font-body leading-relaxed text-lg sm:text-xl transition-colors duration-300 ${
-  theme === 'dark'
-    ? 'text-gray-200 group-hover:text-gray-100'
-    : 'text-gray-700 group-hover:text-gray-600'
-}`}>
-  {(language === 'pl' ? feature.bulletPoints : feature.bulletPointsEn).map((point, idx) => (
-    <li key={idx} className="mb-2 list-disc list-inside">
-      {point}
-    </li>
-  ))}
-</ul>
-
-
-          
+          <ul className={`mb-6 font-body leading-relaxed text-sm sm:text-base transition-colors duration-300 ${
+            theme === 'dark'
+              ? 'text-gray-200 group-hover:text-gray-100'
+              : 'text-gray-700 group-hover:text-gray-600'
+          }`}>
+            {(language === 'pl' ? feature.bulletPoints : feature.bulletPointsEn).map((point, idx) => (
+              <li key={idx} className="mb-2 list-disc list-inside">
+                {point}
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
 
@@ -2802,9 +2506,8 @@ const FeaturesSection = React.memo<{ onFeatureClick: (feature: typeof features[0
   const t = translations[language];
   
   return (
-    <section id="features" className="py-20 sm:py-28 section-bg relative overflow-hidden">
+    <section id="features" className="py-16 sm:py-20 section-bg relative overflow-hidden">
       <div className="absolute inset-0">
-        
         <div className={`absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px] ${
           theme === 'light' ? 'opacity-30' : ''
         }`} />
@@ -2816,21 +2519,21 @@ const FeaturesSection = React.memo<{ onFeatureClick: (feature: typeof features[0
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="text-center mb-20"
+          className="text-center mb-16"
         >
-          <h2 className={`text-3xl sm:text-4xl md:text-5xl font-bold mb-6 font-heading ${
+          <h2 className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-4 font-heading ${
             theme === 'dark' ? 'text-white' : 'text-gray-900'
           }`}>
             {t.features.title}
           </h2>
-          <p className={`text-lg sm:text-xl max-w-3xl mx-auto font-body ${
+          <p className={`text-base sm:text-lg max-w-3xl mx-auto font-body ${
             theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
           }`}>
             {t.features.subtitle}
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-10 lg:gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-8 lg:gap-10">
           {features.map((feature, index) => (
             <FeatureCard 
               key={feature.title} 
@@ -2945,47 +2648,44 @@ const ContactSection = React.memo<{ showToast: (message: string) => void }>(({ s
   }, [errors, formData.message]);
 
   return (
-    <section id="contact" className="py-20 sm:py-28 section-bg">
+    <section id="contact" className="py-16 sm:py-20 section-bg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0.8, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="text-center mb-20"
+          className="text-center mb-16"
         >
-          <h2 className={`text-3xl sm:text-4xl md:text-5xl font-bold mb-6 font-heading ${
+          <h2 className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-4 font-heading ${
             theme === 'dark' ? 'text-white' : 'text-gray-900'
           }`}>
             {t.contact.title}
           </h2>
-          <p className={`text-lg sm:text-xl max-w-4xl mx-auto font-body leading-relaxed ${
+          <p className={`text-base sm:text-lg max-w-4xl mx-auto font-body leading-relaxed ${
             theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
           }`}>
             {t.contact.subtitle}
           </p>
         </motion.div>
 
-        <div className="flex flex-col items-center gap-12 lg:gap-16">
-            
-
-
+        <div className="flex flex-col items-center gap-10 lg:gap-12">
           <motion.div
             initial={{ opacity: 0.8, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="neuromorphic w-full w-6/7 p-8 sm:p-10 rounded-3xl flex flex-col justify-center" 
+            className="neuromorphic w-full max-w-2xl p-6 sm:p-8 rounded-3xl flex flex-col justify-center" 
           >
-            <h3 className={`text-2xl sm:text-3xl font-bold mb-8 font-heading flex items-center ${
+            <h3 className={`text-xl sm:text-2xl font-bold mb-6 font-heading flex items-center ${
               theme === 'dark' ? 'text-white' : 'text-gray-900'
             }`}>
-              <Mail className="w-8 h-8 text-amber-400 mr-4" />
+              <Mail className="w-6 h-6 text-amber-400 mr-3" />
               {t.contact.sendMessage}
             </h3>
-            <div className="space-y-8">
+            <div className="space-y-6">
               <div>
-                <label className={`block text-base font-medium mb-3 font-body ${
+                <label className={`block text-sm font-medium mb-2 font-body ${
                   theme === 'dark' ? 'text-gray-200' : 'text-gray-800'
                 }`}>
                   {t.contact.email} *
@@ -2994,7 +2694,7 @@ const ContactSection = React.memo<{ showToast: (message: string) => void }>(({ s
                   type="email"
                   value={formData.email}
                   onChange={(e) => handleInputChange('email', e.target.value)}
-                  className={`neuromorphic-inset w-full px-5 py-4 bg-transparent rounded-xl focus:outline-none transition-all duration-200 font-body text-base sm:text-lg ${
+                  className={`neuromorphic-inset w-full px-4 py-3 bg-transparent rounded-xl focus:outline-none transition-all duration-200 font-body text-sm ${
                     theme === 'dark' ? 'text-gray-100' : 'text-gray-800'
                   } ${
                     errors.email 
@@ -3027,7 +2727,7 @@ const ContactSection = React.memo<{ showToast: (message: string) => void }>(({ s
                 )}
               </div>
               <div>
-                <label className={`block text-base font-medium mb-3 font-body ${
+                <label className={`block text-sm font-medium mb-2 font-body ${
                   theme === 'dark' ? 'text-gray-200' : 'text-gray-800'
                 }`}>
                   {t.contact.organization}
@@ -3036,14 +2736,14 @@ const ContactSection = React.memo<{ showToast: (message: string) => void }>(({ s
                   type="text"
                   value={formData.organization}
                   onChange={(e) => handleInputChange('organization', e.target.value)}
-                  className={`neuromorphic-inset w-full px-5 py-4 bg-transparent rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all duration-200 font-body text-base sm:text-lg ${
+                  className={`neuromorphic-inset w-full px-4 py-3 bg-transparent rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all duration-200 font-body text-sm ${
                     theme === 'dark' ? 'text-gray-100' : 'text-gray-800'
                   }`}
                   placeholder="NIP lub nazwa firmy"
                 />
               </div>
               <div>
-                <label className={`block text-base font-medium mb-3 font-body ${
+                <label className={`block text-sm font-medium mb-2 font-body ${
                   theme === 'dark' ? 'text-gray-200' : 'text-gray-800'
                 }`}>
                   {t.contact.phone}
@@ -3052,14 +2752,14 @@ const ContactSection = React.memo<{ showToast: (message: string) => void }>(({ s
                   type="text"
                   value={formData.phone}
                   onChange={(e) => handleInputChange('phone', e.target.value)}
-                  className={`neuromorphic-inset w-full px-5 py-4 bg-transparent rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all duration-200 font-body text-base sm:text-lg ${
+                  className={`neuromorphic-inset w-full px-4 py-3 bg-transparent rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all duration-200 font-body text-sm ${
                     theme === 'dark' ? 'text-gray-100' : 'text-gray-800'
                   }`}
                   placeholder="Telefon kontaktowy"
                 />
               </div>
               <div>
-                <label className={`block text-base font-medium mb-3 font-body ${
+                <label className={`block text-sm font-medium mb-2 font-body ${
                   theme === 'dark' ? 'text-gray-200' : 'text-gray-800'
                 }`}>
                   {t.contact.companySize}
@@ -3072,8 +2772,8 @@ const ContactSection = React.memo<{ showToast: (message: string) => void }>(({ s
                 />
               </div>
               <div>
-                <div className="flex justify-between items-center mb-3">
-                  <label className={`text-base font-medium font-body ${
+                <div className="flex justify-between items-center mb-2">
+                  <label className={`text-sm font-medium font-body ${
                     theme === 'dark' ? 'text-gray-200' : 'text-gray-800'
                   }`}>
                     {t.contact.message} *
@@ -3089,8 +2789,8 @@ const ContactSection = React.memo<{ showToast: (message: string) => void }>(({ s
                 <textarea
                   value={formData.message}
                   onChange={(e) => handleInputChange('message', e.target.value)}
-                  rows={5}
-                  className={`neuromorphic-inset w-full px-5 py-4 bg-transparent rounded-xl resize-none focus:outline-none transition-all duration-200 font-body text-base sm:text-lg ${
+                  rows={4}
+                  className={`neuromorphic-inset w-full px-4 py-3 bg-transparent rounded-xl resize-none focus:outline-none transition-all duration-200 font-body text-sm ${
                     theme === 'dark' ? 'text-gray-100' : 'text-gray-800'
                   } ${
                     errors.message 
@@ -3167,7 +2867,7 @@ const Footer = React.memo(() => {
   ], [t.footer.cookies]);
 
   return (
-    <footer className={`border-t py-16 ${
+    <footer className={`border-t py-12 ${
       theme === 'dark' 
         ? 'bg-black border-gray-700' 
         : 'bg-gray-50 border-gray-300'
@@ -3178,17 +2878,17 @@ const Footer = React.memo(() => {
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className={`border-t pt-8 ${
+          className={`border-t pt-6 ${
             theme === 'dark' ? 'border-gray-700' : 'border-gray-300'
           }`}
         >
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <p className={`text-base font-body text-center md:text-left ${
+            <p className={`text-sm font-body text-center md:text-left ${
               theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
             }`}>
               {t.footer.copyright}
             </p>
-            <div className="flex flex-wrap justify-center md:justify-end space-x-6 text-base">
+            <div className="flex flex-wrap justify-center md:justify-end space-x-6 text-sm">
               {legalList.map((item, index) => (
                 <a 
                   key={`legal-${index}`}
@@ -3291,47 +2991,45 @@ export default function SecurHubLanding() {
   }, []);
 
   return (
-    <MouseProvider>
-      <ThemeContext.Provider value={{ theme, toggleTheme }}>
-        <LanguageContext.Provider value={{ language, toggleLanguage }}>
-          <div className={`min-h-screen font-body overflow-x-hidden transition-colors duration-300 ${
-            theme === 'dark' ? 'bg-black' : 'bg-gray-50'
-          }`}>
-            <NavigationBar 
-              isScrolled={isScrolled}
-              mobileNavActive={mobileNavActive}
-              setMobileNavActive={setMobileNavActive}
-              scrollToSection={scrollToSection}
-              isOverHero={isOverHero}
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+      <LanguageContext.Provider value={{ language, toggleLanguage }}>
+        <div className={`min-h-screen font-body overflow-x-hidden transition-colors duration-300 ${
+          theme === 'dark' ? 'bg-black' : 'bg-gray-50'
+        }`}>
+          <NavigationBar 
+            isScrolled={isScrolled}
+            mobileNavActive={mobileNavActive}
+            setMobileNavActive={setMobileNavActive}
+            scrollToSection={scrollToSection}
+            isOverHero={isOverHero}
+          />
+          <main>
+            <HeroSection 
+              onCertificateClick={handleCertificateClick}
             />
-            <main>
-              <HeroSection 
-                onCertificateClick={handleCertificateClick}
-              />
-              <AboutSection />
-              <CyberStatsSection />
-              <FeaturesSection onFeatureClick={handleFeatureClick} />
-              <ContactSection showToast={showToast} />
-            </main>
-            <Footer />
-            <CertificateModal
-              certificate={selectedCertificate}
-              isOpen={isCertModalOpen}
-              onClose={handleCloseCertModal}
-            />
-            <FeatureModal
-              feature={selectedFeature}
-              isOpen={isFeatureModalOpen}
-              onClose={handleCloseFeatureModal}
-            />
-            <AnimatePresence>
-              {toastMessage && (
-                <Toast message={toastMessage} onClose={handleCloseToast} />
-              )}
-            </AnimatePresence>
-          </div>
-        </LanguageContext.Provider>
-      </ThemeContext.Provider>
-    </MouseProvider>
+            <AboutSection />
+            <CyberStatsSection />
+            <FeaturesSection onFeatureClick={handleFeatureClick} />
+            <ContactSection showToast={showToast} />
+          </main>
+          <Footer />
+          <CertificateModal
+            certificate={selectedCertificate}
+            isOpen={isCertModalOpen}
+            onClose={handleCloseCertModal}
+          />
+          <FeatureModal
+            feature={selectedFeature}
+            isOpen={isFeatureModalOpen}
+            onClose={handleCloseFeatureModal}
+          />
+          <AnimatePresence>
+            {toastMessage && (
+              <Toast message={toastMessage} onClose={handleCloseToast} />
+            )}
+          </AnimatePresence>
+        </div>
+      </LanguageContext.Provider>
+    </ThemeContext.Provider>
   );
 }
