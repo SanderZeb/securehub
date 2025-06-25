@@ -20,7 +20,6 @@ import {
   FaChevronRight as ChevronRight,
   FaEnvelope as Mail,
   FaArrowRight as ArrowRight,
-  FaPlay as Play,
   FaCheckCircle as CheckCircle,
   FaChevronDown as ChevronDown,
   FaSun as Sun,
@@ -391,9 +390,6 @@ const translations = {
       desc2: "wyselekcjonowanych dostawców",
       desc3: "usług cybersecurity z",
       desc4: "ponad 25-letnim doświadczeniem",
-      description: "SecurHUB to innowacyjna platforma skierowana do średnich i dużych przedsiebiorstw. Zrzeszamy wyłącznie certyfikowanych specjalistów oraz wyselekcjonowanych dostawców z wieloletnim doświadczeniem. Gwarantujemy tym samym najwyższą jakość i bezpieczeństwo wykonywanych usług!",
-      startCooperation: "Rozpocznij współpracę",
-      seeOffer: "Zobacz ofertę",
       yearsExperience: "Lat doświadczenia",
       satisfiedClients: "Zadowolonych klientów", 
       testEfficiency: "Skuteczność testów",
@@ -475,9 +471,10 @@ const translations = {
       contact: "Contact"
     },
     hero: {
-      description: "SecurHUB is an innovative platform aimed at medium and large enterprises. We only associate certified specialists and selected suppliers with years of experience. This guarantees the highest quality and security of the services performed!",
-      startCooperation: "Start cooperation",
-      seeOffer: "See offer",
+desc1: "A platform dedicated to large enterprises, bringing together",
+desc2: "carefully selected providers",
+desc3: "of cybersecurity services with",
+desc4: "over 25 years of experience",
       yearsExperience: "Years of experience",
       satisfiedClients: "Satisfied clients",
       testEfficiency: "Test efficiency", 
@@ -1463,18 +1460,6 @@ const certificates = [
     ]
   },
   {
-    name: "Mobile Security",
-    description: "Mobile Security & Penetration Testing",
-    
-    fullDescription: "Specjalizacja w bezpieczeństwie urządzeń mobilnych i testowaniu penetracyjnym aplikacji mobilnych na platformach iOS i Android.",
-    details: [
-      "Bezpieczeństwo aplikacji mobilnych",
-      "iOS i Android penetration testing", 
-      "Mobile malware analysis",
-      "Mobile device forensics"
-    ]
-  },
-  {
     name: "OSCE",
     description: "Offensive Security Certified Expert",
     image: "/images/logos/osce.png",
@@ -2296,19 +2281,10 @@ const NavigationBar = React.memo<{
 NavigationBar.displayName = 'NavigationBar';
 
 const HeroSection = React.memo<{
-  scrollToSection: (sectionId: string) => void;
   onCertificateClick: (certificate: typeof certificates[0]) => void;
-}>(({ scrollToSection, onCertificateClick }) => {
+}>(({ onCertificateClick }) => { // <-- removed scrollToSection here
   const { language } = React.useContext(LanguageContext);
   const t = translations[language];
-
-  const handleContactClick = useCallback(() => {
-    scrollToSection("contact");
-  }, [scrollToSection]);
-
-  const handleFeaturesClick = useCallback(() => {
-    scrollToSection("features");
-  }, [scrollToSection]);
 
   const mouseXLocal = useMotionValue(0);
   const mouseYLocal = useMotionValue(0);
@@ -2403,29 +2379,21 @@ const HeroSection = React.memo<{
             </motion.h1>
           </div>
 
-
-
-
-
           <motion.p
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
             className="text-lg sm:text-xl md:text-2xl mb-12 text-gray-100 max-w-4xl mx-auto font-body leading-relaxed px-4"
           >
-            
             {t.hero.desc1} {" "}
             <span className="text-amber-300 font-semibold">
               {t.hero.desc2}
-              </span>{" "}
+            </span>{" "}
             {t.hero.desc3}{" "}
             <span className="text-yellow-300 font-semibold">
               {t.hero.desc4}
             </span>
           </motion.p>
-
-
-
 
           <motion.div
             initial={{ opacity: 0.8, y: 30 }}
@@ -2460,7 +2428,8 @@ const HeroSection = React.memo<{
       </div>
     </section>
   );
-});
+})
+
 
 HeroSection.displayName = 'HeroSection';
 
@@ -2703,7 +2672,7 @@ const FeatureCard = React.memo<{
         
         <div className="flex-shrink-0 self-center py-8">
           <motion.div 
-            className="neuromorphic w-44 h-44 sm:w-52 sm:h-52 rounded-3xl overflow-hidden group-hover:shadow-amber-500/30 transition-all duration-500 relative"
+            className=" w-44 h-44 sm:w-52 sm:h-52 rounded-3xl overflow-hidden group-hover:shadow-amber-500/30 transition-all duration-500 relative"
             whileHover={{ scale: 1.05 }}
             transition={{ duration: 0.3 }}
           >
@@ -2732,27 +2701,6 @@ const FeatureCard = React.memo<{
               }}
             />
           </motion.div>
-        </div>
-
-        <div className="flex-1 flex flex-col">
-          <motion.h3 
-            className={`text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 font-heading group-hover:text-amber-100 transition-all duration-300 leading-tight ${
-              theme === 'dark' ? 'text-white' : 'text-gray-900'
-            }`}
-            whileHover={{ x: 5 }}
-            transition={{ duration: 0.2 }}
-          >
-            {language === 'pl' ? feature.title : feature.titleEn}
-          </motion.h3>
-
-          <p className={`mb-8 font-body leading-relaxed text-lg sm:text-xl transition-colors duration-300 ${
-            theme === 'dark'
-              ? 'text-gray-200 group-hover:text-gray-100'
-              : 'text-gray-700 group-hover:text-gray-600'
-          }`}>
-            {language === 'pl' ? feature.description : feature.descriptionEn}
-          </p>
-
           <div className="mt-auto pt-8">
             <motion.div
               whileHover={{ scale: 1.05 }}
@@ -2783,6 +2731,33 @@ const FeatureCard = React.memo<{
               </PremiumButton>
             </motion.div>
           </div>
+        </div>
+
+        <div className="flex-1 flex flex-col">
+          <motion.h3 
+            className={`text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 font-heading group-hover:text-amber-100 transition-all duration-300 leading-tight ${
+              theme === 'dark' ? 'text-white' : 'text-gray-900'
+            }`}
+            whileHover={{ x: 5 }}
+            transition={{ duration: 0.2 }}
+          >
+            {language === 'pl' ? feature.title : feature.titleEn}
+          </motion.h3>
+
+<ul className={`mb-8 font-body leading-relaxed text-lg sm:text-xl transition-colors duration-300 ${
+  theme === 'dark'
+    ? 'text-gray-200 group-hover:text-gray-100'
+    : 'text-gray-700 group-hover:text-gray-600'
+}`}>
+  {(language === 'pl' ? feature.bulletPoints : feature.bulletPointsEn).map((point, idx) => (
+    <li key={idx} className="mb-2 list-disc list-inside">
+      {point}
+    </li>
+  ))}
+</ul>
+
+
+          
         </div>
       </div>
 
@@ -2991,7 +2966,7 @@ const ContactSection = React.memo<{ showToast: (message: string) => void }>(({ s
           </p>
         </motion.div>
 
-        <div className="flex flex-col md:flex-row md:items-stretch gap-12 lg:gap-16">
+        <div className="flex flex-col items-center gap-12 lg:gap-16">
             
 
 
@@ -3000,7 +2975,7 @@ const ContactSection = React.memo<{ showToast: (message: string) => void }>(({ s
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="neuromorphic w-full md:w-1/2 p-8 sm:p-10 rounded-3xl flex flex-col justify-center" 
+            className="neuromorphic w-full w-6/7 p-8 sm:p-10 rounded-3xl flex flex-col justify-center" 
           >
             <h3 className={`text-2xl sm:text-3xl font-bold mb-8 font-heading flex items-center ${
               theme === 'dark' ? 'text-white' : 'text-gray-900'
@@ -3331,7 +3306,6 @@ export default function SecurHubLanding() {
             />
             <main>
               <HeroSection 
-                scrollToSection={scrollToSection} 
                 onCertificateClick={handleCertificateClick}
               />
               <AboutSection />
